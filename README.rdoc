@@ -1,0 +1,68 @@
+= bio-samtools
+
+samtools-ruby
+
+== Introduction
+Binder of samtools for ruby, on the top of FFI. 
+
+This project was born from the need to add support of BAM files to 
+the gee_fu genome browser (http://github.com/danmaclean/gee_fu). 
+
+== Installation
+At the moment, the only way to "install" the module is to copy it to copy the content 
+of the lib folder on any lib folder you have. You must also copy your libbam.a (linux)
+or libbam.dll (windows) from samtools. If you have a Mac, add the following variable
+to the makefile of samtools
+
+DYFLAGS 	= -dynamiclib -lz
+
+and the following target:
+dylib: libbam.dylib
+libbam.dylib:$(LOBJS)
+		$(CC) $(CFLAGS) $(DYFLAGS) -o libbam.dylib $(LOBJS)
+
+Then, run 
+
+make dylib
+
+Finally, you copy the .dylib file to your lib folder. 
+
+== Usage
+The easiest way to see in "action" samtools-ruby to call
+rake test. 
+
+
+== Dependencies:
+-FFI (http://github.com/ffi/ffi)
+-libbam
+	This can be obtained from samtools.  (http://samtools.sourceforge.net/ )
+	
+== FAQ.
+I´m getting a segmentation Fault, what did I do wrong?
+There are two known segmentation faults at the moment
+	-When you try to load a text file as binary file
+	-When you try to lad a binary file as a text file
+
+If this is not the problem, or you have any other question,  don´t hesitate on 
+dropping a line to
+Ricardo dot Ramirez-Gonzalez at bbsrc dot ac dot uk
+
+== TODO
+-Write a gem to install it
+-Filter to the fetching algorithm (give a condition that has to be satisfied to add the alignment to the list)
+-Examples of how to use it, besides the test folder
+== Contributing to bio-samtools
+ 
+* Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
+* Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
+* Fork the project
+* Start a feature/bugfix branch
+* Commit and push until you are happy with your contribution
+* Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
+* Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
+
+== Copyright
+
+Copyright (c) 2011 Raoul J.P. Bonnal. See LICENSE.txt for
+further details.
+
