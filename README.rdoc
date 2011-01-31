@@ -58,8 +58,9 @@ Ricardo dot Ramirez-Gonzalez at bbsrc dot ac dot uk
 -Operating system independent, DONE ( test needed)
 
 == IMPORTANT NOTE
-The gem/archive comes with preinstalled library .a and dylib, .dll is missing I didn't compile it.
-library .a has been compiled on OS X, I didn't check if it works on linux (test needed) 
+-Libraries are compiled for 64 bit machines
+-The gem/archive comes with preinstalled library .a and dylib, .dll is missing I didn't compile it.
+-Library .a, I didn't check if it works on linux (test needed) 
 
 == Contributing to bio-samtools
  
