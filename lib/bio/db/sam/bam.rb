@@ -8,7 +8,8 @@ module Bio
       module Tools
         extend FFI::Library
         
-        ffi_lib "#{File.join(File.expand_path(File.dirname(__FILE__)),'external','libbam.dylib')}"
+        #ffi_lib "#{File.join(File.expand_path(File.dirname(__FILE__)),'external','libbam.dylib')}"
+        ffi_lib Bio::DB::Sam::Library.filename
 
         BAM_FPAIRED = 1
         BAM_FPROPER_PAIR = 2

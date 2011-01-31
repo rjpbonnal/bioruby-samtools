@@ -1,8 +1,12 @@
 = bio-samtools
 
-samtools-ruby
+The original project samtools-ruby belongs to Ricardo H. Ramirez @ https://github.com/homonecloco/samtools-ruby
 
 == Introduction
+
+
+Documentation and code come from that project and we'll adapt it for a better integration in BioRuby.
+
 Binder of samtools for ruby, on the top of FFI. 
 
 This project was born from the need to add support of BAM files to 

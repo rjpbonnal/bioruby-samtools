@@ -6,7 +6,8 @@ module Bio
     module SAM
       module Tools
         extend FFI::Library
-        ffi_lib "#{File.join(File.expand_path(File.dirname(__FILE__)),'external','libbam.dylib')}"
+        #ffi_lib "#{File.join(File.expand_path(File.dirname(__FILE__)),'external','libbam.dylib')}"
+        ffi_lib Bio::DB::Sam::Library.filename
 
         attach_function :fai_build, [ :string ], :int
         attach_function :fai_destroy, [ :pointer ], :void

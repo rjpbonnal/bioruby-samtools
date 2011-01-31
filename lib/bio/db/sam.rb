@@ -11,6 +11,30 @@ end
 
 module Bio
   module DB
+    module Sam
+      module Library
+
+        # Return the path with the file name of the library for the specific operating system
+        def filename
+          #TODO refactor this piece of code in all the files
+          lib_os=case RUBY_PLATFORM
+        when /linux/
+          'a'
+        when /darwin/
+          'dylib'
+        when /windows/
+          'dll'  
+        end
+        
+        File.join(File.expand_path(File.dirname(__FILE__)),'external',"libbam.#{lib_os}")
+        
+      end
+    end
+  end
+end
+
+module Bio
+  module DB
     class Sam
       attr_reader :sam_file
 
@@ -116,7 +140,7 @@ module Bio
       def average_coverage(chromosome, qstart, len)
 
         #reference = fetch_reference(chromosome, qstart,len)
-       # len = reference.length if len > reference.length
+        # len = reference.length if len > reference.length
 
 
         coverages = chromosome_coverage(chromosome, qstart, len)
@@ -128,8 +152,8 @@ module Bio
       end
 
       def chromosome_coverage(chromosome, qstart, len)
-      #  reference = fetch_reference(chromosome, qstart,len)
-      #  len = reference.length if len > reference.length
+        #  reference = fetch_reference(chromosome, qstart,len)
+        #  len = reference.length if len > reference.length
         #p qend.to_s + "-" + qstart.to_s + "framesize " + (qend - qstart).to_s
         coverages = Array.new(len, 0)
 
