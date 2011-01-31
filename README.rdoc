@@ -55,6 +55,12 @@ Ricardo dot Ramirez-Gonzalez at bbsrc dot ac dot uk
 -Write a gem to install it
 -Filter to the fetching algorithm (give a condition that has to be satisfied to add the alignment to the list)
 -Examples of how to use it, besides the test folder
+-Operating system independent, DONE ( test needed)
+
+== IMPORTANT NOTE
+The gem/archive comes with preinstalled library .a and dylib, .dll is missing I didn't compile it.
+library .a has been compiled on OS X, I didn't check if it works on linux (test needed) 
+
 == Contributing to bio-samtools
  
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
