@@ -2,6 +2,7 @@ module Bio
   module DB
     module SAM
       module Library
+        #IMPORTANT NOTE: Windows library is missing in this distribution
 
         # Return the path with the file name of the library for the specific operating system
         def filename
