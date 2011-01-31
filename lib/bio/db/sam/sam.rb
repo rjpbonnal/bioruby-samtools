@@ -14,7 +14,7 @@ module Bio
         extend FFI::Library
         
 #        ffi_lib "#{File.join(File.expand_path(File.dirname(__FILE__)),'external','libbam.#{lib_os}')}"
-         ffi_lib Bio::DB::Sam::Library.filename
+         ffi_lib Bio::DB::SAM::Library.filename
 
 #        typedef struct {
 #        	int32_t n_targets;
