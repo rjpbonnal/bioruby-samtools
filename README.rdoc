@@ -61,6 +61,12 @@ Ricardo dot Ramirez-Gonzalez at bbsrc dot ac dot uk
 -Libraries are compiled for 64 bit machines
 -The gem/archive comes with preinstalled library .a and dylib, .dll is missing I didn't compile it.
 -Library .a, I didn't check if it works on linux (test needed) 
+-Library libbam.so.1, The library is simply compiled with make dylib without any special parameter on
+CentOS5.5 x86_64, gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-48). 
+$ openssl dgst libbam.so.1
+MD5(libbam.so.1)= c45cfccfb41ffeb2730ee4b227d244c4
+
+
 
 == Contributing to bio-samtools
  
