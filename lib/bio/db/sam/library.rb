@@ -9,7 +9,7 @@ module Bio
           #TODO refactor this piece of code in all the files
           lib_os = case RUBY_PLATFORM
           when /linux/
-            'a'
+            'so.1'
           when /darwin/
             'dylib'
           when /windows/
