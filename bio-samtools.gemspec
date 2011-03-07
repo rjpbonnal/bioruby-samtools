@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ricardo Ramirez-Gonzalez", "Raoul J.P. Bonnal"]
-  s.date = %q{2011-01-21}
+  s.date = %q{2011-03-07}
   s.description = %q{Binder of samtools for ruby, on the top of FFI. 
 
   This project was born from the need to add support of BAM files to 
@@ -32,9 +32,12 @@ Gem::Specification.new do |s|
     "lib/bio/.DS_Store",
     "lib/bio/db/sam.rb",
     "lib/bio/db/sam/bam.rb",
+    "lib/bio/db/sam/external/COPYING",
     "lib/bio/db/sam/external/libbam.a",
     "lib/bio/db/sam/external/libbam.dylib",
+    "lib/bio/db/sam/external/libbam.so.1",
     "lib/bio/db/sam/faidx.rb",
+    "lib/bio/db/sam/library.rb",
     "lib/bio/db/sam/sam.rb",
     "test/basictest.rb",
     "test/coverage.rb",
@@ -65,7 +68,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/helios/bioruby-samtools}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.7}
+  s.rubygems_version = %q{1.5.0}
   s.summary = %q{Binder of samtools for ruby, on the top of FFI.}
   s.test_files = [
     "test/basictest.rb",
@@ -77,7 +80,6 @@ Gem::Specification.new do |s|
   ]
 
   if s.respond_to? :specification_version then
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
