@@ -153,6 +153,27 @@ module Bio
         #FIXME: if we see that we need this function, implement it on ruby, seems like FFI is having problems with
         #te static inline.
         #attach_function :bam_dup1, [ :pointer ], :pointer
+        
+        
+        #bam sort
+          # @abstract Sort an unsorted BAM file based on the chromosome order
+          # and the leftmost position of an alignment
+          # 
+          # @param  is_by_qname whether to sort by query name
+          # @param  fn       name of the file to be sorted
+          # @param  prefix   prefix of the output and the temporary files; upon
+          #                              sucessess, prefix.bam will be written.
+          # @param  max_mem  approxiate maximum memory (very inaccurate)
+          # 
+          # @discussion It may create multiple temporary subalignment files
+          # and then merge them by calling bam_merge_core(). This function is
+          # NOT thread safe.
+        attach_function :bam_sort_core, [:int, :string, :string, :int], :void
+        def self.bam_sort(bam_filename, bam_output_prefix)
+          is_by_name = 0
+          max_mem = 500000000
+          bam_sort_core(is_by_name, bam_filename, bam_output_prefix, max_mem)
+        end
       end
     end
   end
