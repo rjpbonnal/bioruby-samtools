@@ -3,7 +3,7 @@
 # require 'bio/db/sam/faidx'
 # require 'bio/db/sam/sam'
 module Bio
-  module DB
+  class DB
     module SAM
       module Tools
         extend FFI::Library

@@ -8,7 +8,7 @@
 # require'ffi'
 # require 'bio/db/sam/bam'
 module Bio
-  module DB
+  class DB
     module SAM
       module Tools
         extend FFI::Library

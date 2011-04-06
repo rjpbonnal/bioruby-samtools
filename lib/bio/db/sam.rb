@@ -11,7 +11,7 @@ module LibC
 end
 
 module Bio
-  module DB
+  class DB
     class Sam
       attr_reader :sam_file
 

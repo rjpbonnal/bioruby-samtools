@@ -1,5 +1,5 @@
 module Bio
-  module DB
+  class DB
     module SAM
       module Library
         #IMPORTANT NOTE: Windows library is missing in this distribution
