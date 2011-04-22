@@ -5,16 +5,17 @@
 
 Gem::Specification.new do |s|
   s.name = %q{bio-samtools}
-  s.version = "0.1.0"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ricardo Ramirez-Gonzalez", "Raoul J.P. Bonnal"]
-  s.date = %q{2011-04-06}
+  s.date = %q{2011-04-22}
   s.description = %q{Binder of samtools for ruby, on the top of FFI. 
 
   This project was born from the need to add support of BAM files to 
   the gee_fu genome browser (http://github.com/danmaclean/gee_fu).}
   s.email = %q{ilpuccio.febo@gmail.com}
+  s.extensions = ["ext/mkrf_conf.rb"]
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.rdoc"
@@ -28,14 +29,12 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "bio-samtools.gemspec",
+    "ext/mkrf_conf.rb",
     "lib/bio-samtools.rb",
     "lib/bio/.DS_Store",
     "lib/bio/db/sam.rb",
     "lib/bio/db/sam/bam.rb",
     "lib/bio/db/sam/external/COPYING",
-    "lib/bio/db/sam/external/libbam.a",
-    "lib/bio/db/sam/external/libbam.dylib",
-    "lib/bio/db/sam/external/libbam.so.1",
     "lib/bio/db/sam/faidx.rb",
     "lib/bio/db/sam/library.rb",
     "lib/bio/db/sam/sam.rb",

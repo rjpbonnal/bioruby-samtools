@@ -11,7 +11,7 @@ module Bio
           when /linux/
             'so.1'
           when /darwin/
-            'dylib'
+            '1.dylib'
           when /windows/
             'dll'  
           end
