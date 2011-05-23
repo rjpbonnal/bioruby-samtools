@@ -71,14 +71,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.5.0}
   s.summary = %q{Binder of samtools for ruby, on the top of FFI.}
-  s.test_files = [
-    "test/basictest.rb",
-    "test/coverage.rb",
-    "test/coverage_plot.rb",
-    "test/feature.rb",
-    "test/helper.rb",
-    "test/test_bio-samtools.rb"
-  ]
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
