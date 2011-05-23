@@ -174,6 +174,36 @@ module Bio
           max_mem = 500000000
           bam_sort_core(is_by_name, bam_filename, bam_output_prefix, max_mem)
         end
+
+          # @abstract    Merge multiple sorted BAM.
+          # @param  is_by_qname whether to sort by query name
+          # @param  out  output BAM file name
+          # @param  headers  name of SAM file from which to copy '@' header lines,
+          #                  or NULL to copy them from the first file to be merged
+          # @param  n    number of files to be merged
+          # @param  fn   names of files to be merged
+          # 
+          # @discussion Padding information may NOT correctly maintained. This
+          # function is NOT thread safe.
+          # int bam_merge_core(int by_qname, const char *out, const char *headers, int n, char * const *fn,
+          #           int flag, const char *reg)
+
+          # attach_function :bam_merge_core, [:int, :string, :string, :int, :pointer, :int, :string], :int
+          # def self.bam_merge(bam_output_file_name, bam_array_input_file_names, rg)
+          #   is_by_qname = 0
+          #   headers = ""
+          #   flag = 0
+          #   ary = bam_array_input_file_names.map do |filename|
+          #     FFI::MemoryPointer.from_string(filename)
+          #   end
+          #   ary << nil
+          #   fns=FFI::MemoryPointer.new :pointer, ary.size
+          #   ary.each_with_index do |p_filename, idx|
+          #     fns[idx].put_pointer(0, p_filename)
+          #   end
+          #   
+          #   bam_merge_core(is_by_qname, bam_output_file_name, headers, bam_array_input_file_names.size, fns, flag, rg)
+          # end        
       end
     end
   end
