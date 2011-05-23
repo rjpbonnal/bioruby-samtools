@@ -19,6 +19,6 @@ DEPENDENCIES
   bio (>= 1.4.1)
   bundler (~> 1.0.0)
   ffi
-  jeweler (~> 1.5.2)
+  jeweler
   rcov
   shoulda
