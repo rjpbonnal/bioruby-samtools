@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Ricardo Ramirez-Gonzalez", "Raoul J.P. Bonnal"]
-  s.date = %q{2011-04-22}
+  s.authors = ["Ricardo Ramirez-Gonzalez", "Dan MacLean", "Raoul J.P. Bonnal"]
+  s.date = %q{2011-05-23}
   s.description = %q{Binder of samtools for ruby, on the top of FFI. 
 
   This project was born from the need to add support of BAM files to 
@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
     "lib/bio/db/sam.rb",
     "lib/bio/db/sam/bam.rb",
     "lib/bio/db/sam/external/COPYING",
+    "lib/bio/db/sam/external/VERSION",
     "lib/bio/db/sam/faidx.rb",
     "lib/bio/db/sam/library.rb",
     "lib/bio/db/sam/sam.rb",
@@ -55,6 +56,7 @@ Gem::Specification.new do |s|
     "test/samples/small/test_chr.fasta.amb",
     "test/samples/small/test_chr.fasta.ann",
     "test/samples/small/test_chr.fasta.bwt",
+    "test/samples/small/test_chr.fasta.fai",
     "test/samples/small/test_chr.fasta.pac",
     "test/samples/small/test_chr.fasta.rbwt",
     "test/samples/small/test_chr.fasta.rpac",
