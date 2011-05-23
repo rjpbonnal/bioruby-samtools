@@ -4,7 +4,7 @@ GEM
     bio (1.4.1)
     ffi (1.0.9)
     git (1.2.5)
-    jeweler (1.5.2)
+    jeweler
       bundler (~> 1.0.0)
       git (>= 1.2.5)
       rake
