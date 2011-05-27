@@ -58,11 +58,8 @@ Ricardo dot Ramirez-Gonzalez at bbsrc dot ac dot uk
 -Operating system independent, DONE ( test needed)
 
 == IMPORTANT NOTE
--Libraries are compiled for 64 bit machines
--The gem/archive comes with preinstalled library .a and dylib, .dll is missing I didn't compile it.
+-Libraries are downloaded, compiled and installed inside the gem at install time on the host system
 -Library .a, I didn't check if it works on linux (test needed) 
--Library libbam.so.1, The library is simply compiled with make dylib without any special parameter on
-CentOS5.5 x86_64, gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-48). 
 $ openssl dgst libbam.so.1
 MD5(libbam.so.1)= c45cfccfb41ffeb2730ee4b227d244c4
 
@@ -77,6 +74,17 @@ MD5(libbam.so.1)= c45cfccfb41ffeb2730ee4b227d244c4
 * Commit and push until you are happy with your contribution
 * Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
 * Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
+
+=== Important Notes for developers
+
+Remember that you must compile and install the right libbam library for you host system. In order to do that there are three possible solutions:
+* download, compile and install the library in bioruby-samtools-your_clone/lib/bio/db/sam/external/libbam.xxxxx by yourself
+* install the gem and then grab the compiled library cp `locate libbam.1.dylib` bioruby-samtools-your_clone/lib/bio/db/sam/external (library name is an example)
+* in your bioruby-samtools-your_clone create the Rakefile typing "cd ext; ruby mkrf_conf.rb; rake -f Rakefile"
+
+The latest I think is the easiest way, cause you are replicating the automatic process.
+
+For testing just run `rake test`. Tests must be improved.
 
 == Copyright
 
