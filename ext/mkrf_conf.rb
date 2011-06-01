@@ -36,13 +36,14 @@ end
 task :compile do
   sh "tar xvfj #{SamToolsFile}"
   cd("samtools-#{Version}") do
-    sh "make"
     cp("libbam.a","#{path_external}")
     case Config::CONFIG['host_os']
       when /linux/
+        sh "CFLAGS='-g -Wall -O2 -fPIC' make -e"
         sh "CFLAGS='-g -Wall -O2 -fPIC' make -e libbam.so.1-local"
         cp("libbam.so.1","#{path_external}")
       when /darwin/
+        sh "make"
         sh "make libbam.1.dylib-local"
         cp("libbam.1.dylib","#{path_external}")      
       when /mswin|mingw/ then raise NotImplementedError, "BWA library is not available for Windows platform"  
