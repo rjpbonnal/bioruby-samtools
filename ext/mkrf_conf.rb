@@ -40,7 +40,7 @@ task :compile do
     cp("libbam.a","#{path_external}")
     case Config::CONFIG['host_os']
       when /linux/
-        sh "make libbam.so.1-local"
+        sh "CFLAGS='-g -Wall -O2 -fPIC' make -e libbam.so.1-local"
         cp("libbam.so.1","#{path_external}")
       when /darwin/
         sh "make libbam.1.dylib-local"
