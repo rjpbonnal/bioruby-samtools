@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>close (Bio::DB::Sam)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bio/db/sam.rb, line 93</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">close</span>()
+        <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">fai_destroy</span>(<span class="ruby-ivar">@fasta_index</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@fasta_index</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@fasta_index</span>.<span class="ruby-identifier">null?</span>
+        <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">bam_index_destroy</span>(<span class="ruby-ivar">@sam_index</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@sam_index</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@sam_index</span>.<span class="ruby-identifier">null?</span>
+        <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">samclose</span>(<span class="ruby-ivar">@sam_file</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@sam_file</span>.<span class="ruby-identifier">nil?</span> 
+        <span class="ruby-ivar">@sam_file</span> = <span class="ruby-keyword kw">nil</span>
+        <span class="ruby-ivar">@fasta_index</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

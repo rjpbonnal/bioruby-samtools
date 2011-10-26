@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>consensus (Pileup)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bio/db/sam/pileup.rb, line 80</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">consensus</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@consensus</span>.<span class="ruby-identifier">nil?</span>
+        <span class="ruby-identifier">max</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">non_refs</span>.<span class="ruby-identifier">values</span>.<span class="ruby-identifier">max</span>
+        <span class="ruby-keyword kw">if</span> (<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">ref_count</span> <span class="ruby-operator">/</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">coverage</span>) <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span><span class="ruby-value">.5</span>
+          <span class="ruby-ivar">@consensus</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">ref_base</span> 
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">ref_count</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">max</span>
+          <span class="ruby-ivar">@consensus</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">ref_base</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">arr</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">non_refs</span>.<span class="ruby-identifier">select</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">max</span> }
+          <span class="ruby-identifier">bases</span> = <span class="ruby-identifier">arr</span>.<span class="ruby-identifier">collect</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">b</span><span class="ruby-operator">|</span> <span class="ruby-identifier">b</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">to_s</span> }
+          <span class="ruby-identifier">bases</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">ref_base</span> <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">ref_count</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">max</span>
+          <span class="ruby-ivar">@consensus</span> = <span class="ruby-identifier">bases</span>.<span class="ruby-identifier">sort</span>.<span class="ruby-identifier">join</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@consensus</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>
