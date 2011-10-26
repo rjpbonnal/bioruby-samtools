@@ -276,6 +276,20 @@ class TestBioDbSam < Test::Unit::TestCase
     assert(true, "Average coverage ran")
     #assert(3 == cov, "The coverage is 3")
   end
+  
+  #test whether the call to mpileup works and returns 10 objects of class pileup
+  def test_pileup
+    sam = Bio::DB::Sam.new(:fasta=>@testReference, :bam=>@testBAMFile )
+    pileup_list = []
+    sam.mpileup(:region => "chr_1:100-110") do |pile|
+      next unless pile.ref_name == 'chr_1' ##required because in the test environment stdout gets mixed in with the captured stdout in the function and non pileup lines are passed...
+      pileup_list << pile
+    end
+    assert_equal(10,pileup_list.length)
+    pileup_list.each  do |p|
+      assert_kind_of(Pileup, p)
+    end
+  end
 
 end
 
