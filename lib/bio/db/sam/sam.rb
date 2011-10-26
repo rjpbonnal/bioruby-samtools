@@ -78,6 +78,7 @@ module Bio
         attach_function :samwrite, [ :pointer, :pointer ], :int
         attach_function :sampileup, [ :pointer, :int, :bam_pileup_f, :pointer ], :int
         attach_function :samfaipath, [ :string ], :string
+        attach_function :bam_mpileup, [ :int, :pointer ], :int
       end
     end
   end
