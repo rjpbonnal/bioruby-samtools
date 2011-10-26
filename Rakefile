@@ -32,6 +32,17 @@ Jeweler::Tasks.new do |gem|
 end
 Jeweler::RubygemsDotOrgTasks.new
 
+desc "Basic Functionality Test"
+task :basic_test do
+  ruby "test/basictest.rb"
+end
+
+
+desc "Test the Pileup class"
+task :pileup_test do 
+  ruby "test/pileup.rb"
+end
+
 require 'rake/testtask'
 Rake::TestTask.new(:test) do |test|
   test.libs << 'lib' << 'test'

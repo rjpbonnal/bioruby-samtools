@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>set (Bio::DB::Alignment)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bio/db/sam.rb, line 417</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set</span>(<span class="ruby-identifier">bam_alignment</span>, <span class="ruby-identifier">header</span>)
+        <span class="ruby-comment cmt">#Create the FFI object</span>
+        <span class="ruby-ivar">@al</span> = <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Bam1T</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">bam_alignment</span>) 
+
+        <span class="ruby-comment cmt">#set the raw data</span>
+        <span class="ruby-identifier">tmp_str</span> =  <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">bam_format1</span>(<span class="ruby-identifier">header</span>,<span class="ruby-identifier">al</span>)
+        <span class="ruby-comment cmt">#self.sam =  tmp_str</span>
+        <span class="ruby-comment cmt">#ObjectSpace.define_finalizer(self, proc {|id| puts &quot;Finalizer one on #{id}&quot; })</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">sam</span> = <span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">tmp_str</span>)
+        <span class="ruby-comment cmt">#LibC.free tmp_str</span>
+        <span class="ruby-comment cmt">#Set values calculated by libbam</span>
+        <span class="ruby-identifier">core</span> = <span class="ruby-identifier">al</span>[<span class="ruby-identifier">:core</span>]
+        <span class="ruby-identifier">cigar</span> = <span class="ruby-identifier">al</span>[<span class="ruby-identifier">:data</span>][<span class="ruby-identifier">core</span>[<span class="ruby-identifier">:l_qname</span>]]<span class="ruby-comment cmt">#define bam1_cigar(b) ((uint32_t*)((b)-&gt;data + (b)-&gt;core.l_qname)) </span>
+        <span class="ruby-ivar">@calend</span> = <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">bam_calend</span>(<span class="ruby-identifier">core</span>,<span class="ruby-identifier">cigar</span>)
+        <span class="ruby-ivar">@qlen</span> = <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">bam_cigar2qlen</span>(<span class="ruby-identifier">core</span>,<span class="ruby-identifier">cigar</span>)
+
+        <span class="ruby-comment cmt">#process the flags</span>
+        <span class="ruby-ivar">@is_paired</span>             = <span class="ruby-ivar">@flag</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0x0001</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-ivar">@is_mapped</span>             = <span class="ruby-ivar">@flag</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0x0002</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-ivar">@query_unmapped</span>        = <span class="ruby-ivar">@flag</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0x0004</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-ivar">@mate_unmapped</span>         = <span class="ruby-ivar">@flag</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0x0008</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-ivar">@query_strand</span>          = <span class="ruby-operator">!</span>(<span class="ruby-ivar">@flag</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0x0010</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>)
+        <span class="ruby-ivar">@mate_strand</span>           = <span class="ruby-operator">!</span>(<span class="ruby-ivar">@flag</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0x0020</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>)
+        <span class="ruby-ivar">@first_in_pair</span>         = <span class="ruby-ivar">@flag</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0x0040</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-ivar">@second_in_pair</span>        = <span class="ruby-ivar">@flag</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0x0080</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-ivar">@primary</span>               = <span class="ruby-operator">!</span>(<span class="ruby-ivar">@flag</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0x0100</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>)
+        <span class="ruby-ivar">@failed_quality</span>        = <span class="ruby-ivar">@flag</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0x0200</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-ivar">@is_duplicate</span>          = <span class="ruby-ivar">@flag</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0x0400</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>
