@@ -2,6 +2,7 @@ require 'bio/db/sam/library'
 require 'bio/db/sam/bam'
 require 'bio/db/sam/faidx'
 require 'bio/db/sam/sam'
+require 'bio/db/sam/pileup'
 
 module LibC
   extend FFI::Library
