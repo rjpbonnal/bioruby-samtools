@@ -36,12 +36,14 @@ end
 task :compile do
   sh "tar xvfj #{SamToolsFile}"
   cd("samtools-#{Version}") do
-
+    sh "patch < ../Makefile-bioruby.patch"
     case Config::CONFIG['host_os']
       when /linux/
-        sh "CFLAGS='-g -Wall -O2 -fPIC' make -e"
+        #sh "CFLAGS='-g -Wall -O2 -fPIC' make -e"
+        sh "make"
         cp("libbam.a","#{path_external}")
-        sh "CFLAGS='-g -Wall -O2 -fPIC' make -e libbam.so.1-local"
+        #sh "CFLAGS='-g -Wall -O2 -fPIC' make -e libbam.so.1-local"
+        sh "make libbam.so.1-local"
         cp("libbam.so.1","#{path_external}")
       when /darwin/
         sh "make"
@@ -61,7 +63,7 @@ task :clean do
   rm_rf("samtools-#{Version}")
 end
 
-task :default => [:download, :compile, :clean]
+task :default => [:download, :compile] #, :clean]
   
 RAKE
   
