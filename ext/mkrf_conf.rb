@@ -51,7 +51,7 @@ task :compile do
         sh "make libbam.1.dylib-local"
         cp("libbam.1.dylib","#{path_external}")      
       when /mswin|mingw/ then raise NotImplementedError, "BWA library is not available for Windows platform"  
-    end#case
+    end #case
   end #cd
 end
   
@@ -63,7 +63,7 @@ task :clean do
   rm_rf("samtools-#{Version}")
 end
 
-task :default => [:download, :compile] #, :clean]
+task :default => [:download, :compile, :clean]
   
 RAKE
   

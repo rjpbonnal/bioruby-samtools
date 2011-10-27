@@ -93,6 +93,7 @@ Gem::Specification.new do |s|
     "doc/rdoc-style.css",
     "doc/tutorial.html",
     "doc/tutorial.pdf",
+    "ext/Makefile-bioruby.patch",
     "ext/mkrf_conf.rb",
     "lib/bio-samtools.rb",
     "lib/bio/.DS_Store",
