@@ -14,4 +14,5 @@ group :development do
   gem "rcov", ">= 0"
   gem "bio", ">= 1.4.2"
   gem "ffi"
+  gem 'rdoc'
 end
