@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{bio-samtools}
-  s.version = "0.3.2"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [%q{Ricardo Ramirez-Gonzalez}, %q{Dan MacLean}, %q{Raoul J.P. Bonnal}]
-  s.date = %q{2011-10-27}
+  s.date = %q{2011-11-09}
   s.description = %q{Binder of samtools for ruby, on the top of FFI. 
 
   This project was born from the need to add support of BAM files to 
@@ -94,6 +94,7 @@ Gem::Specification.new do |s|
     "doc/tutorial.html",
     "doc/tutorial.pdf",
     "ext/Makefile-bioruby.patch",
+    "ext/Rakefile",
     "ext/mkrf_conf.rb",
     "lib/bio-samtools.rb",
     "lib/bio/.DS_Store",
@@ -101,10 +102,13 @@ Gem::Specification.new do |s|
     "lib/bio/db/sam/bam.rb",
     "lib/bio/db/sam/external/COPYING",
     "lib/bio/db/sam/external/VERSION",
+    "lib/bio/db/sam/external/libbam.1.dylib",
+    "lib/bio/db/sam/external/libbam.a",
     "lib/bio/db/sam/faidx.rb",
     "lib/bio/db/sam/library.rb",
     "lib/bio/db/sam/pileup.rb",
     "lib/bio/db/sam/sam.rb",
+    "lib/bio/db/sam/vcf.rb",
     "test/basictest.rb",
     "test/coverage.rb",
     "test/coverage_plot.rb",
@@ -123,7 +127,6 @@ Gem::Specification.new do |s|
     "test/samples/small/test_chr.fasta.amb",
     "test/samples/small/test_chr.fasta.ann",
     "test/samples/small/test_chr.fasta.bwt",
-    "test/samples/small/test_chr.fasta.fai",
     "test/samples/small/test_chr.fasta.pac",
     "test/samples/small/test_chr.fasta.rbwt",
     "test/samples/small/test_chr.fasta.rpac",
@@ -131,7 +134,10 @@ Gem::Specification.new do |s|
     "test/samples/small/test_chr.fasta.sa",
     "test/samples/small/testu.bam",
     "test/samples/small/testu.bam.bai",
-    "test/test_bio-samtools.rb"
+    "test/test_basic.rb",
+    "test/test_bio-samtools.rb",
+    "test/test_pileup.rb",
+    "test/test_vcf.rb"
   ]
   s.homepage = %q{http://github.com/helios/bioruby-samtools}
   s.licenses = [%q{MIT}]
@@ -151,6 +157,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<rcov>, [">= 0"])
       s.add_development_dependency(%q<bio>, [">= 1.4.2"])
       s.add_development_dependency(%q<ffi>, [">= 0"])
+      s.add_development_dependency(%q<rdoc>, [">= 0"])
     else
       s.add_dependency(%q<ffi>, [">= 0"])
       s.add_dependency(%q<bio>, [">= 1.4.2"])
@@ -160,6 +167,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rcov>, [">= 0"])
       s.add_dependency(%q<bio>, [">= 1.4.2"])
       s.add_dependency(%q<ffi>, [">= 0"])
+      s.add_dependency(%q<rdoc>, [">= 0"])
     end
   else
     s.add_dependency(%q<ffi>, [">= 0"])
@@ -170,6 +178,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rcov>, [">= 0"])
     s.add_dependency(%q<bio>, [">= 1.4.2"])
     s.add_dependency(%q<ffi>, [">= 0"])
+    s.add_dependency(%q<rdoc>, [">= 0"])
   end
 end
 
