@@ -1,5 +1,5 @@
-# require 'rubygems'
-# require'ffi'
+#require 'rubygems'
+#require 'ffi'
 # require 'bio/db/sam/faidx'
 # require 'bio/db/sam/sam'
 module Bio
