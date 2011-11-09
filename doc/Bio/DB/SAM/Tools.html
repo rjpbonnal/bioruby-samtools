@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+
+<title>Module: Bio::DB::SAM::Tools</title>
+
+<link type="text/css" media="screen" href="../../../rdoc.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../../";
+</script>
+
+<script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../../js/navigation.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../../js/search_index.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../../js/search.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../../js/searcher.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../../js/darkfish.js"></script>
+
+
+<body id="top" class="module">
+<nav id="metadata">
+  <nav id="home-section" class="section">
+  <h3 class="section-header">
+    <a href="../../../index.html">Home</a>
+    <a href="../../../table_of_contents.html#classes">Classes</a>
+    <a href="../../../table_of_contents.html#methods">Methods</a>
+  </h3>
+</nav>
+
+
+  <nav id="search-section" class="section project-section" class="initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <h3 class="section-header">
+      <input type="text" name="search" placeholder="Search" id="search-field"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </h3>
+  </form>
+
+  <ul id="search-results" class="initially-hidden"></ul>
+</nav>
+
+
+  <div id="file-metadata">
+    <nav id="file-list-section" class="section">
+  <h3 class="section-header">Defined In</h3>
+  <ul>
+    <li>lib/bio/db/sam/bam.rb
+    <li>lib/bio/db/sam/faidx.rb
+    <li>lib/bio/db/sam/sam.rb
+  </ul>
+</nav>
+
+    
+  </div>
+
+  <div id="class-metadata">
+    
+    
+    
+    <!-- Method Quickref -->
+<nav id="method-list-section" class="section">
+  <h3 class="section-header">Methods</h3>
+
+  <ul class="link-list">
+    
+    <li><a href="#method-c-bam_sort">::bam_sort</a>
+    
+  </ul>
+</nav>
+
+  </div>
+
+  <div id="project-metadata">
+    <nav id="fileindex-section" class="section project-section">
+  <h3 class="section-header">Pages</h3>
+
+  <ul>
+  
+    <li class="file"><a href="../../../LICENSE_txt.html">LICENSE</a>
+  
+  </ul>
+</nav>
+
+    <nav id="classindex-section" class="section project-section">
+  <h3 class="section-header">Class and Module Index</h3>
+
+  <ul class="link-list">
+  
+    <li><a href="../../../Bio.html">Bio</a>
+  
+    <li><a href="../../../Bio/DB.html">Bio::DB</a>
+  
+    <li><a href="../../../Bio/DB/Alignment.html">Bio::DB::Alignment</a>
+  
+    <li><a href="../../../Bio/DB/SAM.html">Bio::DB::SAM</a>
+  
+    <li><a href="../../../Bio/DB/SAM/Library.html">Bio::DB::SAM::Library</a>
+  
+    <li><a href="../../../Bio/DB/SAM/Tools.html">Bio::DB::SAM::Tools</a>
+  
+    <li><a href="../../../Bio/DB/SAM/Tools/Bam1CoreT.html">Bio::DB::SAM::Tools::Bam1CoreT</a>
+  
+    <li><a href="../../../Bio/DB/SAM/Tools/Bam1T.html">Bio::DB::SAM::Tools::Bam1T</a>
+  
+    <li><a href="../../../Bio/DB/SAM/Tools/BamHeaderT.html">Bio::DB::SAM::Tools::BamHeaderT</a>
+  
+    <li><a href="../../../Bio/DB/SAM/Tools/BamPileup1T.html">Bio::DB::SAM::Tools::BamPileup1T</a>
+  
+    <li><a href="../../../Bio/DB/SAM/Tools/SamfileT.html">Bio::DB::SAM::Tools::SamfileT</a>
+  
+    <li><a href="../../../Bio/DB/SAM/Tools/SamfileTX.html">Bio::DB::SAM::Tools::SamfileTX</a>
+  
+    <li><a href="../../../Bio/DB/SAMException.html">Bio::DB::SAMException</a>
+  
+    <li><a href="../../../Bio/DB/Sam.html">Bio::DB::Sam</a>
+  
+    <li><a href="../../../Bio/DB/Tag.html">Bio::DB::Tag</a>
+  
+    <li><a href="../../../LibC.html">LibC</a>
+  
+    <li><a href="../../../Pileup.html">Pileup</a>
+  
+    <li><a href="../../../Vcf.html">Vcf</a>
+  
+  </ul>
+</nav>
+
+  </div>
+</nav>
+
+<div id="documentation">
+  <h1 class="module">module Bio::DB::SAM::Tools</h1>
+
+  <div id="description" class="description">
+    
+  </div><!-- description -->
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+    <!-- Constants -->
+    <section id="constants-list" class="section">
+      <h3 class="section-header">Constants</h3>
+      <dl>
+      
+        <dt id="BAM_CDEL">BAM_CDEL
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_CHARD_CLIP">BAM_CHARD_CLIP
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_CIGAR_MASK">BAM_CIGAR_MASK
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_CIGAR_SHIFT">BAM_CIGAR_SHIFT
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_CINS">BAM_CINS
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_CMATCH">BAM_CMATCH
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_CPAD">BAM_CPAD
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_CREF_SKIP">BAM_CREF_SKIP
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_CSOFT_CLIP">BAM_CSOFT_CLIP
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_DEF_MASK">BAM_DEF_MASK
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_FDUP">BAM_FDUP
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_FMREVERSE">BAM_FMREVERSE
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_FMUNMAP">BAM_FMUNMAP
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_FPAIRED">BAM_FPAIRED
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_FPROPER_PAIR">BAM_FPROPER_PAIR
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_FQCFAIL">BAM_FQCFAIL
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_FREAD1">BAM_FREAD1
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_FREAD2">BAM_FREAD2
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_FREVERSE">BAM_FREVERSE
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_FSECONDARY">BAM_FSECONDARY
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_FUNMAP">BAM_FUNMAP
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_OFDEC">BAM_OFDEC
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_OFHEX">BAM_OFHEX
+        
+        <dd class="description">
+        
+      
+        <dt id="BAM_OFSTR">BAM_OFSTR
+        
+        <dd class="description">
+        
+      
+      </dl>
+    </section>
+    
+
+    
+
+    <!-- Methods -->
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section section">
+      <h3 class="section-header">Public Class Methods</h3>
+
+    
+      <div id="method-c-bam_sort" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">bam_sort</span><span
+            class="method-args">(bam_filename, bam_output_prefix)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+
+          
+          <div class="method-source-code" id="bam_sort-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam/bam.rb, line 172</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">bam_sort</span>(<span class="ruby-identifier">bam_filename</span>, <span class="ruby-identifier">bam_output_prefix</span>)
+  <span class="ruby-identifier">is_by_name</span> = <span class="ruby-value">0</span>
+  <span class="ruby-identifier">max_mem</span> = <span class="ruby-value">500000000</span>
+  <span class="ruby-identifier">bam_sort_core</span>(<span class="ruby-identifier">is_by_name</span>, <span class="ruby-identifier">bam_filename</span>, <span class="ruby-identifier">bam_output_prefix</span>, <span class="ruby-identifier">max_mem</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- bam_sort-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- bam_sort-method -->
+
+    
+    </section><!-- public-class-method-details -->
+  
+  </section><!-- 5Buntitled-5D -->
+
+</div><!-- documentation -->
+
+
+<footer id="validator-badges">
+  <p><a href="http://validator.w3.org/check/referer">[Validate]</a>
+  <p>Generated by <a href="https://github.com/rdoc/rdoc">RDoc</a> 3.11.
+  <p>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish Rdoc Generator</a> 3.
+</footer>
+
