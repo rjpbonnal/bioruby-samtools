@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{bio-samtools}
-  s.version = "0.4.0"
+  s.version = "0.4.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [%q{Ricardo Ramirez-Gonzalez}, %q{Dan MacLean}, %q{Raoul J.P. Bonnal}]
@@ -102,8 +102,6 @@ Gem::Specification.new do |s|
     "lib/bio/db/sam/bam.rb",
     "lib/bio/db/sam/external/COPYING",
     "lib/bio/db/sam/external/VERSION",
-    "lib/bio/db/sam/external/libbam.1.dylib",
-    "lib/bio/db/sam/external/libbam.a",
     "lib/bio/db/sam/faidx.rb",
     "lib/bio/db/sam/library.rb",
     "lib/bio/db/sam/pileup.rb",
