@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{bio-samtools}
-  s.version = "0.4.1"
+  s.version = "0.4.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [%q{Ricardo Ramirez-Gonzalez}, %q{Dan MacLean}, %q{Raoul J.P. Bonnal}]
-  s.date = %q{2011-11-09}
+  s.date = %q{2011-11-10}
   s.description = %q{Binder of samtools for ruby, on the top of FFI. 
 
   This project was born from the need to add support of BAM files to 
@@ -29,6 +29,24 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "bio-samtools.gemspec",
+    "doc/Bio.html",
+    "doc/Bio/DB.html",
+    "doc/Bio/DB/Alignment.html",
+    "doc/Bio/DB/SAM.html",
+    "doc/Bio/DB/SAM/Library.html",
+    "doc/Bio/DB/SAM/Tools.html",
+    "doc/Bio/DB/SAM/Tools/Bam1CoreT.html",
+    "doc/Bio/DB/SAM/Tools/Bam1T.html",
+    "doc/Bio/DB/SAM/Tools/BamHeaderT.html",
+    "doc/Bio/DB/SAM/Tools/BamPileup1T.html",
+    "doc/Bio/DB/SAM/Tools/SamfileT.html",
+    "doc/Bio/DB/SAM/Tools/SamfileTX.html",
+    "doc/Bio/DB/SAMException.html",
+    "doc/Bio/DB/Tag.html",
+    "doc/LICENSE_txt.html",
+    "doc/LibC.html",
+    "doc/Pileup.html",
+    "doc/Vcf.html",
     "doc/basic_styles.css",
     "doc/classes/Bio.html",
     "doc/classes/Bio/DB.html",
@@ -89,8 +107,48 @@ Gem::Specification.new do |s|
     "doc/fr_class_index.html",
     "doc/fr_file_index.html",
     "doc/fr_method_index.html",
+    "doc/images/add.png",
+    "doc/images/brick.png",
+    "doc/images/brick_link.png",
+    "doc/images/bug.png",
+    "doc/images/bullet_black.png",
+    "doc/images/bullet_toggle_minus.png",
+    "doc/images/bullet_toggle_plus.png",
+    "doc/images/date.png",
+    "doc/images/delete.png",
+    "doc/images/find.png",
+    "doc/images/loadingAnimation.gif",
+    "doc/images/macFFBgHack.png",
+    "doc/images/package.png",
+    "doc/images/page_green.png",
+    "doc/images/page_white_text.png",
+    "doc/images/page_white_width.png",
+    "doc/images/plugin.png",
+    "doc/images/ruby.png",
+    "doc/images/tag_blue.png",
+    "doc/images/tag_green.png",
+    "doc/images/transparent.png",
+    "doc/images/wrench.png",
+    "doc/images/wrench_orange.png",
+    "doc/images/zoom.png",
     "doc/index.html",
+    "doc/js/darkfish.js",
+    "doc/js/jquery.js",
+    "doc/js/navigation.js",
+    "doc/js/search.js",
+    "doc/js/search_index.js",
+    "doc/js/searcher.js",
+    "doc/lib/bio-samtools_rb.html",
+    "doc/lib/bio/db/sam/bam_rb.html",
+    "doc/lib/bio/db/sam/faidx_rb.html",
+    "doc/lib/bio/db/sam/library_rb.html",
+    "doc/lib/bio/db/sam/pileup_rb.html",
+    "doc/lib/bio/db/sam/sam_rb.html",
+    "doc/lib/bio/db/sam/vcf_rb.html",
+    "doc/lib/bio/db/sam_rb.html",
     "doc/rdoc-style.css",
+    "doc/rdoc.css",
+    "doc/table_of_contents.html",
     "doc/tutorial.html",
     "doc/tutorial.pdf",
     "ext/Makefile-bioruby.patch",
@@ -108,9 +166,6 @@ Gem::Specification.new do |s|
     "lib/bio/db/sam/sam.rb",
     "lib/bio/db/sam/vcf.rb",
     "test/basictest.rb",
-    "test/coverage.rb",
-    "test/coverage_plot.rb",
-    "test/feature.rb",
     "test/helper.rb",
     "test/pileup.rb",
     "test/samples/small/ids2.txt",
@@ -134,7 +189,6 @@ Gem::Specification.new do |s|
     "test/samples/small/testu.bam.bai",
     "test/test_basic.rb",
     "test/test_bio-samtools.rb",
-    "test/test_pileup.rb",
     "test/test_vcf.rb"
   ]
   s.homepage = %q{http://github.com/helios/bioruby-samtools}
