@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+
+<title>Class: Bio::DB::Sam</title>
+
+<link type="text/css" media="screen" href="../../rdoc.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../";
+</script>
+
+<script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/navigation.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/search_index.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/search.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/searcher.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/darkfish.js"></script>
+
+
+<body id="top" class="class">
+<nav id="metadata">
+  <nav id="home-section" class="section">
+  <h3 class="section-header">
+    <a href="../../index.html">Home</a>
+    <a href="../../table_of_contents.html#classes">Classes</a>
+    <a href="../../table_of_contents.html#methods">Methods</a>
+  </h3>
+</nav>
+
+
+  <nav id="search-section" class="section project-section" class="initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <h3 class="section-header">
+      <input type="text" name="search" placeholder="Search" id="search-field"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </h3>
+  </form>
+
+  <ul id="search-results" class="initially-hidden"></ul>
+</nav>
+
+
+  <div id="file-metadata">
+    <nav id="file-list-section" class="section">
+  <h3 class="section-header">Defined In</h3>
+  <ul>
+    <li>lib/bio/db/sam.rb
+  </ul>
+</nav>
+
+    
+  </div>
+
+  <div id="class-metadata">
+    
+    <nav id="parent-class-section" class="section">
+  <h3 class="section-header">Parent</h3>
+  
+  <p class="link">Object
+  
+</nav>
+
+    
+    <!-- Method Quickref -->
+<nav id="method-list-section" class="section">
+  <h3 class="section-header">Methods</h3>
+
+  <ul class="link-list">
+    
+    <li><a href="#method-c-finalize">::finalize</a>
+    
+    <li><a href="#method-c-merge">::merge</a>
+    
+    <li><a href="#method-c-new">::new</a>
+    
+    <li><a href="#method-i-average_coverage">#average_coverage</a>
+    
+    <li><a href="#method-i-chromosome_coverage">#chromosome_coverage</a>
+    
+    <li><a href="#method-i-close">#close</a>
+    
+    <li><a href="#method-i-deprecated_pileup">#deprecated_pileup</a>
+    
+    <li><a href="#method-i-fetch">#fetch</a>
+    
+    <li><a href="#method-i-fetch_reference">#fetch_reference</a>
+    
+    <li><a href="#method-i-fetch_with_function">#fetch_with_function</a>
+    
+    <li><a href="#method-i-index_stats">#index_stats</a>
+    
+    <li><a href="#method-i-load_index">#load_index</a>
+    
+    <li><a href="#method-i-load_reference">#load_reference</a>
+    
+    <li><a href="#method-i-mpileup">#mpileup</a>
+    
+    <li><a href="#method-i-mpileup_plus">#mpileup_plus</a>
+    
+    <li><a href="#method-i-open">#open</a>
+    
+    <li><a href="#method-i-query_string">#query_string</a>
+    
+    <li><a href="#method-i-to_s">#to_s</a>
+    
+  </ul>
+</nav>
+
+  </div>
+
+  <div id="project-metadata">
+    <nav id="fileindex-section" class="section project-section">
+  <h3 class="section-header">Pages</h3>
+
+  <ul>
+  
+    <li class="file"><a href="../../LICENSE_txt.html">LICENSE</a>
+  
+  </ul>
+</nav>
+
+    <nav id="classindex-section" class="section project-section">
+  <h3 class="section-header">Class and Module Index</h3>
+
+  <ul class="link-list">
+  
+    <li><a href="../../Bio.html">Bio</a>
+  
+    <li><a href="../../Bio/DB.html">Bio::DB</a>
+  
+    <li><a href="../../Bio/DB/Alignment.html">Bio::DB::Alignment</a>
+  
+    <li><a href="../../Bio/DB/SAM.html">Bio::DB::SAM</a>
+  
+    <li><a href="../../Bio/DB/SAM/Library.html">Bio::DB::SAM::Library</a>
+  
+    <li><a href="../../Bio/DB/SAM/Tools.html">Bio::DB::SAM::Tools</a>
+  
+    <li><a href="../../Bio/DB/SAM/Tools/Bam1CoreT.html">Bio::DB::SAM::Tools::Bam1CoreT</a>
+  
+    <li><a href="../../Bio/DB/SAM/Tools/Bam1T.html">Bio::DB::SAM::Tools::Bam1T</a>
+  
+    <li><a href="../../Bio/DB/SAM/Tools/BamHeaderT.html">Bio::DB::SAM::Tools::BamHeaderT</a>
+  
+    <li><a href="../../Bio/DB/SAM/Tools/BamPileup1T.html">Bio::DB::SAM::Tools::BamPileup1T</a>
+  
+    <li><a href="../../Bio/DB/SAM/Tools/SamfileT.html">Bio::DB::SAM::Tools::SamfileT</a>
+  
+    <li><a href="../../Bio/DB/SAM/Tools/SamfileTX.html">Bio::DB::SAM::Tools::SamfileTX</a>
+  
+    <li><a href="../../Bio/DB/SAMException.html">Bio::DB::SAMException</a>
+  
+    <li><a href="../../Bio/DB/Sam.html">Bio::DB::Sam</a>
+  
+    <li><a href="../../Bio/DB/Tag.html">Bio::DB::Tag</a>
+  
+    <li><a href="../../LibC.html">LibC</a>
+  
+    <li><a href="../../Pileup.html">Pileup</a>
+  
+    <li><a href="../../Vcf.html">Vcf</a>
+  
+  </ul>
+</nav>
+
+  </div>
+</nav>
+
+<div id="documentation">
+  <h1 class="class">class Bio::DB::Sam</h1>
+
+  <div id="description" class="description">
+    
+  </div><!-- description -->
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+    <!-- Attributes -->
+    <section id="attribute-method-details" class="method-section section">
+      <h3 class="section-header">Attributes</h3>
+
+      
+      <div id="attribute-i-sam_file" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">sam_file</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+    </section><!-- attribute-method-details -->
+    
+
+    <!-- Methods -->
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section section">
+      <h3 class="section-header">Public Class Methods</h3>
+
+    
+      <div id="method-c-finalize" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">finalize</span><span
+            class="method-args">(id)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Destructor method that closes the file before letting the object be garbage
+collected.</p>
+          
+
+          
+          <div class="method-source-code" id="finalize-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 104</span>
+<span class="ruby-keyword">def</span> <span class="ruby-constant">Sam</span>.<span class="ruby-identifier">finalize</span>(<span class="ruby-identifier">id</span>)
+  <span class="ruby-identifier">id</span>.<span class="ruby-identifier">close</span>()
+  <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Finalizing #{id}  at #{Time.new}&quot;</span>       
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- finalize-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- finalize-method -->
+
+    
+      <div id="method-c-merge" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">merge</span><span
+            class="method-args">(files, merged_file, headers, add_RG, by_qname)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Merges n BAM files. This doesn’t require to create a <a
+href="SAM.html">SAM</a> object</p>
+<dl class="rdoc-list note-list"><dt>files
+<dd>
+<p>An array with the paths to the files.</p>
+</dd><dt>merged_file
+<dd>
+<p>The path to the merged file</p>
+</dd><dt>headers
+<dd>
+<p>The BAM file containing the header</p>
+</dd><dt>add_RG
+<dd>
+<p>If true, the RG tag is added (infered from the filenames)</p>
+</dd><dt>by_qname
+<dd>
+<p>If true, the bamfiles should by ordered by query name, if false, by
+coordinates.</p>
+</dd></dl>
+          
+
+          
+          <div class="method-source-code" id="merge-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 259</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">files</span>, <span class="ruby-identifier">merged_file</span>, <span class="ruby-identifier">headers</span>, <span class="ruby-identifier">add_RG</span>, <span class="ruby-identifier">by_qname</span>)
+  <span class="ruby-identifier">strptrs</span> = []
+  <span class="ruby-identifier">strptrs</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">FFI</span><span class="ruby-operator">::</span><span class="ruby-constant">MemoryPointer</span>.<span class="ruby-identifier">from_string</span>(<span class="ruby-string">&quot;merge&quot;</span>)
+  <span class="ruby-identifier">files</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">file</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">strptrs</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">FFI</span><span class="ruby-operator">::</span><span class="ruby-constant">MemoryPointer</span>.<span class="ruby-identifier">from_string</span>(<span class="ruby-identifier">file</span>)
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">strptrs</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword">nil</span>
+
+  <span class="ruby-comment"># Now load all the pointers into a native memory block</span>
+  <span class="ruby-identifier">argv</span> = <span class="ruby-constant">FFI</span><span class="ruby-operator">::</span><span class="ruby-constant">MemoryPointer</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">:pointer</span>, <span class="ruby-identifier">strptrs</span>.<span class="ruby-identifier">length</span>)
+  <span class="ruby-identifier">strptrs</span>.<span class="ruby-identifier">each_with_index</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">p</span>, <span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+     <span class="ruby-identifier">argv</span>[<span class="ruby-identifier">i</span>].<span class="ruby-identifier">put_pointer</span>(<span class="ruby-value">0</span>,  <span class="ruby-identifier">p</span>)
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-comment">#void bam_merge_core(int by_qname, const char *out, const char *headers, int n, char * const *fn, int add_RG)</span>
+  <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">bam_merge_core</span>(<span class="ruby-identifier">by_qname</span>, <span class="ruby-identifier">merged_file</span>, <span class="ruby-identifier">headers</span>, <span class="ruby-identifier">strptrs</span>.<span class="ruby-identifier">length</span>, <span class="ruby-identifier">argv</span>, <span class="ruby-identifier">add_RG</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- merge-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- merge-method -->
+
+    
+      <div id="method-c-new" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">(optsa={})</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>To make a new sam object. Initialize expects a hash optsa with the
+following elemets:</p>
+<dl class="rdoc-list note-list"><dt>fasta
+<dd>
+<p>The fasta file with the reference. (nil)</p>
+</dd><dt>bam
+<dd>
+<p>path to a binary <a href="SAM.html">SAM</a> file (nil)</p>
+</dd><dt>tam
+<dd>
+<p>path to a text <a href="SAM.html">SAM</a> file (nil)</p>
+</dd><dt>compressed
+<dd>
+<p>If the binary file is compressed (true)</p>
+</dd><dt>write
+<dd>
+<p>If the file is to be writen (false). Not supported yet.</p>
+</dd></dl>
+
+<p><strong>NOTE:</strong> you can’t use binary and text formats
+simultaneusly. To make queries, the file has to be a sorted binary.  This
+function doesn’t actually open the file, it just prepares the object to
+be opened in a later stage.</p>
+          
+
+          
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 29</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">optsa</span>={})
+  <span class="ruby-identifier">opts</span> =  { <span class="ruby-value">:fasta</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">nil</span>,  <span class="ruby-value">:bam</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">nil</span>,<span class="ruby-value">:tam</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">:compressed</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>, <span class="ruby-value">:write</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span> }.<span class="ruby-identifier">merge!</span>(<span class="ruby-identifier">optsa</span>)
+
+
+
+  <span class="ruby-ivar">@fasta_path</span> = <span class="ruby-identifier">opts</span>[<span class="ruby-value">:fasta</span>]
+  <span class="ruby-ivar">@compressed</span> = <span class="ruby-identifier">opts</span>[<span class="ruby-value">:compressed</span>]
+  <span class="ruby-ivar">@write</span> = <span class="ruby-identifier">opts</span>[<span class="ruby-value">:write</span>]
+  <span class="ruby-identifier">bam</span> = <span class="ruby-identifier">opts</span>[<span class="ruby-value">:bam</span>]
+  <span class="ruby-identifier">tam</span> = <span class="ruby-identifier">opts</span>[<span class="ruby-value">:tam</span>]
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">bam</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">tam</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@fasta_path</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">then</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;No alignment or reference file&quot;</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">bam</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">tam</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">then</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;Alignment has to be in either text or binary format, not both&quot;</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">bam</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">then</span>
+    <span class="ruby-ivar">@binary</span> = <span class="ruby-keyword">true</span>
+    <span class="ruby-ivar">@sam</span> = <span class="ruby-identifier">bam</span>     
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">tam</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">then</span>
+    <span class="ruby-ivar">@sam</span> = <span class="ruby-identifier">tam</span>     
+    <span class="ruby-ivar">@binary</span> = <span class="ruby-keyword">false</span>
+
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-ivar">@fasta_file</span> = <span class="ruby-keyword">nil</span>
+  <span class="ruby-ivar">@sam_file</span>   = <span class="ruby-keyword">nil</span>
+
+  <span class="ruby-constant">ObjectSpace</span>.<span class="ruby-identifier">define_finalizer</span>(<span class="ruby-keyword">self</span>,  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">method</span>(<span class="ruby-value">:finalize</span>).<span class="ruby-identifier">to_proc</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- new-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- new-method -->
+
+    
+    </section><!-- public-class-method-details -->
+  
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section section">
+      <h3 class="section-header">Public Instance Methods</h3>
+
+    
+      <div id="method-i-average_coverage" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">average_coverage</span><span
+            class="method-args">(chromosome, qstart, len)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Returns the average coverage of a region in a bam file.</p>
+          
+
+          
+          <div class="method-source-code" id="average_coverage-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 143</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">average_coverage</span>(<span class="ruby-identifier">chromosome</span>, <span class="ruby-identifier">qstart</span>, <span class="ruby-identifier">len</span>)
+
+  <span class="ruby-comment">#reference = fetch_reference(chromosome, qstart,len)</span>
+  <span class="ruby-comment"># len = reference.length if len &gt; reference.length</span>
+
+
+  <span class="ruby-identifier">coverages</span> = <span class="ruby-identifier">chromosome_coverage</span>(<span class="ruby-identifier">chromosome</span>, <span class="ruby-identifier">qstart</span>, <span class="ruby-identifier">len</span>)
+  <span class="ruby-identifier">total</span> = <span class="ruby-value">0</span>
+  <span class="ruby-identifier">len</span>.<span class="ruby-identifier">times</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span> <span class="ruby-identifier">total</span>= <span class="ruby-identifier">total</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">coverages</span>[<span class="ruby-identifier">i</span>] }
+  <span class="ruby-identifier">avg_cov</span> = <span class="ruby-identifier">total</span>.<span class="ruby-identifier">to_f</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">len</span>
+  <span class="ruby-comment">#LibC.free reference</span>
+  <span class="ruby-identifier">avg_cov</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- average_coverage-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- average_coverage-method -->
+
+    
+      <div id="method-i-chromosome_coverage" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">chromosome_coverage</span><span
+            class="method-args">(chromosome, qstart, len)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Returns an array with the coverage at each possition in the queried region
+This is a simple average coverage just calculated with the first and last
+possition of the alignment, ignoring the gaps.</p>
+          
+
+          
+          <div class="method-source-code" id="chromosome_coverage-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 160</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">chromosome_coverage</span>(<span class="ruby-identifier">chromosome</span>, <span class="ruby-identifier">qstart</span>, <span class="ruby-identifier">len</span>)
+  <span class="ruby-comment">#  reference = fetch_reference(chromosome, qstart,len)</span>
+  <span class="ruby-comment">#  len = reference.length if len &gt; reference.length</span>
+  <span class="ruby-comment">#p qend.to_s + &quot;-&quot; + qstart.to_s + &quot;framesize &quot; + (qend - qstart).to_s</span>
+  <span class="ruby-identifier">coverages</span> = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">len</span>, <span class="ruby-value">0</span>)
+
+  <span class="ruby-identifier">chr_cov_proc</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">alignment</span><span class="ruby-operator">|</span>
+    <span class="ruby-comment">#last = qstart + len</span>
+    <span class="ruby-comment">#first = qstart</span>
+    <span class="ruby-comment">#last = alignment.calend if last &gt; alignment.calend</span>
+    <span class="ruby-comment">#first = alignment.pos if first &lt; alignment.pos</span>
+    <span class="ruby-comment"># p first</span>
+    <span class="ruby-identifier">last</span> = <span class="ruby-identifier">alignment</span>.<span class="ruby-identifier">calend</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">qstart</span>
+    <span class="ruby-identifier">first</span> = <span class="ruby-identifier">alignment</span>.<span class="ruby-identifier">pos</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">qstart</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">last</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">first</span>
+      <span class="ruby-identifier">tmp</span> = <span class="ruby-identifier">last</span>
+      <span class="ruby-identifier">last</span> = <span class="ruby-identifier">first</span>
+      <span class="ruby-identifier">first</span> = <span class="ruby-identifier">last</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-comment">#  STDERR.puts &quot;#{first} #{last}\n&quot;</span>
+    <span class="ruby-identifier">first</span>.<span class="ruby-identifier">upto</span>(<span class="ruby-identifier">last</span><span class="ruby-operator">-</span><span class="ruby-value">1</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+
+      <span class="ruby-identifier">coverages</span>[<span class="ruby-identifier">i</span><span class="ruby-operator">-</span><span class="ruby-value">1</span>] = <span class="ruby-value">1</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">coverages</span>[<span class="ruby-identifier">i</span><span class="ruby-operator">-</span><span class="ruby-value">1</span>]  <span class="ruby-keyword">if</span> <span class="ruby-identifier">i</span><span class="ruby-operator">-</span><span class="ruby-value">1</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">len</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">i</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+    }
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">fetch_with_function</span>(<span class="ruby-identifier">chromosome</span>, <span class="ruby-identifier">qstart</span>, <span class="ruby-identifier">qstart</span><span class="ruby-operator">+</span><span class="ruby-identifier">len</span>,  <span class="ruby-identifier">chr_cov_proc</span>)
+  <span class="ruby-comment">#p coverages</span>
+  <span class="ruby-identifier">coverages</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- chromosome_coverage-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- chromosome_coverage-method -->
+
+    
+      <div id="method-i-close" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">close</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Closes the sam file and destroys the C pointers using the functions
+provided by libbam</p>
+          
+
+          
+          <div class="method-source-code" id="close-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 95</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">close</span>()
+  <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">fai_destroy</span>(<span class="ruby-ivar">@fasta_index</span>) <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@fasta_index</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@fasta_index</span>.<span class="ruby-identifier">null?</span>
+  <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">bam_index_destroy</span>(<span class="ruby-ivar">@sam_index</span>) <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@sam_index</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@sam_index</span>.<span class="ruby-identifier">null?</span>
+  <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">samclose</span>(<span class="ruby-ivar">@sam_file</span>) <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@sam_file</span>.<span class="ruby-identifier">nil?</span> 
+  <span class="ruby-ivar">@sam_file</span> = <span class="ruby-keyword">nil</span>
+  <span class="ruby-ivar">@fasta_index</span> = <span class="ruby-keyword">nil</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- close-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- close-method -->
+
+    
+      <div id="method-i-deprecated_pileup" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">deprecated_pileup</span><span
+            class="method-args">( cmd ) { |pileup| ... }</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>utility method that does not use the samtools API, it calls samtools
+directly as if on the command line and catches the output, to use this
+method you must have a version of samtools that supports the pileup command
+(&lt; 0.1.17) otherwise the command will fail. mpileup is the preferred
+method for getting pileups.  With this method the sam object should be
+created as usual, but you need to pass this method a string of options for
+samtools you don’t need to provide the call to samtools pileup itself or
+-f &lt;fasta file&gt; or the bam file itself, these are taken from the sam
+object</p>
+          
+
+          
+          <div class="method-source-code" id="deprecated_pileup-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 472</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">deprecated_pileup</span>( <span class="ruby-identifier">cmd</span> )
+  
+  <span class="ruby-identifier">system</span>(<span class="ruby-string">'samtools pileup &gt; /dev/null 2&gt;&amp;1'</span>)
+  <span class="ruby-comment">##assumes samtools is in the path...</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">$?</span>.<span class="ruby-identifier">exitstatus</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">RuntimeError</span>, <span class="ruby-string">&quot;samtools is required on the path. A version of samtools with the pileup function is required&quot;</span>
+  <span class="ruby-keyword">end</span>
+  
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;No BAMFile provided&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@sam</span> <span class="ruby-keyword">and</span> <span class="ruby-ivar">@binary</span>
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;No FastA provided&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@fasta_path</span>
+  
+  <span class="ruby-identifier">command</span> = <span class="ruby-string">'samtools pileup '</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">cmd</span> <span class="ruby-operator">+</span> <span class="ruby-node">&quot; -f #{@fasta_path}&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-node">&quot; #{@sam}&quot;</span> 
+  
+  <span class="ruby-identifier">pipe</span> = <span class="ruby-constant">IO</span>.<span class="ruby-identifier">popen</span>(<span class="ruby-identifier">command</span>)
+  <span class="ruby-keyword">while</span> <span class="ruby-identifier">line</span> = <span class="ruby-identifier">pipe</span>.<span class="ruby-identifier">gets</span>
+    <span class="ruby-keyword">yield</span> <span class="ruby-constant">Pileup</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">line</span>)
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">pipe</span>.<span class="ruby-identifier">close</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- deprecated_pileup-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- deprecated_pileup-method -->
+
+    
+      <div id="method-i-fetch" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">fetch</span><span
+            class="method-args">(chromosome, qstart, qend)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Returns an array of Alignments on a given region.</p>
+          
+
+          
+          <div class="method-source-code" id="fetch-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 211</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">chromosome</span>, <span class="ruby-identifier">qstart</span>, <span class="ruby-identifier">qend</span>)
+  <span class="ruby-identifier">als</span> = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-identifier">fetchAlignment</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">alignment</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">als</span>.<span class="ruby-identifier">push</span>(<span class="ruby-identifier">alignment</span>.<span class="ruby-identifier">clone</span>)   
+    <span class="ruby-value">0</span>  
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">fetch_with_function</span>(<span class="ruby-identifier">chromosome</span>, <span class="ruby-identifier">qstart</span>, <span class="ruby-identifier">qend</span>, <span class="ruby-identifier">fetchAlignment</span>)
+  <span class="ruby-identifier">als</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- fetch-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- fetch-method -->
+
+    
+      <div id="method-i-fetch_reference" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">fetch_reference</span><span
+            class="method-args">(chromosome, qstart,qend)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Returns the sequence for a given region.</p>
+          
+
+          
+          <div class="method-source-code" id="fetch_reference-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 193</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">fetch_reference</span>(<span class="ruby-identifier">chromosome</span>, <span class="ruby-identifier">qstart</span>,<span class="ruby-identifier">qend</span>)
+  <span class="ruby-identifier">load_reference</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@fasta_index</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@fasta_index</span>.<span class="ruby-identifier">null?</span> 
+  <span class="ruby-identifier">query</span> = <span class="ruby-identifier">query_string</span>(<span class="ruby-identifier">chromosome</span>, <span class="ruby-identifier">qstart</span>,<span class="ruby-identifier">qend</span>)
+  <span class="ruby-identifier">len</span> = <span class="ruby-constant">FFI</span><span class="ruby-operator">::</span><span class="ruby-constant">MemoryPointer</span>.<span class="ruby-identifier">new</span> <span class="ruby-value">:int</span>
+  <span class="ruby-identifier">reference</span> = <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">fai_fetch</span>(<span class="ruby-ivar">@fasta_index</span>, <span class="ruby-identifier">query</span>, <span class="ruby-identifier">len</span>)
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;Unable to get sequence for reference: &quot;</span><span class="ruby-operator">+</span><span class="ruby-identifier">query</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">reference</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-identifier">reference</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- fetch_reference-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- fetch_reference-method -->
+
+    
+      <div id="method-i-fetch_with_function" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">fetch_with_function</span><span
+            class="method-args">(chromosome, qstart, qend, function)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Executes a function on each <a href="Alignment.html">Alignment</a> inside
+the queried region of the chromosome. The chromosome can be either the
+textual name or a FixNum with the internal index. However, you need to get
+the internal index with the provided API, otherwise the pointer is outside
+the scope of the C library.  Returns the count of alignments in the region.
+WARNING: Accepts an index already parsed by the library. It fails when you
+use your own FixNum (FFI-bug?)</p>
+          
+
+          
+          <div class="method-source-code" id="fetch_with_function-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 226</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">fetch_with_function</span>(<span class="ruby-identifier">chromosome</span>, <span class="ruby-identifier">qstart</span>, <span class="ruby-identifier">qend</span>, <span class="ruby-identifier">function</span>)
+  <span class="ruby-identifier">load_index</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@sam_index</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@sam_index</span>.<span class="ruby-identifier">null?</span>
+  <span class="ruby-identifier">chr</span> = <span class="ruby-constant">FFI</span><span class="ruby-operator">::</span><span class="ruby-constant">MemoryPointer</span>.<span class="ruby-identifier">new</span> <span class="ruby-value">:int</span>
+  <span class="ruby-identifier">beg</span> = <span class="ruby-constant">FFI</span><span class="ruby-operator">::</span><span class="ruby-constant">MemoryPointer</span>.<span class="ruby-identifier">new</span> <span class="ruby-value">:int</span>
+  <span class="ruby-identifier">last</span> = <span class="ruby-constant">FFI</span><span class="ruby-operator">::</span><span class="ruby-constant">MemoryPointer</span>.<span class="ruby-identifier">new</span> <span class="ruby-value">:int</span>
+  <span class="ruby-identifier">query</span> = <span class="ruby-identifier">query_string</span>(<span class="ruby-identifier">chromosome</span>, <span class="ruby-identifier">qstart</span>,<span class="ruby-identifier">qend</span>)
+  <span class="ruby-identifier">qpointer</span> = <span class="ruby-constant">FFI</span><span class="ruby-operator">::</span><span class="ruby-constant">MemoryPointer</span>.<span class="ruby-identifier">from_string</span>(<span class="ruby-identifier">query</span>)
+  <span class="ruby-identifier">header</span> = <span class="ruby-ivar">@sam_file</span>[<span class="ruby-value">:header</span>]
+  <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">bam_parse_region</span>(<span class="ruby-identifier">header</span>,<span class="ruby-identifier">qpointer</span>, <span class="ruby-identifier">chr</span>, <span class="ruby-identifier">beg</span>, <span class="ruby-identifier">last</span>) 
+  <span class="ruby-comment">#raise SAMException.new(), &quot;invalid query: &quot; + query  if(chr.read_int &lt; 0)</span>
+  <span class="ruby-identifier">count</span> = <span class="ruby-value">0</span>;
+
+  <span class="ruby-identifier">fetchAlignment</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">bam_alignment</span>, <span class="ruby-identifier">data</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">alignment</span> =  <span class="ruby-constant">Alignment</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-identifier">alignment</span>.<span class="ruby-identifier">set</span>(<span class="ruby-identifier">bam_alignment</span>, <span class="ruby-identifier">header</span>)
+    <span class="ruby-identifier">function</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">alignment</span>)
+    <span class="ruby-identifier">count</span> = <span class="ruby-identifier">count</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>
+    <span class="ruby-value">0</span>  
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">bam_fetch</span>(<span class="ruby-ivar">@sam_file</span>[<span class="ruby-value">:x</span>][<span class="ruby-value">:bam</span>], <span class="ruby-ivar">@sam_index</span>,<span class="ruby-identifier">chr</span>.<span class="ruby-identifier">read_int</span>,<span class="ruby-identifier">beg</span>.<span class="ruby-identifier">read_int</span>, <span class="ruby-identifier">last</span>.<span class="ruby-identifier">read_int</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">fetchAlignment</span>)
+  <span class="ruby-comment">#LibC.free chr</span>
+  <span class="ruby-comment">#LibC.free beg</span>
+  <span class="ruby-comment">#LibC.free last</span>
+  <span class="ruby-comment">#LibC.free qpointer</span>
+  <span class="ruby-identifier">count</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- fetch_with_function-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- fetch_with_function-method -->
+
+    
+      <div id="method-i-index_stats" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">index_stats</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+
+          
+          <div class="method-source-code" id="index_stats-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 493</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">index_stats</span> 
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;No BAMFile provided&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@sam</span> <span class="ruby-keyword">and</span> <span class="ruby-ivar">@binary</span>
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;No FastA provided&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@fasta_path</span>
+  <span class="ruby-identifier">strptrs</span> = []
+  <span class="ruby-identifier">strptrs</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">FFI</span><span class="ruby-operator">::</span><span class="ruby-constant">MemoryPointer</span>.<span class="ruby-identifier">from_string</span>(<span class="ruby-string">&quot;idxstats&quot;</span>)
+  <span class="ruby-identifier">strptrs</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">FFI</span><span class="ruby-operator">::</span><span class="ruby-constant">MemoryPointer</span>.<span class="ruby-identifier">from_string</span>(<span class="ruby-ivar">@sam</span>)
+  <span class="ruby-identifier">strptrs</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword">nil</span>
+
+  <span class="ruby-comment"># Now load all the pointers into a native memory block</span>
+  <span class="ruby-identifier">argv</span> = <span class="ruby-constant">FFI</span><span class="ruby-operator">::</span><span class="ruby-constant">MemoryPointer</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">:pointer</span>, <span class="ruby-identifier">strptrs</span>.<span class="ruby-identifier">length</span>)
+  <span class="ruby-identifier">strptrs</span>.<span class="ruby-identifier">each_with_index</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">p</span>, <span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+     <span class="ruby-identifier">argv</span>[<span class="ruby-identifier">i</span>].<span class="ruby-identifier">put_pointer</span>(<span class="ruby-value">0</span>,  <span class="ruby-identifier">p</span>)
+  <span class="ruby-keyword">end</span>
+  
+  <span class="ruby-identifier">index_stats</span> = {}
+  
+  <span class="ruby-identifier">old_stdout</span> = <span class="ruby-constant">STDOUT</span>.<span class="ruby-identifier">clone</span>
+  <span class="ruby-identifier">read_pipe</span>, <span class="ruby-identifier">write_pipe</span> = <span class="ruby-constant">IO</span>.<span class="ruby-identifier">pipe</span>()
+  <span class="ruby-constant">STDOUT</span>.<span class="ruby-identifier">reopen</span>(<span class="ruby-identifier">write_pipe</span>)
+  
+  <span class="ruby-comment">#int bam_idxstats(int argc, char *argv[])</span>
+  <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">bam_idxstats</span>(<span class="ruby-identifier">strptrs</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>,<span class="ruby-identifier">argv</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">fork</span>
+    <span class="ruby-identifier">write_pipe</span>.<span class="ruby-identifier">close</span>
+    <span class="ruby-constant">STDOUT</span>.<span class="ruby-identifier">reopen</span>(<span class="ruby-identifier">old_stdout</span>) <span class="ruby-comment">#beware .. stdout from other processes eg tests calling this method can get mixed in...</span>
+    <span class="ruby-keyword">begin</span>
+      
+      <span class="ruby-keyword">while</span> <span class="ruby-identifier">line</span> = <span class="ruby-identifier">read_pipe</span>.<span class="ruby-identifier">readline</span> <span class="ruby-comment">#TAB delimited with each line consisting of reference sequence name, sequence length, # mapped reads and # unmapped reads.</span>
+          <span class="ruby-identifier">info</span> = <span class="ruby-identifier">line</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp">/\t/</span>)
+          <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">info</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">4</span>
+          <span class="ruby-identifier">index_stats</span>[ <span class="ruby-identifier">info</span>[<span class="ruby-value">0</span>] ] = {<span class="ruby-value">:length</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">info</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">to_i</span>, <span class="ruby-value">:mapped_reads</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">info</span>[<span class="ruby-value">2</span>].<span class="ruby-identifier">to_i</span>, <span class="ruby-value">:unmapped_reads</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">info</span>[<span class="ruby-value">3</span>].<span class="ruby-identifier">to_i</span> } 
+      <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">rescue</span> <span class="ruby-constant">EOFError</span>
+        <span class="ruby-identifier">read_pipe</span>.<span class="ruby-identifier">close</span>
+        <span class="ruby-constant">Process</span>.<span class="ruby-identifier">wait</span>
+      <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span> <span class="ruby-comment">#fork</span>
+  <span class="ruby-identifier">index_stats</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- index_stats-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- index_stats-method -->
+
+    
+      <div id="method-i-load_index" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">load_index</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Loads the bam index to be used for fetching. If the index doesn’t exists
+the index is built provided that the user has writing access to the folder
+where the BAM file is located. If the creation of the file fails a <a
+href="SAMException.html">SAMException</a> is thrown.  If the index
+doesn’t exist, loading it will take more time. It is suggested to
+generate the index separatedly if the bam file sits on a server where the
+executing user may not have writing permissions in the server.</p>
+          
+
+          
+          <div class="method-source-code" id="load_index-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 114</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">load_index</span>()
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;Indexes are only supported by BAM files, please use samtools to convert your SAM file&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@binary</span>
+  <span class="ruby-ivar">@sam_index</span> = <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">bam_index_load</span>(<span class="ruby-ivar">@sam</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@sam_index</span>.<span class="ruby-identifier">null?</span> <span class="ruby-keyword">then</span>
+    <span class="ruby-identifier">p</span> <span class="ruby-string">&quot;Generating index for: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@sam</span>
+    <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">bam_index_build</span>(<span class="ruby-ivar">@sam</span>)
+    <span class="ruby-ivar">@sam_index</span> = <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">bam_index_load</span>(<span class="ruby-ivar">@sam</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;Unable to generate bam index for: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@sam</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@sam_index</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@sam_index</span>.<span class="ruby-identifier">null?</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- load_index-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- load_index-method -->
+
+    
+      <div id="method-i-load_reference" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">load_reference</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Loads the reference file to be able to query regions of it. This requires
+the fai index to exist in the same folder than the reference. If it
+doesn’t exisits, this functions attempts to generate it. If user
+doesn’t have writing permissions on the folder, or the creation of the
+fai fails for any reason, a <a href="SAMException.html">SAMException</a> is
+thrown.</p>
+          
+
+          
+          <div class="method-source-code" id="load_reference-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 128</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">load_reference</span>()
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;No path for the refernce fasta file. &quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@fasta_path</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-ivar">@fasta_index</span> = <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">fai_load</span>(<span class="ruby-ivar">@fasta_path</span>)
+
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@fasta_index</span>.<span class="ruby-identifier">null?</span> <span class="ruby-keyword">then</span>
+    <span class="ruby-identifier">p</span> <span class="ruby-string">&quot;Generating index for: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@fasta_path</span>
+    <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">fai_build</span>(<span class="ruby-ivar">@fasta_path</span>)
+    <span class="ruby-ivar">@fasta_index</span> =  <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">fai_load</span>(<span class="ruby-ivar">@fasta_path</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;Unable to generate fasta index for: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@fasta_path</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@fasta_index</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span>  <span class="ruby-ivar">@fasta_index</span>.<span class="ruby-identifier">null?</span>
+  <span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- load_reference-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- load_reference-method -->
+
+    
+      <div id="method-i-mpileup" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">mpileup</span><span
+            class="method-args">( opts ) { |pileup| ... }</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>calls the mpileup function, opts is a hash of options identical to the
+command line options for mpileup. is an iterator that yields a <a
+href="../../Pileup.html">Pileup</a> object for each postion the command
+line options that generate/affect BCF/VCF are ignored ie (g,u,e,h,I,L,o,p)
+call the option as a symbol of the flag, eg -r for region is called :r
+=&gt; “some <a href="SAM.html">SAM</a> compatible region” eg
+bam.mpileup(:r =&gt; “chr1:1000-2000”, :q =&gt; 50) gets the bases with
+quality &gt; 50 on chr1 between 1000-5000</p>
+          
+
+          
+          <div class="method-source-code" id="mpileup-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 281</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">mpileup</span>( <span class="ruby-identifier">opts</span> )
+
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;No BAMFile provided&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@sam</span> <span class="ruby-keyword">and</span> <span class="ruby-ivar">@binary</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;No FastA provided&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@fasta_path</span>
+        <span class="ruby-comment">#long option form to short samtools form..</span>
+        <span class="ruby-identifier">long_opts</span> = {
+        <span class="ruby-value">:region</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:r</span>,
+        <span class="ruby-value">:illumina_quals</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:six</span>,
+        <span class="ruby-value">:count_anomalous</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:A</span>,
+        <span class="ruby-value">:no_baq</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:B</span>,
+        <span class="ruby-value">:adjust_mapq</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:C</span>,
+        <span class="ruby-value">:max_per_bam_depth</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:d</span>,
+        <span class="ruby-value">:extended_baq</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:E</span>,
+        <span class="ruby-value">:exclude_reads_file</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:G</span>,
+        <span class="ruby-value">:list_of_positions</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:l</span>,
+        <span class="ruby-value">:mapping_quality_cap</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:M</span>,
+        <span class="ruby-value">:ignore_rg</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:R</span>,
+        <span class="ruby-value">:min_mapping_quality</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:q</span>,
+        <span class="ruby-value">:min_base_quality</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:Q</span>
+        }
+
+        <span class="ruby-comment">##convert any long_opts to short opts </span>
+        <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">each_pair</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword">if</span> <span class="ruby-identifier">long_opts</span>[<span class="ruby-identifier">k</span>]
+            <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">long_opts</span>[<span class="ruby-identifier">k</span>]] = <span class="ruby-identifier">v</span> 
+            <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">k</span>)
+          <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">end</span>
+
+        <span class="ruby-comment">##remove any calls to -g or -u for mpileup, bcf output is not yet supported</span>
+        <span class="ruby-comment">##and also associated output options</span>
+        [<span class="ruby-value">:g</span>, <span class="ruby-value">:u</span>, <span class="ruby-value">:e</span>, <span class="ruby-value">:h</span>, <span class="ruby-value">:I</span>, <span class="ruby-value">:L</span>, <span class="ruby-value">:o</span>, <span class="ruby-value">:p</span>].<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">x</span>) }
+
+        <span class="ruby-identifier">sam_opts</span> = []
+        <span class="ruby-comment">#strptrs &lt;&lt; FFI::MemoryPointer.from_string(&quot;mpileup&quot;)</span>
+        <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">k</span>] <span class="ruby-comment">##dont bother unless the values provided are true.. </span>
+          <span class="ruby-identifier">k</span> = <span class="ruby-string">'6'</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">k</span> <span class="ruby-operator">==</span> <span class="ruby-value">:six</span>
+          <span class="ruby-identifier">k</span> = <span class="ruby-string">'-'</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span>
+          <span class="ruby-identifier">sam_opts</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">k</span> <span class="ruby-comment">#strptrs &lt;&lt; FFI::MemoryPointer.from_string(k)</span>
+          <span class="ruby-identifier">sam_opts</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">v</span>.<span class="ruby-identifier">to_s</span>  <span class="ruby-keyword">unless</span> [<span class="ruby-string">&quot;-R&quot;</span>, <span class="ruby-string">&quot;-B&quot;</span>, <span class="ruby-string">&quot;-E&quot;</span>, <span class="ruby-string">&quot;-6&quot;</span>, <span class="ruby-string">&quot;-A&quot;</span>].<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">k</span>) <span class="ruby-comment">#these are just flags so don't pass a value... strptrs &lt;&lt; FFI::MemoryPointer.from_string(v.to_s)</span>
+        <span class="ruby-keyword">end</span>
+        <span class="ruby-identifier">sam_opts</span> = <span class="ruby-identifier">sam_opts</span> <span class="ruby-operator">+</span> [<span class="ruby-string">'-f'</span>, <span class="ruby-ivar">@fasta_path</span>, <span class="ruby-ivar">@sam</span>]
+        <span class="ruby-identifier">sam_command</span> = <span class="ruby-node">&quot;#{File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools')} mpileup #{sam_opts.join(' ')} 2&gt; /dev/null&quot;</span>
+
+        <span class="ruby-identifier">sam_pipe</span> = <span class="ruby-constant">IO</span>.<span class="ruby-identifier">popen</span>(<span class="ruby-identifier">sam_command</span>)
+        <span class="ruby-keyword">while</span> <span class="ruby-identifier">line</span> = <span class="ruby-identifier">sam_pipe</span>.<span class="ruby-identifier">gets</span>
+          <span class="ruby-keyword">yield</span> <span class="ruby-constant">Pileup</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">line</span>)
+        <span class="ruby-keyword">end</span>
+        <span class="ruby-identifier">sam_pipe</span>.<span class="ruby-identifier">close</span>
+        <span class="ruby-comment">#strptrs &lt;&lt; FFI::MemoryPointer.from_string('-f')</span>
+        <span class="ruby-comment">#strptrs &lt;&lt; FFI::MemoryPointer.from_string(@fasta_path)</span>
+        <span class="ruby-comment">#strptrs &lt;&lt; FFI::MemoryPointer.from_string(@sam)</span>
+        <span class="ruby-comment">#strptrs &lt;&lt; nil</span>
+
+        <span class="ruby-comment"># Now load all the pointers into a native memory block</span>
+        <span class="ruby-comment">#argv = FFI::MemoryPointer.new(:pointer, strptrs.length)</span>
+        <span class="ruby-comment">#strptrs.each_with_index do |p, i|</span>
+        <span class="ruby-comment">#   argv[i].put_pointer(0,  p)</span>
+        <span class="ruby-comment">#end</span>
+
+        <span class="ruby-comment">#old_stdout = STDOUT.clone</span>
+        <span class="ruby-comment">#read_pipe, write_pipe = IO.pipe()</span>
+        <span class="ruby-comment">#STDOUT.reopen(write_pipe)</span>
+          <span class="ruby-comment">#int bam_mpileup(int argc, char *argv[])</span>
+         <span class="ruby-comment"># Bio::DB::SAM::Tools.bam_mpileup(strptrs.length - 1,argv)</span>
+          <span class="ruby-comment">#if fork</span>
+          <span class="ruby-comment">#  write_pipe.close</span>
+          <span class="ruby-comment">#  STDOUT.reopen(old_stdout) #beware .. stdout from other processes eg tests calling this method can get mixed in...</span>
+          <span class="ruby-comment">#  begin</span>
+          <span class="ruby-comment">#    while line = read_pipe.readline</span>
+          <span class="ruby-comment">#      yield Pileup.new(line)</span>
+          <span class="ruby-comment">#    end</span>
+          <span class="ruby-comment">#  rescue EOFError</span>
+          <span class="ruby-comment">#    read_pipe.close</span>
+          <span class="ruby-comment">#    Process.wait</span>
+          <span class="ruby-comment">#  end</span>
+          <span class="ruby-comment">#end</span>
+      <span class="ruby-keyword">end</span></pre>
+          </div><!-- mpileup-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- mpileup-method -->
+
+    
+      <div id="method-i-mpileup_plus" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">mpileup_plus</span><span
+            class="method-args">( opts ) { |vcf| ... }</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>experimental method that spawns a samtools mpileup | bcftools view process
+and supports returning of pileup vcf</p>
+
+<pre>otherwise works like mpileup</pre>
+          
+
+          
+          <div class="method-source-code" id="mpileup_plus-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 363</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">mpileup_plus</span>( <span class="ruby-identifier">opts</span> )
+
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;No BAMFile provided&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@sam</span> <span class="ruby-keyword">and</span> <span class="ruby-ivar">@binary</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;No FastA provided&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@fasta_path</span>
+        <span class="ruby-comment">#long option form to short samtools form..</span>
+        <span class="ruby-identifier">long_opts</span> = {
+        <span class="ruby-value">:region</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:r</span>,
+        <span class="ruby-value">:illumina_quals</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:six</span>,
+        <span class="ruby-value">:count_anomalous</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:A</span>,
+        <span class="ruby-value">:no_baq</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:B</span>,
+        <span class="ruby-value">:adjust_mapq</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:C</span>,
+        <span class="ruby-value">:max_per_bam_depth</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:d</span>,
+        <span class="ruby-value">:extended_baq</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:E</span>,
+        <span class="ruby-value">:exclude_reads_file</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:G</span>,
+        <span class="ruby-value">:list_of_positions</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:l</span>,
+        <span class="ruby-value">:mapping_quality_cap</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:M</span>,
+        <span class="ruby-value">:ignore_rg</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:R</span>,
+        <span class="ruby-value">:min_mapping_quality</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:q</span>,
+        <span class="ruby-value">:min_base_quality</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:Q</span>,
+        <span class="ruby-comment">###following options are for the -g -u option</span>
+        <span class="ruby-value">:genotype_calling</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:g</span>,
+        <span class="ruby-value">:uncompressed_bcf</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:u</span>,
+        <span class="ruby-value">:extension_sequencing_probability</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:e</span>,
+        <span class="ruby-value">:homopolymer_error_coefficient</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:h</span>,
+        <span class="ruby-value">:no_indels</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:I</span>,
+        <span class="ruby-value">:skip_indel_over_average_depth</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:L</span>,
+        <span class="ruby-value">:gap_open_sequencing_error_probability</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:o</span>,
+        <span class="ruby-value">:platforms</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:P</span> 
+        }
+
+        <span class="ruby-comment">##convert any long_opts to short opts </span>
+        <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">each_pair</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword">if</span> <span class="ruby-identifier">long_opts</span>[<span class="ruby-identifier">k</span>]
+            <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">long_opts</span>[<span class="ruby-identifier">k</span>]] = <span class="ruby-identifier">v</span> 
+            <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">k</span>)
+          <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">end</span>
+
+        <span class="ruby-comment">##remove any calls to -g or -u for mpileup, bcf output is not yet supported</span>
+        <span class="ruby-comment">##and also associated output options</span>
+        <span class="ruby-comment">#[:g, :u, :e, :h, :I, :L, :o, :p].each {|x| opts.delete(x) }</span>
+        <span class="ruby-identifier">opts</span>[<span class="ruby-value">:u</span>] = <span class="ruby-keyword">true</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">opts</span>[<span class="ruby-value">:g</span>] <span class="ruby-comment">#so that we always get uncompressed output</span>
+        <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:g</span>)
+        
+        <span class="ruby-identifier">sam_opts</span> = []
+        <span class="ruby-comment">#strptrs &lt;&lt; FFI::MemoryPointer.from_string(&quot;mpileup&quot;)</span>
+        <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">k</span>] <span class="ruby-comment">##dont bother unless the values provided are true.. </span>
+          <span class="ruby-identifier">k</span> = <span class="ruby-string">'6'</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">k</span> <span class="ruby-operator">==</span> <span class="ruby-value">:six</span>
+          <span class="ruby-identifier">k</span> = <span class="ruby-string">'-'</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span>
+          <span class="ruby-identifier">sam_opts</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">k</span> <span class="ruby-comment">#strptrs &lt;&lt; FFI::MemoryPointer.from_string(k)</span>
+          <span class="ruby-identifier">sam_opts</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">v</span>.<span class="ruby-identifier">to_s</span>  <span class="ruby-keyword">unless</span> [<span class="ruby-string">&quot;-R&quot;</span>, <span class="ruby-string">&quot;-B&quot;</span>, <span class="ruby-string">&quot;-E&quot;</span>, <span class="ruby-string">&quot;-6&quot;</span>, <span class="ruby-string">&quot;-A&quot;</span>, <span class="ruby-string">&quot;-g&quot;</span>, <span class="ruby-string">&quot;-u&quot;</span>, <span class="ruby-string">&quot;-I&quot;</span>].<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">k</span>) <span class="ruby-comment">#these are just flags so don't pass a value... strptrs &lt;&lt; FFI::MemoryPointer.from_string(v.to_s)</span>
+        <span class="ruby-keyword">end</span>
+        <span class="ruby-identifier">sam_opts</span> = <span class="ruby-identifier">sam_opts</span> <span class="ruby-operator">+</span> [<span class="ruby-string">'-f'</span>, <span class="ruby-ivar">@fasta_path</span>, <span class="ruby-ivar">@sam</span>]
+        
+        <span class="ruby-identifier">command</span> = <span class="ruby-node">&quot;#{File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools')} mpileup #{sam_opts.join(' ')} 2&gt; /dev/null&quot;</span>
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">opts</span>[<span class="ruby-value">:u</span>]
+          <span class="ruby-identifier">command</span> = <span class="ruby-identifier">command</span> <span class="ruby-operator">+</span> <span class="ruby-node">&quot; | #{File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','bcftools')} view -cg -&quot;</span>
+        <span class="ruby-keyword">end</span>
+        <span class="ruby-identifier">pipe</span> = <span class="ruby-constant">IO</span>.<span class="ruby-identifier">popen</span>(<span class="ruby-identifier">command</span>)
+        <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-identifier">command</span>
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">opts</span>[<span class="ruby-value">:u</span>]
+          <span class="ruby-keyword">while</span> <span class="ruby-identifier">line</span> = <span class="ruby-identifier">pipe</span>.<span class="ruby-identifier">gets</span>
+            <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">line</span>[<span class="ruby-value">0</span>,<span class="ruby-value">1</span>] <span class="ruby-operator">==</span> <span class="ruby-string">'#'</span> <span class="ruby-comment">#skip any header or meta-lines, we dont do anything with those </span>
+            <span class="ruby-keyword">yield</span> <span class="ruby-constant">Vcf</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">line</span>) 
+          <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">else</span>
+          <span class="ruby-keyword">while</span> <span class="ruby-identifier">line</span> = <span class="ruby-identifier">pipe</span>.<span class="ruby-identifier">gets</span>
+            <span class="ruby-keyword">yield</span> <span class="ruby-constant">Pileup</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">line</span>)
+          <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">end</span>
+        <span class="ruby-identifier">pipe</span>.<span class="ruby-identifier">close</span>
+        <span class="ruby-comment">#strptrs &lt;&lt; FFI::MemoryPointer.from_string('-f')</span>
+        <span class="ruby-comment">#strptrs &lt;&lt; FFI::MemoryPointer.from_string(@fasta_path)</span>
+        <span class="ruby-comment">#strptrs &lt;&lt; FFI::MemoryPointer.from_string(@sam)</span>
+        <span class="ruby-comment">#strptrs &lt;&lt; nil</span>
+
+        <span class="ruby-comment"># Now load all the pointers into a native memory block</span>
+        <span class="ruby-comment">#argv = FFI::MemoryPointer.new(:pointer, strptrs.length)</span>
+        <span class="ruby-comment">#strptrs.each_with_index do |p, i|</span>
+        <span class="ruby-comment">#   argv[i].put_pointer(0,  p)</span>
+        <span class="ruby-comment">#end</span>
+
+        <span class="ruby-comment">#old_stdout = STDOUT.clone</span>
+        <span class="ruby-comment">#read_pipe, write_pipe = IO.pipe()</span>
+        <span class="ruby-comment">#STDOUT.reopen(write_pipe)</span>
+          <span class="ruby-comment">#int bam_mpileup(int argc, char *argv[])</span>
+         <span class="ruby-comment"># Bio::DB::SAM::Tools.bam_mpileup(strptrs.length - 1,argv)</span>
+          <span class="ruby-comment">#if fork</span>
+          <span class="ruby-comment">#  write_pipe.close</span>
+          <span class="ruby-comment">#  STDOUT.reopen(old_stdout) #beware .. stdout from other processes eg tests calling this method can get mixed in...</span>
+          <span class="ruby-comment">#  begin</span>
+          <span class="ruby-comment">#    while line = read_pipe.readline</span>
+          <span class="ruby-comment">#      yield Pileup.new(line)</span>
+          <span class="ruby-comment">#    end</span>
+          <span class="ruby-comment">#  rescue EOFError</span>
+          <span class="ruby-comment">#    read_pipe.close</span>
+          <span class="ruby-comment">#    Process.wait</span>
+          <span class="ruby-comment">#  end</span>
+          <span class="ruby-comment">#end</span>
+      <span class="ruby-keyword">end</span></pre>
+          </div><!-- mpileup_plus-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- mpileup_plus-method -->
+
+    
+      <div id="method-i-open" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">open</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Function that actually opens the sam file Throws a <a
+href="SAMException.html">SAMException</a> if the file can’t be open.</p>
+          
+
+          
+          <div class="method-source-code" id="open-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 60</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">open</span>()
+
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;Writing not supported yet&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@write</span>
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;No SAM file specified&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@sam</span> 
+
+  <span class="ruby-identifier">opts</span> = <span class="ruby-ivar">@write</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;w&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;r&quot;</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@binary</span> <span class="ruby-keyword">then</span>  
+    <span class="ruby-identifier">opts</span> <span class="ruby-operator">+=</span> <span class="ruby-string">&quot;b&quot;</span> 
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@write</span> <span class="ruby-keyword">then</span>
+      <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@compressed</span> <span class="ruby-keyword">then</span> 
+        <span class="ruby-identifier">opts</span> <span class="ruby-operator">+=</span> <span class="ruby-string">&quot;u&quot;</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">valid</span> = [<span class="ruby-string">&quot;r&quot;</span>, <span class="ruby-string">&quot;w&quot;</span>, <span class="ruby-string">&quot;wh&quot;</span>, <span class="ruby-string">&quot;rb&quot;</span>, <span class="ruby-string">&quot;wb&quot;</span> , <span class="ruby-string">&quot;wbu&quot;</span>]
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">valid</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">opts</span>) <span class="ruby-keyword">then</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;Invalid options for samopen: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">opts</span> 
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">samFile</span> = <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span>.<span class="ruby-identifier">samopen</span>(<span class="ruby-ivar">@sam</span>, <span class="ruby-identifier">opts</span>, <span class="ruby-keyword">nil</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">samFile</span>.<span class="ruby-identifier">null?</span> <span class="ruby-keyword">then</span>
+    <span class="ruby-ivar">@sam_file</span> = <span class="ruby-keyword">nil</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;File not opened:  &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@sam</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-ivar">@sam_file</span> = <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">SamfileT</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">samFile</span>)
+
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- open-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- open-method -->
+
+    
+      <div id="method-i-query_string" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">query_string</span><span
+            class="method-args">(chromosome, qstart,qend)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Generates a query sting to be used by the region parser in samtools.  In
+principle, you shouldn’t need to use this function.</p>
+          
+
+          
+          <div class="method-source-code" id="query_string-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 205</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">query_string</span>(<span class="ruby-identifier">chromosome</span>, <span class="ruby-identifier">qstart</span>,<span class="ruby-identifier">qend</span>)
+  <span class="ruby-identifier">query</span> = <span class="ruby-identifier">chromosome</span> <span class="ruby-operator">+</span> <span class="ruby-string">&quot;:&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">qstart</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-string">&quot;-&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">qend</span>.<span class="ruby-identifier">to_s</span> 
+  <span class="ruby-identifier">query</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- query_string-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- query_string-method -->
+
+    
+      <div id="method-i-to_s" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">to_s</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Prints a description of the sam file in a text format containg if it is
+binary or text, the path and the fasta file of the reference</p>
+          
+
+          
+          <div class="method-source-code" id="to_s-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 90</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_s</span>()
+  (<span class="ruby-ivar">@binary</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;Binary&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;Text&quot;</span>) <span class="ruby-operator">+</span> <span class="ruby-string">&quot; file: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@sam</span> <span class="ruby-operator">+</span> <span class="ruby-string">&quot; with fasta: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@fasta_path</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- to_s-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- to_s-method -->
+
+    
+    </section><!-- public-instance-method-details -->
+  
+  </section><!-- 5Buntitled-5D -->
+
+</div><!-- documentation -->
+
+
+<footer id="validator-badges">
+  <p><a href="http://validator.w3.org/check/referer">[Validate]</a>
+  <p>Generated by <a href="https://github.com/rdoc/rdoc">RDoc</a> 3.11.
+  <p>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish Rdoc Generator</a> 3.
+</footer>
+

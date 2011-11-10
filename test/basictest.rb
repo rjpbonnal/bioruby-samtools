@@ -29,7 +29,7 @@ class TestBioDbSam < Test::Unit::TestCase
     rescue
     end
   end
-
+=begi
   def default_test
     puts $LOAD_PATH
     assert(true, "Unit test test")
@@ -165,7 +165,7 @@ class TestBioDbSam < Test::Unit::TestCase
     assert(true, "Seems it ran the query")
     #node_7263       238     60 has 550+, query from 0 to 500, something shall come.... 
   end
-
+=end
   def test_read_invalid_reference
     sam       = Bio::DB::Sam.new({:bam=>@testBAMFile})
     sam.open
@@ -281,11 +281,11 @@ class TestBioDbSam < Test::Unit::TestCase
   def test_pileup
     sam = Bio::DB::Sam.new(:fasta=>@testReference, :bam=>@testBAMFile )
     pileup_list = []
-    sam.mpileup(:region => "chr_1:100-110") do |pile|
+    sam.mpileup(:region => "chr_1:100-1100") do |pile|
       next unless pile.ref_name == 'chr_1' ##required because in the test environment stdout gets mixed in with the captured stdout in the function and non pileup lines are passed...
       pileup_list << pile
     end
-    assert_equal(10,pileup_list.length)
+    assert_equal(1000,pileup_list.length)
     pileup_list.each  do |p|
       assert_kind_of(Pileup, p)
     end

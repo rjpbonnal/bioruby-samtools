@@ -11,7 +11,6 @@ public
 
   #create the vcf object, use the ordered list of sample names to label samples if provided ['A', 'B', 'C'], otherwise uses, 1,2,3 etc
   def initialize(line=nil, sample_names=nil)
-    next if line[0,1] == '#' #skip any header or meta-lines... inadvertantly passed.. 
     @info = {}
     @samples = {}
     parse_line(line, sample_names) if line != nil
