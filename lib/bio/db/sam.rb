@@ -311,44 +311,157 @@ module Bio
               ##and also associated output options
               [:g, :u, :e, :h, :I, :L, :o, :p].each {|x| opts.delete(x) }
 
-              strptrs = []
-              strptrs << FFI::MemoryPointer.from_string("mpileup")
+              sam_opts = []
+              #strptrs << FFI::MemoryPointer.from_string("mpileup")
               opts.each do |k,v|
                 next unless opts[k] ##dont bother unless the values provided are true.. 
                 k = '6' if k == :six
                 k = '-' + k.to_s
-                strptrs << FFI::MemoryPointer.from_string(k)
-                strptrs << FFI::MemoryPointer.from_string(v.to_s) unless ["-R", "-B", "-E", "-6", "-A"].include?(k) #these are just flags so don't pass a value...
+                sam_opts << k #strptrs << FFI::MemoryPointer.from_string(k)
+                sam_opts << v.to_s  unless ["-R", "-B", "-E", "-6", "-A"].include?(k) #these are just flags so don't pass a value... strptrs << FFI::MemoryPointer.from_string(v.to_s)
               end
-              strptrs << FFI::MemoryPointer.from_string('-f')
-              strptrs << FFI::MemoryPointer.from_string(@fasta_path)
-              strptrs << FFI::MemoryPointer.from_string(@sam)
-              strptrs << nil
+              sam_opts = sam_opts + ['-f', @fasta_path, @sam]
+              sam_command = "#{File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools')} mpileup #{sam_opts.join(' ')} 2> /dev/null"
+
+              sam_pipe = IO.popen(sam_command)
+              while line = sam_pipe.gets
+                yield Pileup.new(line)
+              end
+              sam_pipe.close
+              #strptrs << FFI::MemoryPointer.from_string('-f')
+              #strptrs << FFI::MemoryPointer.from_string(@fasta_path)
+              #strptrs << FFI::MemoryPointer.from_string(@sam)
+              #strptrs << nil
 
               # Now load all the pointers into a native memory block
-              argv = FFI::MemoryPointer.new(:pointer, strptrs.length)
-              strptrs.each_with_index do |p, i|
-                 argv[i].put_pointer(0,  p)
-              end
+              #argv = FFI::MemoryPointer.new(:pointer, strptrs.length)
+              #strptrs.each_with_index do |p, i|
+              #   argv[i].put_pointer(0,  p)
+              #end
 
-              old_stdout = STDOUT.clone
-              read_pipe, write_pipe = IO.pipe()
-              STDOUT.reopen(write_pipe)
+              #old_stdout = STDOUT.clone
+              #read_pipe, write_pipe = IO.pipe()
+              #STDOUT.reopen(write_pipe)
                 #int bam_mpileup(int argc, char *argv[])
-                Bio::DB::SAM::Tools.bam_mpileup(strptrs.length - 1,argv)
-                if fork
-                  write_pipe.close
-                  STDOUT.reopen(old_stdout) #beware .. stdout from other processes eg tests calling this method can get mixed in...
-                  begin
-                    while line = read_pipe.readline
-                      yield Pileup.new(line)
-                    end
-                  rescue EOFError
-                    read_pipe.close
-                    Process.wait
-                  end
-                end
+               # Bio::DB::SAM::Tools.bam_mpileup(strptrs.length - 1,argv)
+                #if fork
+                #  write_pipe.close
+                #  STDOUT.reopen(old_stdout) #beware .. stdout from other processes eg tests calling this method can get mixed in...
+                #  begin
+                #    while line = read_pipe.readline
+                #      yield Pileup.new(line)
+                #    end
+                #  rescue EOFError
+                #    read_pipe.close
+                #    Process.wait
+                #  end
+                #end
             end
+            
+            #experimental method that spawns a samtools mpileup | bcftools view process and supports returning of pileup vcf
+            ##otherwise works like mpileup
+            def mpileup_plus( opts )
+
+                    raise SAMException.new(), "No BAMFile provided" unless @sam and @binary
+                    raise SAMException.new(), "No FastA provided" unless @fasta_path
+                    #long option form to short samtools form..
+                    long_opts = {
+                    :region => :r,
+                    :illumina_quals => :six,
+                    :count_anomalous => :A,
+                    :no_baq => :B,
+                    :adjust_mapq => :C,
+                    :max_per_bam_depth => :d,
+                    :extended_baq => :E,
+                    :exclude_reads_file => :G,
+                    :list_of_positions => :l,
+                    :mapping_quality_cap => :M,
+                    :ignore_rg => :R,
+                    :min_mapping_quality => :q,
+                    :min_base_quality => :Q,
+                    ###following options are for the -g -u option
+                    :genotype_calling => :g,
+                    :uncompressed_bcf => :u,
+                    :extension_sequencing_probability => :e,
+                    :homopolymer_error_coefficient => :h,
+                    :no_indels => :I,
+                    :skip_indel_over_average_depth => :L,
+                    :gap_open_sequencing_error_probability => :o,
+                    :platforms => :P 
+                    }
+
+                    ##convert any long_opts to short opts 
+                    opts.each_pair do |k,v|
+                      if long_opts[k]
+                        opts[long_opts[k]] = v 
+                        opts.delete(k)
+                      end
+                    end
+
+                    ##remove any calls to -g or -u for mpileup, bcf output is not yet supported
+                    ##and also associated output options
+                    #[:g, :u, :e, :h, :I, :L, :o, :p].each {|x| opts.delete(x) }
+                    opts[:u] = true if opts[:g] #so that we always get uncompressed output
+                    opts.delete(:g)
+                    
+                    sam_opts = []
+                    #strptrs << FFI::MemoryPointer.from_string("mpileup")
+                    opts.each do |k,v|
+                      next unless opts[k] ##dont bother unless the values provided are true.. 
+                      k = '6' if k == :six
+                      k = '-' + k.to_s
+                      sam_opts << k #strptrs << FFI::MemoryPointer.from_string(k)
+                      sam_opts << v.to_s  unless ["-R", "-B", "-E", "-6", "-A", "-g", "-u", "-I"].include?(k) #these are just flags so don't pass a value... strptrs << FFI::MemoryPointer.from_string(v.to_s)
+                    end
+                    sam_opts = sam_opts + ['-f', @fasta_path, @sam]
+                    
+                    command = "#{File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools')} mpileup #{sam_opts.join(' ')} 2> /dev/null"
+                    if opts[:u]
+                      command = command + " | #{File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','bcftools')} view -cg -"
+                    end
+                    pipe = IO.popen(command)
+                    $stderr.puts command
+                    if opts[:u]
+                      while line = pipe.gets
+                        next if line[0,1] == '#' #skip any header or meta-lines, we dont do anything with those 
+                        yield Vcf.new(line) 
+                      end
+                    else
+                      while line = pipe.gets
+                        yield Pileup.new(line)
+                      end
+                    end
+                    pipe.close
+                    #strptrs << FFI::MemoryPointer.from_string('-f')
+                    #strptrs << FFI::MemoryPointer.from_string(@fasta_path)
+                    #strptrs << FFI::MemoryPointer.from_string(@sam)
+                    #strptrs << nil
+
+                    # Now load all the pointers into a native memory block
+                    #argv = FFI::MemoryPointer.new(:pointer, strptrs.length)
+                    #strptrs.each_with_index do |p, i|
+                    #   argv[i].put_pointer(0,  p)
+                    #end
+
+                    #old_stdout = STDOUT.clone
+                    #read_pipe, write_pipe = IO.pipe()
+                    #STDOUT.reopen(write_pipe)
+                      #int bam_mpileup(int argc, char *argv[])
+                     # Bio::DB::SAM::Tools.bam_mpileup(strptrs.length - 1,argv)
+                      #if fork
+                      #  write_pipe.close
+                      #  STDOUT.reopen(old_stdout) #beware .. stdout from other processes eg tests calling this method can get mixed in...
+                      #  begin
+                      #    while line = read_pipe.readline
+                      #      yield Pileup.new(line)
+                      #    end
+                      #  rescue EOFError
+                      #    read_pipe.close
+                      #    Process.wait
+                      #  end
+                      #end
+                  end
+
       
       # utility method that does not use the samtools API, it calls samtools directly as if on the command line and catches the output,
       # to use this method you must have a version of samtools that supports the pileup command (< 0.1.17)

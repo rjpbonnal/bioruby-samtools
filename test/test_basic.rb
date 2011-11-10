@@ -22,18 +22,18 @@ class TestBioDbSam < Test::Unit::TestCase
   def teardown
     begin
       File.delete(@testReference + ".fai")
-      p "deleted: " + @testReference + ".fai "
+      #p "deleted: " + @testReference + ".fai "
     rescue
     end
     begin
       File.delete(@testBAMFile + ".fai")
-      p "deleted: " + @testBAMFile + ".bai "
+      #p "deleted: " + @testBAMFile + ".bai "
     rescue
     end
   end
-=begin
+
   def default_test
-    puts $LOAD_PATH
+    #puts $LOAD_PATH
     assert(true, "Unit test test")
   end
 
@@ -48,7 +48,7 @@ class TestBioDbSam < Test::Unit::TestCase
       bam                        = Bio::DB::Sam.new({})
       assert(false, "Should fail while opening without parameters")
     rescue Bio::DB::SAMException => e
-      puts e.message
+      #puts e.message
       assert(true, e.message)
     end
   end
@@ -60,7 +60,7 @@ class TestBioDbSam < Test::Unit::TestCase
       sam.close
       assert(false, "Should fail with an invalid path")
     rescue Bio::DB::SAMException => e
-      puts e.message
+      #puts e.message
       assert(true, e.message)
     end
   end
@@ -93,10 +93,10 @@ class TestBioDbSam < Test::Unit::TestCase
      sam       = Bio::DB::Sam.new({:bam=>@testBAMFile, :fasta=>@testReference})
      sam.open
   	File.open( @test_folder +"/ids2.txt", "r") do |file|
-  	  puts "file opened"
+  	  #puts "file opened"
   	  file.each_line{|line|
         fetching = line.split(' ')[0]
-        puts "fetching: " + fetching
+        #puts "fetching: " + fetching
   	    sam.load_reference
     	  seq = sam.fetch_reference(fetching, 0, 16000)
   #	  puts seq 
@@ -104,8 +104,8 @@ class TestBioDbSam < Test::Unit::TestCase
   	  als = sam.fetch(fetching, 0, seq.length) 
      #      p als
   	  if als.length() > 0 then
-  	       p fetching
-                p als
+  	      # p fetching
+          #      p als
   	    end
            }
 
@@ -162,7 +162,7 @@ class TestBioDbSam < Test::Unit::TestCase
     sam       = Bio::DB::Sam.new({:bam=>@testBAMFile})
     sam.open
     als = sam.fetch("chr_1", 0, 500)
-    p als 
+    #p als 
     sam.close
     assert(true, "Seems it ran the query")
     #node_7263       238     60 has 550+, query from 0 to 500, something shall come.... 
@@ -173,11 +173,11 @@ class TestBioDbSam < Test::Unit::TestCase
     sam.open
     begin
       als = sam.fetch("Chr1", 0, 500)
-      p als 
+      #p als 
       sam.close
       assert(false, "Seems it ran the query")
     rescue Bio::DB::SAMException => e
-      p e
+      #p e
       assert(true, "Exception generated and catched")
     end
   end
@@ -187,11 +187,11 @@ class TestBioDbSam < Test::Unit::TestCase
     sam.open
     begin
       als = sam.fetch("chr", -1, 500)
-      p als 
+      #p als 
       sam.close
       assert(false, "Seems it ran the query")
     rescue Bio::DB::SAMException => e
-      p e
+      #p e
       assert(true, "Exception generated and catched")
     end
   end
@@ -201,25 +201,25 @@ class TestBioDbSam < Test::Unit::TestCase
     sam.open
     begin
       als = sam.fetch("chr", 0, 50000)
-      p als 
+      #p als 
       sam.close
       assert(false, "Seems it ran the query")
     rescue  Bio::DB::SAMException => e
-      p e
+      #p e
       assert(true, "Exception generated and catched")
     end
   end
-  
+ 
   def test_read_invalid_reference_swaped_coordinates
     sam       = Bio::DB::Sam.new({:bam=>@testBAMFile})
     sam.open
     begin
       als = sam.fetch("chr", 500, 0)
-      p als 
+      #p als 
       sam.close
       assert(false, "Seems it ran the query")
     rescue  Bio::DB::SAMException => e
-      p e
+      #p e
       assert(true, "Exception generated and catched")
     end
   end
@@ -228,7 +228,7 @@ class TestBioDbSam < Test::Unit::TestCase
     sam = Bio::DB::Sam.new({:fasta=>@testReference})
     sam.load_reference
     seq = sam.fetch_reference("chr_1", 0, 500)
-    p seq 
+    #p seq 
     sam.close
     assert(true, "The reference was loaded")
   end
@@ -238,11 +238,11 @@ class TestBioDbSam < Test::Unit::TestCase
     sam.load_reference
     begin
       seq = sam.fetch_reference("chr1", 0, 500)
-      p "Error seq:"+ seq 
+      #p "Error seq:"+ seq 
       sam.close
       assert(false, "The reference was loaded")
     rescue Bio::DB::SAMException => e
-      p e
+      #p e
       assert(true,  "The references was not loaded")
     end
   end
@@ -251,7 +251,7 @@ class TestBioDbSam < Test::Unit::TestCase
     
     fs = Feature.find_by_bam("chr_1", 0, 500,@testBAMFile)
     
-    p fs
+    #p fs
     assert(true, "Loaded as features")
   end
   
@@ -259,7 +259,7 @@ class TestBioDbSam < Test::Unit::TestCase
     sam = Bio::DB::Sam.new({:fasta=>@testReference, :bam=>@testBAMFile })
     sam.open
     cov = sam.average_coverage("chr_1", 60, 30)
-    p "Coverage: " + cov.to_s
+    #p "Coverage: " + cov.to_s
     sam.close
     assert(true, "Average coverage ran")
     assert(3 == cov, "The coverage is 3")
@@ -270,21 +270,21 @@ class TestBioDbSam < Test::Unit::TestCase
     sam = Bio::DB::Sam.new({:fasta=>@testReference, :bam=>@testBAMFile })
     sam.open
     covs = sam.chromosome_coverage("chr_1", 0, 60)
-    p "Coverage: "
-    p covs
-    puts "POS\tCOV"
+    #p "Coverage: "
+    #p covs
+    #puts "POS\tCOV"
     covs.each_with_index{ |cov, i| puts "#{i}\t#{cov}" }
     sam.close
     assert(true, "Average coverage ran")
     #assert(3 == cov, "The coverage is 3")
   end
-=end
+  
   #test whether the call to mpileup works and returns 10 objects of class pileup
-  def test_pileup
+  def test_mpileup
     sam = Bio::DB::Sam.new(:fasta=>@testReference, :bam=>@testBAMFile )
     pileup_list = []
     sam.mpileup(:region => "chr_1:100-109") do |pile|
-      next unless pile.ref_name == 'chr_1' ##required because in the test environment stdout gets mixed in with the captured stdout in the function and non pileup lines are passed...
+      #next unless pile.ref_name == 'chr_1' ##required because in the test environment stdout gets mixed in with the captured stdout in the function and non pileup lines are passed...
       pileup_list << pile
     end
     assert_equal(10,pileup_list.length)
@@ -292,7 +292,24 @@ class TestBioDbSam < Test::Unit::TestCase
       assert_kind_of(Pileup, p)
     end
   end
-
+  
+  #test whether the call to experimental mpileup_plus returns vcf or pileup objects appropriately
+  #return ten objects of each class according to set of :g option
+  def test_mpileup_plus
+    sam = Bio::DB::Sam.new(:fasta=>@testReference, :bam=>@testBAMFile)
+    list = []
+    sam.mpileup_plus(:region => "chr_1:100-109") do |pile|
+      list << pile
+    end
+    assert_equal(10,list.length)
+    list.each {|p| assert_kind_of(Pileup, p)}
+    vcf_list = []
+    sam.mpileup_plus(:region => "chr_1:100-109", :g => true) do |vcf|
+      vcf_list << vcf
+    end
+    assert_equal(10,vcf_list.length)
+    vcf_list.each {|p| assert_kind_of(Vcf, p)}
+  end
 
   #test whether the call to mpileup returns a vcf object if :g => true is used on the command-line
 #  def test_vcf
@@ -310,14 +327,13 @@ class TestBioDbSam < Test::Unit::TestCase
                   "*"=>{:length=>0, :mapped_reads=>0, :unmapped_reads=>0}
                  }, sam.index_stats)
   end
-
 end
 
 class Feature 
 attr_reader :start, :end, :strand, :sequence, :quality
 
 def initialize(a={})
-  p a
+  #p a
   @start = a[:start]
   @end = a[:enf]
   @strand = a[:strand]
