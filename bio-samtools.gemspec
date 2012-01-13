@@ -4,18 +4,15 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{bio-samtools}
-  s.version = "0.4.2"
+  s.name = "bio-samtools"
+  s.version = "0.5.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = [%q{Ricardo Ramirez-Gonzalez}, %q{Dan MacLean}, %q{Raoul J.P. Bonnal}]
-  s.date = %q{2011-11-10}
-  s.description = %q{Binder of samtools for ruby, on the top of FFI. 
-
-  This project was born from the need to add support of BAM files to 
-  the gee_fu genome browser (http://github.com/danmaclean/gee_fu).}
-  s.email = %q{ilpuccio.febo@gmail.com}
-  s.extensions = [%q{ext/mkrf_conf.rb}]
+  s.authors = ["Ricardo Ramirez-Gonzalez", "Dan MacLean", "Raoul J.P. Bonnal"]
+  s.date = "2012-01-13"
+  s.description = "Binder of samtools for ruby, on the top of FFI. \n\n  This project was born from the need to add support of BAM files to \n  the gee_fu genome browser (http://github.com/danmaclean/gee_fu)."
+  s.email = "ilpuccio.febo@gmail.com"
+  s.extensions = ["ext/mkrf_conf.rb"]
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.rdoc"
@@ -32,6 +29,7 @@ Gem::Specification.new do |s|
     "doc/Bio.html",
     "doc/Bio/DB.html",
     "doc/Bio/DB/Alignment.html",
+    "doc/Bio/DB/Pileup.html",
     "doc/Bio/DB/SAM.html",
     "doc/Bio/DB/SAM/Library.html",
     "doc/Bio/DB/SAM/Tools.html",
@@ -43,6 +41,7 @@ Gem::Specification.new do |s|
     "doc/Bio/DB/SAM/Tools/SamfileTX.html",
     "doc/Bio/DB/SAMException.html",
     "doc/Bio/DB/Tag.html",
+    "doc/Bio/DB/Vcf.html",
     "doc/LICENSE_txt.html",
     "doc/LibC.html",
     "doc/Pileup.html",
@@ -139,6 +138,7 @@ Gem::Specification.new do |s|
     "doc/js/search_index.js",
     "doc/js/searcher.js",
     "doc/lib/bio-samtools_rb.html",
+    "doc/lib/bio/db/pileup_rb.html",
     "doc/lib/bio/db/sam/bam_rb.html",
     "doc/lib/bio/db/sam/faidx_rb.html",
     "doc/lib/bio/db/sam/library_rb.html",
@@ -146,6 +146,7 @@ Gem::Specification.new do |s|
     "doc/lib/bio/db/sam/sam_rb.html",
     "doc/lib/bio/db/sam/vcf_rb.html",
     "doc/lib/bio/db/sam_rb.html",
+    "doc/lib/bio/db/vcf_rb.html",
     "doc/rdoc-style.css",
     "doc/rdoc.css",
     "doc/table_of_contents.html",
@@ -156,20 +157,19 @@ Gem::Specification.new do |s|
     "ext/mkrf_conf.rb",
     "lib/bio-samtools.rb",
     "lib/bio/.DS_Store",
+    "lib/bio/db/pileup.rb",
     "lib/bio/db/sam.rb",
     "lib/bio/db/sam/bam.rb",
     "lib/bio/db/sam/external/COPYING",
     "lib/bio/db/sam/external/VERSION",
     "lib/bio/db/sam/faidx.rb",
     "lib/bio/db/sam/library.rb",
-    "lib/bio/db/sam/pileup.rb",
     "lib/bio/db/sam/sam.rb",
-    "lib/bio/db/sam/vcf.rb",
-    "test/basictest.rb",
+    "lib/bio/db/vcf.rb",
     "test/helper.rb",
-    "test/pileup.rb",
     "test/samples/small/ids2.txt",
     "test/samples/small/sorted.bam",
+    "test/samples/small/sorted.bam.bai",
     "test/samples/small/test",
     "test/samples/small/test.bam",
     "test/samples/small/test.fa",
@@ -191,11 +191,11 @@ Gem::Specification.new do |s|
     "test/test_bio-samtools.rb",
     "test/test_vcf.rb"
   ]
-  s.homepage = %q{http://github.com/helios/bioruby-samtools}
-  s.licenses = [%q{MIT}]
-  s.require_paths = [%q{lib}]
-  s.rubygems_version = %q{1.8.6}
-  s.summary = %q{Binder of samtools for ruby, on the top of FFI.}
+  s.homepage = "http://github.com/helios/bioruby-samtools"
+  s.licenses = ["MIT"]
+  s.require_paths = ["lib"]
+  s.rubygems_version = "1.8.10"
+  s.summary = "Binder of samtools for ruby, on the top of FFI."
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
