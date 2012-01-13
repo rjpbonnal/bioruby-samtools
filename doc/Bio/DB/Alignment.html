@@ -105,6 +105,8 @@
   
     <li><a href="../../Bio/DB/Alignment.html">Bio::DB::Alignment</a>
   
+    <li><a href="../../Bio/DB/Pileup.html">Bio::DB::Pileup</a>
+  
     <li><a href="../../Bio/DB/SAM.html">Bio::DB::SAM</a>
   
     <li><a href="../../Bio/DB/SAM/Library.html">Bio::DB::SAM::Library</a>
@@ -129,11 +131,9 @@
   
     <li><a href="../../Bio/DB/Tag.html">Bio::DB::Tag</a>
   
+    <li><a href="../../Bio/DB/Vcf.html">Bio::DB::Vcf</a>
+  
     <li><a href="../../LibC.html">LibC</a>
-  
-    <li><a href="../../Pileup.html">Pileup</a>
-  
-    <li><a href="../../Vcf.html">Vcf</a>
   
   </ul>
 </nav>
@@ -595,7 +595,7 @@ for clarity. primary is the negation of is_negative from the BAM format</p>
 
           
           <div class="method-source-code" id="finalize-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 553</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 554</span>
 <span class="ruby-keyword">def</span> <span class="ruby-constant">Alignment</span>.<span class="ruby-identifier">finalize</span>(<span class="ruby-identifier">object_id</span>)
 
   <span class="ruby-comment">#           puts &quot;Object #{object_id} dying at #{Time.new}&quot;</span>
@@ -634,7 +634,7 @@ for clarity. primary is the negation of is_negative from the BAM format</p>
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 549</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 550</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>
   <span class="ruby-constant">ObjectSpace</span>.<span class="ruby-identifier">define_finalizer</span>(<span class="ruby-keyword">self</span>,
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">method</span>(<span class="ruby-value">:finalize</span>).<span class="ruby-identifier">to_proc</span>)
@@ -671,7 +671,7 @@ for clarity. primary is the negation of is_negative from the BAM format</p>
 
           
           <div class="method-source-code" id="sam-3D-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 607</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 608</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">sam=</span>(<span class="ruby-identifier">sam</span>)
   <span class="ruby-comment">#p sam</span>
   <span class="ruby-identifier">s</span> = <span class="ruby-identifier">sam</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&quot;\t&quot;</span>)
@@ -724,7 +724,7 @@ for clarity. primary is the negation of is_negative from the BAM format</p>
 
           
           <div class="method-source-code" id="set-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 575</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 576</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">set</span>(<span class="ruby-identifier">bam_alignment</span>, <span class="ruby-identifier">header</span>)
   <span class="ruby-comment">#Create the FFI object</span>
   <span class="ruby-ivar">@al</span> = <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">SAM</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Bam1T</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">bam_alignment</span>) 

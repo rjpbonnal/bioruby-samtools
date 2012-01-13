@@ -4,12 +4,14 @@
 # Forked from vcfruby at https://github.com/jesserod/vcfruby 
 # Modified and tests written by Dan MacLean (dan.maclean@tsl.ac.uk)
 # VCF is described at http://www.1000genomes.org/node/101
-
+module Bio
+  class DB
 class Vcf
 public
   attr_accessor :chrom, :pos, :id, :ref, :alt, :qual, :filter, :info, :format, :samples
 
   #create the vcf object, use the ordered list of sample names to label samples if provided ['A', 'B', 'C'], otherwise uses, 1,2,3 etc
+  #vcf = Bio::DB::Vcf("19	111	.	A	C	9.6	.	.	GT:HQ	0|0:10,10	0|0:10,10	0/1:3,3")
   def initialize(line=nil, sample_names=nil)
     @info = {}
     @samples = {}
@@ -20,7 +22,7 @@ public
     Integer.new(x) rescue x
   end
 
-  #gets the info in the Vcf lines and parses the
+  #gets the info in the Vcf lines and parses it, setting the attributes
   def parse_line(line, sample_names=nil)
     return false if line[0,1] == '#'
 
@@ -74,4 +76,6 @@ public
     return true;
   end
 
+end
+end
 end

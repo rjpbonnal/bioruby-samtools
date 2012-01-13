@@ -47,11 +47,13 @@
     <nav id="file-list-section" class="section">
   <h3 class="section-header">Defined In</h3>
   <ul>
+    <li>lib/bio/db/pileup.rb
     <li>lib/bio/db/sam/bam.rb
     <li>lib/bio/db/sam/faidx.rb
     <li>lib/bio/db/sam/library.rb
     <li>lib/bio/db/sam/sam.rb
     <li>lib/bio/db/sam.rb
+    <li>lib/bio/db/vcf.rb
   </ul>
 </nav>
 
@@ -87,6 +89,8 @@
   
     <li><a href="./Bio/DB/Alignment.html">Bio::DB::Alignment</a>
   
+    <li><a href="./Bio/DB/Pileup.html">Bio::DB::Pileup</a>
+  
     <li><a href="./Bio/DB/SAM.html">Bio::DB::SAM</a>
   
     <li><a href="./Bio/DB/SAM/Library.html">Bio::DB::SAM::Library</a>
@@ -111,11 +115,9 @@
   
     <li><a href="./Bio/DB/Tag.html">Bio::DB::Tag</a>
   
+    <li><a href="./Bio/DB/Vcf.html">Bio::DB::Vcf</a>
+  
     <li><a href="./LibC.html">LibC</a>
-  
-    <li><a href="./Pileup.html">Pileup</a>
-  
-    <li><a href="./Vcf.html">Vcf</a>
   
   </ul>
 </nav>
@@ -128,6 +130,62 @@
 
   <div id="description" class="description">
     
+<h1 id="label-Bio%3A%3ADB%3A%3APileup+"><a href="Bio/DB/Pileup.html">Bio::DB::Pileup</a> </h1>
+
+<p>A class representing information in SAMTools pileup format</p>
+<dl class="rdoc-list note-list"><dt>Author
+<dd>
+<p>Dan MacLean (tsl at dan.maclean.ac.uk)</p>
+</dd></dl>
+
+<p>Pileup is described at <a
+href="http://sourceforge.net/apps/mediawiki/samtools/index.php?title=SAM_FAQ#I_do_not_understand_the_columns_in_the_pileup_output">sourceforge.net/apps/mediawiki/samtools/index.php?title=SAM_FAQ#I_do_not_understand_the_columns_in_the_pileup_output</a>.
+Briefly (when you invoke pileup with the -c option):</p>
+<ul><li>
+<p>1 reference sequence name</p>
+</li><li>
+<p>2 reference coordinate</p>
+</li><li>
+<p>(3) reference base, or `*‘ for an indel line</p>
+</li><li>
+<p>(4) genotype where heterozygotes are encoded in the IUB code: M=A/C, R=A/G,
+W=A/T, S=C/G, Y=C/T and K=G/T; indels are indicated by, for example,   +A,
+-A   or +CC/-C. There is no difference between */+A or +A/*.</p>
+</li><li>
+<p>(5) Phred-scaled likelihood that the genotype is wrong, which is also
+called `consensus quality’.</p>
+</li><li>
+<p>(6) Phred-scaled likelihood that the genotype is identical to the
+reference, which is also called `SNP quality’. Suppose the reference base
+is A and in alignment we see 17 G and 3 A. We will get a low consensus
+quality because it is difficult to distinguish an A/G heterozygote from a
+G/G homozygote. We will get a high SNP quality, though, because the
+evidence of a SNP is very strong.</p>
+</li><li>
+<p>(7) root mean square (RMS) mapping quality</p>
+</li><li>
+<p>8 # reads covering the position</p>
+</li><li>
+<p>9 read bases at a SNP line (check the manual page for more information);
+the 1st indel allele otherwise</p>
+</li><li>
+<p>10 base quality at a SNP line; the 2nd indel allele otherwise</p>
+</li><li>
+<p>(11) indel line only: # reads directly supporting the 1st indel allele</p>
+</li><li>
+<p>(12) indel line only: # reads directly supporting the 2nd indel allele</p>
+</li><li>
+<p>(13) indel line only: # reads supporting a third indel allele</p>
+</li></ul>
+
+<p>If pileup is invoked without `-c’, indel lines and columns between 3 and 7
+inclusive will not be outputted.</p>
+
+<p>NB mpileup uses the 6 column output format eg
+“seq2t151tGtGt36t0t99t12t.….……At:9&lt;;;7=&lt;&lt;&lt;&lt;&lt;” Pileup
+provides accessors for all columns (6 or 10 column format) and a few other
+useful methods</p>
+
 <p>require ‘rubygems’ require ‘ffi’</p>
 
 <pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">'bio/db/sam/faidx'</span>
@@ -141,6 +199,15 @@
 Created by Ricardo Ramirez on 3/25/10.</pre>
 
 <p>require ‘rubygems’ require’ffi’ require ‘bio/db/sam/bam’</p>
+
+<h1 id="label-Vcf+">Vcf </h1>
+
+<p>A class representing information in Variant Call Format Forked from vcfruby
+at <a
+href="https://github.com/jesserod/vcfruby">github.com/jesserod/vcfruby</a> 
+Modified and tests written by Dan MacLean (tsl at dan.maclean.ac.uk) VCF is
+described at <a
+href="http://www.1000genomes.org/node/101">www.1000genomes.org/node/101</a></p>
 
   </div><!-- description -->
 

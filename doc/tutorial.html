@@ -140,7 +140,7 @@ end
 	...
 end 
 </code></pre>	
-<p>Not all the options SAMTools allows you to pass to mpileup are supported, those that cause mpileup to return BCF/VCF are ignored. Specifically these are g,u,e,h,I,L,o,p. The table below lists the SAMTools flags supported and the symbols you can use to call them in the mpileup command.
+<p>Not all the options SAMTools allows you to pass to mpileup will return a Pileup object, those that cause mpileup to return BCF/VCF will be ignored. Specifically these are g,u,e,h,I,L,o,p. The table below lists the SAMTools flags supported and the symbols you can use to call them in the mpileup command.
 	<table>
 		<tr><th>SAMTools option</th><th>description</th><th>short symbol</th><th>long symbol</th><th>default</th><th>example</th></tr>
 		<tr><td><code>r</code></td><td>limit retrieval to a region</td><td><code>:r</code></td><td><code>:region</code></td><td>all positions</td><td><code>:r => "Chr1:1000-2000"</code></tr>
@@ -157,6 +157,31 @@ end
 <tr><td><code>q</code></td><td>skip alignments with mapping quality smaller than value</td><td><code>:q</code></td><td><code>:min_mapping_quality</code></td><td>0</td><td><code>:q => 30 </code></tr>
 <tr><td><code>Q</code></td><td>skip bases with base quality smaller than value</td><td><code>:Q</code></td><td><code>:imin_base_quality</code></td><td>13</td><td><code>:Q => 30 </code></tr>
 	</table>
+	<br />
+	<p>There is an 'experimental' function, <code>mpileup_plus</code>, that can return a Bio::DB::Vcf object when g,u,e,h,I,L,o,p options are passed. The list below shows the symbols you can use to invoke this behaviour:</p>
+	<ul>
+		<li><code>:genotype_calling, :g</code></li>
+        <li><code>:uncompressed_bcf , :u</code></li>
+        <li><code>:extension_sequencing_probability, :e</code></li>
+        <li><code>:homopolymer_error_coefficient, :h</code></li>
+        <li><code>:no_indels, :I</code></li>
+        <li><code>:skip_indel_over_average_depth, :L</code></li>
+        <li><code>:gap_open_sequencing_error_probability,:o</code></li>
+        <li><code>:platforms, :P</code></li>
+	</ul>
+	<br />
+		<h2>Tests</h2>
+		<p>The easiest way to run the built-in unit tests is to change to the bio-samtools installation directory (discoverable by typing 'gem which bio-samtools' at the command line) and running the separate test files individually.</p>
+<pre><code class="ruby">gem which 'bio-samtools'
+/some/path/ruby-1.x.x/bio-samtools-0.x.x/lib/bio-samtools.rb
+cd /some/path/ruby-1.x.x/bio-samtools-0.x.x
+ruby test/test_basic.rb
+</code></pre>
+<p> Each test file tests different aspects of the gem.
+	<ul>
+		<li>test_basic.rb - tests the general functionality of the gem, such as opening and closing BAM, creating indices, fetching regions, checks the correct Pileup format is returned when requested etc.</li>
+		<li>test_pileup.rb - tests the Pileup class, making sure attributes are set correctly when Pileup data are passed</li>
+		<li>test_vcf.rb - tests the Vcf class, making sure attributes are set correctly when Vcf data are passed</li>
 		</div>
 	</div>
 </div>

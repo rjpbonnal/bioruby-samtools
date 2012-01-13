@@ -1,5 +1,5 @@
 # :title:Pileup
-# = Pileup 
+# = Bio::DB::Pileup 
 # A class representing information in SAMTools pileup format
 # Author:: Dan MacLean (dan.maclean@tsl.ac.uk)
 # Pileup is described at http://sourceforge.net/apps/mediawiki/samtools/index.php?title=SAM_FAQ#I_do_not_understand_the_columns_in_the_pileup_output.
@@ -24,13 +24,14 @@
 # Pileup provides accessors for all columns (6 or 10 column format) and a few other useful methods
 # 
 # 
-
+module Bio
+  class DB
 class Pileup
   attr_accessor :ref_name, :pos, :ref_base, :coverage, :read_bases, :read_quals, :consensus, :consensus_quality, :snp_quality, :rms_mapq, :ar1, :ar2, :ar3
   
   #creates the Pileup object
   #    pile_up_line = "seq2\t151\tG\tG\t36\t0\t99\t12\t...........A\t:9<;;7=<<<<<"
-  #    pile = Pileup.new(pile_up_line)
+  #    pile = Bio::DB::Pileup.new(pile_up_line)
   def initialize(pile_up_line)
     cols = pile_up_line.split(/\t/)
     if cols.length == 6 ##should only be able to get 6 lines from mpileup
@@ -95,4 +96,5 @@ class Pileup
   end
   
 end
-
+end
+end
