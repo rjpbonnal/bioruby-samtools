@@ -42,6 +42,7 @@ I´m getting a segmentation Fault, what did I do wrong?
 I keep seeing this "Invalid gemspec in [some ruby gem path...]", what is wrong?
 - This appears to be a bug in RubyGems that doesn't affect the running of the tools. It will keep happening until someone updates RubyGems. If it really bugs you, downgrade RubyGems.
 
+
 To whom do I complain?
 -about bio-samtools? Try
 Ricardo dot Ramirez-Gonzalez at tgac dot ac dot uk

@@ -2,8 +2,8 @@ require 'bio/db/sam/library'
 require 'bio/db/sam/bam'
 require 'bio/db/sam/faidx'
 require 'bio/db/sam/sam'
-require 'bio/db/sam/pileup'
-require 'bio/db/sam/vcf'
+#require 'bio/db/pileup'
+#require 'bio/db/vcf'
 
 module LibC
   extend FFI::Library
@@ -298,15 +298,15 @@ module Bio
               :min_mapping_quality => :q,
               :min_base_quality => :Q
               }
-
               ##convert any long_opts to short opts 
+              temp_opts = opts.dup
               opts.each_pair do |k,v|
                 if long_opts[k]
-                  opts[long_opts[k]] = v 
-                  opts.delete(k)
+                  temp_opts[long_opts[k]] = v 
+                  temp_opts.delete(k)
                 end
               end
-
+              opts = temp_opts
               ##remove any calls to -g or -u for mpileup, bcf output is not yet supported
               ##and also associated output options
               [:g, :u, :e, :h, :I, :L, :o, :p].each {|x| opts.delete(x) }
@@ -325,7 +325,7 @@ module Bio
 
               sam_pipe = IO.popen(sam_command)
               while line = sam_pipe.gets
-                yield Pileup.new(line)
+                yield Bio::DB::Pileup.new(line)
               end
               sam_pipe.close
               #strptrs << FFI::MemoryPointer.from_string('-f')
@@ -391,13 +391,14 @@ module Bio
                     }
 
                     ##convert any long_opts to short opts 
+                    temp_opts = opts.dup
                     opts.each_pair do |k,v|
                       if long_opts[k]
-                        opts[long_opts[k]] = v 
-                        opts.delete(k)
+                        temp_opts[long_opts[k]] = v 
+                        temp_opts.delete(k)
                       end
                     end
-
+                    opts = temp_opts
                     ##remove any calls to -g or -u for mpileup, bcf output is not yet supported
                     ##and also associated output options
                     #[:g, :u, :e, :h, :I, :L, :o, :p].each {|x| opts.delete(x) }
@@ -424,11 +425,11 @@ module Bio
                     if opts[:u]
                       while line = pipe.gets
                         next if line[0,1] == '#' #skip any header or meta-lines, we dont do anything with those 
-                        yield Vcf.new(line) 
+                        yield Bio::DB::Vcf.new(line) 
                       end
                     else
                       while line = pipe.gets
-                        yield Pileup.new(line)
+                        yield Bio::DB::Pileup.new(line)
                       end
                     end
                     pipe.close
