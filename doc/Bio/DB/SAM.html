@@ -133,6 +133,8 @@
   
     <li><a href="../../Bio/DB/Alignment.html">Bio::DB::Alignment</a>
   
+    <li><a href="../../Bio/DB/Pileup.html">Bio::DB::Pileup</a>
+  
     <li><a href="../../Bio/DB/SAM.html">Bio::DB::SAM</a>
   
     <li><a href="../../Bio/DB/SAM/Library.html">Bio::DB::SAM::Library</a>
@@ -157,11 +159,9 @@
   
     <li><a href="../../Bio/DB/Tag.html">Bio::DB::Tag</a>
   
+    <li><a href="../../Bio/DB/Vcf.html">Bio::DB::Vcf</a>
+  
     <li><a href="../../LibC.html">LibC</a>
-  
-    <li><a href="../../Pileup.html">Pileup</a>
-  
-    <li><a href="../../Vcf.html">Vcf</a>
   
   </ul>
 </nav>
@@ -337,10 +337,10 @@ following elemets:</p>
 <p>If the file is to be writen (false). Not supported yet.</p>
 </dd></dl>
 
-<p><strong>NOTE:</strong> you can’t use binary and text formats
-simultaneusly. To make queries, the file has to be a sorted binary.  This
-function doesn’t actually open the file, it just prepares the object to
-be opened in a later stage.</p>
+<p><strong>NOTE:</strong> you can't use binary and text formats simultaneusly.
+To make queries, the file has to be a sorted binary.  This function doesn't
+actually open the file, it just prepares the object to be opened in a later
+stage.</p>
           
 
           
@@ -542,14 +542,14 @@ method you must have a version of samtools that supports the pileup command
 (&lt; 0.1.17) otherwise the command will fail. mpileup is the preferred
 method for getting pileups.  With this method the sam object should be
 created as usual, but you need to pass this method a string of options for
-samtools you don’t need to provide the call to samtools pileup itself or
--f &lt;fasta file&gt; or the bam file itself, these are taken from the sam
+samtools you don’t need to provide the call to samtools pileup itself or -f
+&lt;fasta file&gt; or the bam file itself, these are taken from the sam
 object</p>
           
 
           
           <div class="method-source-code" id="deprecated_pileup-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 472</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 473</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">deprecated_pileup</span>( <span class="ruby-identifier">cmd</span> )
   
   <span class="ruby-identifier">system</span>(<span class="ruby-string">'samtools pileup &gt; /dev/null 2&gt;&amp;1'</span>)
@@ -726,7 +726,7 @@ use your own FixNum (FFI-bug?)</p>
 
           
           <div class="method-source-code" id="index_stats-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 493</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 494</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">index_stats</span> 
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;No BAMFile provided&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@sam</span> <span class="ruby-keyword">and</span> <span class="ruby-ivar">@binary</span>
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-string">&quot;No FastA provided&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@fasta_path</span>
@@ -790,10 +790,10 @@ use your own FixNum (FFI-bug?)</p>
           <p>Loads the bam index to be used for fetching. If the index doesn’t exists
 the index is built provided that the user has writing access to the folder
 where the BAM file is located. If the creation of the file fails a <a
-href="SAMException.html">SAMException</a> is thrown.  If the index
-doesn’t exist, loading it will take more time. It is suggested to
-generate the index separatedly if the bam file sits on a server where the
-executing user may not have writing permissions in the server.</p>
+href="SAMException.html">SAMException</a> is thrown.  If the index doesn’t
+exist, loading it will take more time. It is suggested to generate the
+index separatedly if the bam file sits on a server where the executing user
+may not have writing permissions in the server.</p>
           
 
           
@@ -831,11 +831,10 @@ executing user may not have writing permissions in the server.</p>
         <div class="method-description">
           
           <p>Loads the reference file to be able to query regions of it. This requires
-the fai index to exist in the same folder than the reference. If it
-doesn’t exisits, this functions attempts to generate it. If user
-doesn’t have writing permissions on the folder, or the creation of the
-fai fails for any reason, a <a href="SAMException.html">SAMException</a> is
-thrown.</p>
+the fai index to exist in the same folder than the reference. If it doesn’t
+exisits, this functions attempts to generate it. If user doesn’t have
+writing permissions on the folder, or the creation of the fai fails for any
+reason, a <a href="SAMException.html">SAMException</a> is thrown.</p>
           
 
           
@@ -877,12 +876,12 @@ thrown.</p>
           
           <p>calls the mpileup function, opts is a hash of options identical to the
 command line options for mpileup. is an iterator that yields a <a
-href="../../Pileup.html">Pileup</a> object for each postion the command
-line options that generate/affect BCF/VCF are ignored ie (g,u,e,h,I,L,o,p)
-call the option as a symbol of the flag, eg -r for region is called :r
-=&gt; “some <a href="SAM.html">SAM</a> compatible region” eg
-bam.mpileup(:r =&gt; “chr1:1000-2000”, :q =&gt; 50) gets the bases with
-quality &gt; 50 on chr1 between 1000-5000</p>
+href="Pileup.html">Pileup</a> object for each postion the command line
+options that generate/affect BCF/VCF are ignored ie (g,u,e,h,I,L,o,p) call
+the option as a symbol of the flag, eg -r for region is called :r =&gt;
+“some <a href="SAM.html">SAM</a> compatible region” eg bam.mpileup(:r =&gt;
+“chr1:1000-2000”, :q =&gt; 50) gets the bases with quality &gt; 50 on chr1
+between 1000-5000</p>
           
 
           
@@ -908,15 +907,15 @@ quality &gt; 50 on chr1 between 1000-5000</p>
         <span class="ruby-value">:min_mapping_quality</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:q</span>,
         <span class="ruby-value">:min_base_quality</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:Q</span>
         }
-
         <span class="ruby-comment">##convert any long_opts to short opts </span>
+        <span class="ruby-identifier">temp_opts</span> = <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">dup</span>
         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">each_pair</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
           <span class="ruby-keyword">if</span> <span class="ruby-identifier">long_opts</span>[<span class="ruby-identifier">k</span>]
-            <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">long_opts</span>[<span class="ruby-identifier">k</span>]] = <span class="ruby-identifier">v</span> 
-            <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">k</span>)
+            <span class="ruby-identifier">temp_opts</span>[<span class="ruby-identifier">long_opts</span>[<span class="ruby-identifier">k</span>]] = <span class="ruby-identifier">v</span> 
+            <span class="ruby-identifier">temp_opts</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">k</span>)
           <span class="ruby-keyword">end</span>
         <span class="ruby-keyword">end</span>
-
+        <span class="ruby-identifier">opts</span> = <span class="ruby-identifier">temp_opts</span>
         <span class="ruby-comment">##remove any calls to -g or -u for mpileup, bcf output is not yet supported</span>
         <span class="ruby-comment">##and also associated output options</span>
         [<span class="ruby-value">:g</span>, <span class="ruby-value">:u</span>, <span class="ruby-value">:e</span>, <span class="ruby-value">:h</span>, <span class="ruby-value">:I</span>, <span class="ruby-value">:L</span>, <span class="ruby-value">:o</span>, <span class="ruby-value">:p</span>].<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">x</span>) }
@@ -935,7 +934,7 @@ quality &gt; 50 on chr1 between 1000-5000</p>
 
         <span class="ruby-identifier">sam_pipe</span> = <span class="ruby-constant">IO</span>.<span class="ruby-identifier">popen</span>(<span class="ruby-identifier">sam_command</span>)
         <span class="ruby-keyword">while</span> <span class="ruby-identifier">line</span> = <span class="ruby-identifier">sam_pipe</span>.<span class="ruby-identifier">gets</span>
-          <span class="ruby-keyword">yield</span> <span class="ruby-constant">Pileup</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">line</span>)
+          <span class="ruby-keyword">yield</span> <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">Pileup</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">line</span>)
         <span class="ruby-keyword">end</span>
         <span class="ruby-identifier">sam_pipe</span>.<span class="ruby-identifier">close</span>
         <span class="ruby-comment">#strptrs &lt;&lt; FFI::MemoryPointer.from_string('-f')</span>
@@ -1028,13 +1027,14 @@ and supports returning of pileup vcf</p>
         }
 
         <span class="ruby-comment">##convert any long_opts to short opts </span>
+        <span class="ruby-identifier">temp_opts</span> = <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">dup</span>
         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">each_pair</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
           <span class="ruby-keyword">if</span> <span class="ruby-identifier">long_opts</span>[<span class="ruby-identifier">k</span>]
-            <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">long_opts</span>[<span class="ruby-identifier">k</span>]] = <span class="ruby-identifier">v</span> 
-            <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">k</span>)
+            <span class="ruby-identifier">temp_opts</span>[<span class="ruby-identifier">long_opts</span>[<span class="ruby-identifier">k</span>]] = <span class="ruby-identifier">v</span> 
+            <span class="ruby-identifier">temp_opts</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">k</span>)
           <span class="ruby-keyword">end</span>
         <span class="ruby-keyword">end</span>
-
+        <span class="ruby-identifier">opts</span> = <span class="ruby-identifier">temp_opts</span>
         <span class="ruby-comment">##remove any calls to -g or -u for mpileup, bcf output is not yet supported</span>
         <span class="ruby-comment">##and also associated output options</span>
         <span class="ruby-comment">#[:g, :u, :e, :h, :I, :L, :o, :p].each {|x| opts.delete(x) }</span>
@@ -1061,11 +1061,11 @@ and supports returning of pileup vcf</p>
         <span class="ruby-keyword">if</span> <span class="ruby-identifier">opts</span>[<span class="ruby-value">:u</span>]
           <span class="ruby-keyword">while</span> <span class="ruby-identifier">line</span> = <span class="ruby-identifier">pipe</span>.<span class="ruby-identifier">gets</span>
             <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">line</span>[<span class="ruby-value">0</span>,<span class="ruby-value">1</span>] <span class="ruby-operator">==</span> <span class="ruby-string">'#'</span> <span class="ruby-comment">#skip any header or meta-lines, we dont do anything with those </span>
-            <span class="ruby-keyword">yield</span> <span class="ruby-constant">Vcf</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">line</span>) 
+            <span class="ruby-keyword">yield</span> <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">Vcf</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">line</span>) 
           <span class="ruby-keyword">end</span>
         <span class="ruby-keyword">else</span>
           <span class="ruby-keyword">while</span> <span class="ruby-identifier">line</span> = <span class="ruby-identifier">pipe</span>.<span class="ruby-identifier">gets</span>
-            <span class="ruby-keyword">yield</span> <span class="ruby-constant">Pileup</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">line</span>)
+            <span class="ruby-keyword">yield</span> <span class="ruby-constant">Bio</span><span class="ruby-operator">::</span><span class="ruby-constant">DB</span><span class="ruby-operator">::</span><span class="ruby-constant">Pileup</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">line</span>)
           <span class="ruby-keyword">end</span>
         <span class="ruby-keyword">end</span>
         <span class="ruby-identifier">pipe</span>.<span class="ruby-identifier">close</span>
