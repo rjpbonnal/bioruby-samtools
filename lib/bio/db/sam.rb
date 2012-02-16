@@ -538,10 +538,9 @@ module Bio
     class Tag
       attr_accessor :tag, :type, :value
       def set(str)
-        v = str.split(":")
-        @tag   = v[0]
-        @type  = v[1]
-        @value = v[2]
+        @tag   = str[0..1]
+        @type  = str[3]
+        @value = str[5..-1]
       end
     end
 
