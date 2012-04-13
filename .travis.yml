@@ -1,7 +1,9 @@
 language: ruby
 
 before_script:
-  - rake -f ext/Rakefile
+  - cd ext
+  - rake -f Rakefile
+  - cd..
 rvm:
   - 1.9.2
   - 1.9.3
