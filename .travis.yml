@@ -4,6 +4,7 @@ before_install:
   - sudo apt-get install libc6-dev
 before_script:
   - cd ext
+  - ruby mkrf_conf.rb
   - rake -f Rakefile
   - cd..
 rvm:
