@@ -1,12 +1,12 @@
 language: ruby
 before_install:
   - sudo apt-get update
-  - sudo apt-get install gcc-multilib
+  - sudo apt-get install zlib1g-dev libncurses5-dev libtinfo-dev
 before_script:
   - cd ext
   - ruby mkrf_conf.rb
   - rake -f Rakefile
-  - cd..
+  - cd ../
 rvm:
   - 1.9.2
   - 1.9.3
