@@ -1,7 +1,7 @@
 language: ruby
 before_install:
   - sudo apt-get update
-  - sudo apt-get install gcc-multilib
+  - sudo apt-get install gcc-multilib lib32z1 lib32z-dev zlib1g lib32tinfo5 lib32tinfo5-dev libtinfo5 libtinfo5-dev lib32ncurses5 libncurses5
 before_script:
   - cd ext
   - ruby mkrf_conf.rb
