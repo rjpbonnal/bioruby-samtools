@@ -4,21 +4,25 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = "bio-samtools"
-  s.version = "0.5.2"
+  s.name = %q{bio-samtools}
+  s.version = "0.5.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Ricardo Ramirez-Gonzalez", "Dan MacLean", "Raoul J.P. Bonnal"]
-  s.date = "2012-03-14"
-  s.description = "Binder of samtools for ruby, on the top of FFI. \n\n  This project was born from the need to add support of BAM files to \n  the gee_fu genome browser (http://github.com/danmaclean/gee_fu)."
-  s.email = "ilpuccio.febo@gmail.com"
-  s.extensions = ["ext/mkrf_conf.rb"]
+  s.authors = [%q{Ricardo Ramirez-Gonzalez}, %q{Dan MacLean}, %q{Raoul J.P. Bonnal}]
+  s.date = %q{2012-04-14}
+  s.description = %q{Binder of samtools for ruby, on the top of FFI. 
+
+  This project was born from the need to add support of BAM files to 
+  the gee_fu genome browser (http://github.com/danmaclean/gee_fu).}
+  s.email = %q{ilpuccio.febo@gmail.com}
+  s.extensions = [%q{ext/mkrf_conf.rb}]
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.rdoc"
   ]
   s.files = [
     ".document",
+    ".travis.yml",
     "Gemfile",
     "Gemfile.lock",
     "LICENSE.txt",
@@ -153,7 +157,6 @@ Gem::Specification.new do |s|
     "doc/tutorial.html",
     "doc/tutorial.pdf",
     "ext/Makefile-bioruby.patch",
-    "ext/Rakefile",
     "ext/mkrf_conf.rb",
     "lib/bio-samtools.rb",
     "lib/bio/.DS_Store",
@@ -191,11 +194,11 @@ Gem::Specification.new do |s|
     "test/test_bio-samtools.rb",
     "test/test_vcf.rb"
   ]
-  s.homepage = "http://github.com/helios/bioruby-samtools"
-  s.licenses = ["MIT"]
-  s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.10"
-  s.summary = "Binder of samtools for ruby, on the top of FFI."
+  s.homepage = %q{http://github.com/helios/bioruby-samtools}
+  s.licenses = [%q{MIT}]
+  s.require_paths = [%q{lib}]
+  s.rubygems_version = %q{1.8.6}
+  s.summary = %q{Binder of samtools for ruby, on the top of FFI.}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
