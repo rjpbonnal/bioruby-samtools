@@ -278,7 +278,7 @@ module Bio
       #the command line options that generate/affect BCF/VCF are ignored ie (g,u,e,h,I,L,o,p)
       #call the option as a symbol of the flag, eg -r for region is called :r => "some SAM compatible region"
       #eg bam.mpileup(:r => "chr1:1000-2000", :q => 50) gets the bases with quality > 50 on chr1 between 1000-5000 
-      def mpileup( opts )
+      def mpileup( opts={})
 
               raise SAMException.new(), "No BAMFile provided" unless @sam and @binary
               raise SAMException.new(), "No FastA provided" unless @fasta_path
@@ -531,7 +531,13 @@ module Bio
         index_stats
       end
       
-      
+      ##yields each reference name and its length
+      def each_reference
+        refs = index_stats
+        refs.each_pair do |k, v|
+          yield k, v[:length]
+        end
+      end
 
     end
 
