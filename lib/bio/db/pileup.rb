@@ -193,6 +193,17 @@ class Pileup
       end
   end
   
+  #returns pileup format line
+  def to_s
+    if @read_quals and !@consensus_quality #6col
+      [@ref_name, @pos, @ref_base, @coverage.to_i, @read_bases, @read_quals].join("\t")    
+    elsif @indel_1 #13 cols
+      [@ref_name, @pos, @ref_base, @consensus, @consensus_quality.to_i, @snp_quality.to_i, @rms_mapq.to_i, @coverage.to_i, @indel_1, @indel_2, @ar1, @ar2, @ar3].join("\t")
+    else #10 cols
+      [@ref_name, @pos, @ref_base, @consensus, @consensus_quality.to_i, @snp_quality.to_i, @rms_mapq.to_i, @coverage.to_i, @read_bases, @read_quals].join("\t")
+    end
+      
+  end
   
 end
 end
