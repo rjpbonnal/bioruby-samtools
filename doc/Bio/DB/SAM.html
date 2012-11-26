@@ -84,6 +84,8 @@
     
     <li><a href="#method-i-deprecated_pileup">#deprecated_pileup</a>
     
+    <li><a href="#method-i-each_reference">#each_reference</a>
+    
     <li><a href="#method-i-fetch">#fetch</a>
     
     <li><a href="#method-i-fetch_reference">#fetch_reference</a>
@@ -337,10 +339,10 @@ following elemets:</p>
 <p>If the file is to be writen (false). Not supported yet.</p>
 </dd></dl>
 
-<p><strong>NOTE:</strong> you can't use binary and text formats simultaneusly.
-To make queries, the file has to be a sorted binary.  This function doesn't
-actually open the file, it just prepares the object to be opened in a later
-stage.</p>
+<p><strong>NOTE:</strong> you can’t use binary and text formats
+simultaneusly. To make queries, the file has to be a sorted binary.  This
+function doesn’t actually open the file, it just prepares the object to
+be opened in a later stage.</p>
           
 
           
@@ -542,8 +544,8 @@ method you must have a version of samtools that supports the pileup command
 (&lt; 0.1.17) otherwise the command will fail. mpileup is the preferred
 method for getting pileups.  With this method the sam object should be
 created as usual, but you need to pass this method a string of options for
-samtools you don’t need to provide the call to samtools pileup itself or -f
-&lt;fasta file&gt; or the bam file itself, these are taken from the sam
+samtools you don’t need to provide the call to samtools pileup itself or
+-f &lt;fasta file&gt; or the bam file itself, these are taken from the sam
 object</p>
           
 
@@ -577,6 +579,39 @@ object</p>
 
         
       </div><!-- deprecated_pileup-method -->
+
+    
+      <div id="method-i-each_reference" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">each_reference</span><span
+            class="method-args">() { |k, v| ... }</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>yields each reference name and its length</p>
+          
+
+          
+          <div class="method-source-code" id="each_reference-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 535</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">each_reference</span>
+  <span class="ruby-identifier">refs</span> = <span class="ruby-identifier">index_stats</span>
+  <span class="ruby-identifier">refs</span>.<span class="ruby-identifier">each_pair</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+    <span class="ruby-keyword">yield</span> <span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span>[<span class="ruby-value">:length</span>]
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- each_reference-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- each_reference-method -->
 
     
       <div id="method-i-fetch" class="method-detail ">
@@ -790,10 +825,10 @@ use your own FixNum (FFI-bug?)</p>
           <p>Loads the bam index to be used for fetching. If the index doesn’t exists
 the index is built provided that the user has writing access to the folder
 where the BAM file is located. If the creation of the file fails a <a
-href="SAMException.html">SAMException</a> is thrown.  If the index doesn’t
-exist, loading it will take more time. It is suggested to generate the
-index separatedly if the bam file sits on a server where the executing user
-may not have writing permissions in the server.</p>
+href="SAMException.html">SAMException</a> is thrown.  If the index
+doesn’t exist, loading it will take more time. It is suggested to
+generate the index separatedly if the bam file sits on a server where the
+executing user may not have writing permissions in the server.</p>
           
 
           
@@ -831,10 +866,11 @@ may not have writing permissions in the server.</p>
         <div class="method-description">
           
           <p>Loads the reference file to be able to query regions of it. This requires
-the fai index to exist in the same folder than the reference. If it doesn’t
-exisits, this functions attempts to generate it. If user doesn’t have
-writing permissions on the folder, or the creation of the fai fails for any
-reason, a <a href="SAMException.html">SAMException</a> is thrown.</p>
+the fai index to exist in the same folder than the reference. If it
+doesn’t exisits, this functions attempts to generate it. If user
+doesn’t have writing permissions on the folder, or the creation of the
+fai fails for any reason, a <a href="SAMException.html">SAMException</a> is
+thrown.</p>
           
 
           
@@ -879,9 +915,9 @@ command line options for mpileup. is an iterator that yields a <a
 href="Pileup.html">Pileup</a> object for each postion the command line
 options that generate/affect BCF/VCF are ignored ie (g,u,e,h,I,L,o,p) call
 the option as a symbol of the flag, eg -r for region is called :r =&gt;
-“some <a href="SAM.html">SAM</a> compatible region” eg bam.mpileup(:r =&gt;
-“chr1:1000-2000”, :q =&gt; 50) gets the bases with quality &gt; 50 on chr1
-between 1000-5000</p>
+“some <a href="SAM.html">SAM</a> compatible region” eg bam.mpileup(:r
+=&gt; “chr1:1000-2000”, :q =&gt; 50) gets the bases with quality &gt;
+50 on chr1 between 1000-5000</p>
           
 
           

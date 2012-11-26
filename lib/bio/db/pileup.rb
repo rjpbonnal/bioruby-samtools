@@ -27,7 +27,7 @@
 module Bio
   class DB
 class Pileup
-  attr_accessor :ref_name, :pos, :ref_base, :coverage, :read_bases, :read_quals, :consensus, :consensus_quality, :snp_quality, :rms_mapq, :ar1, :ar2, :ar3
+  attr_accessor :ref_name, :pos, :ref_base, :coverage, :read_bases, :read_quals, :consensus, :consensus_quality, :snp_quality, :rms_mapq, :ar1, :ar2, :ar3, :indel_1, :indel_2
   
   #creates the Pileup object
   #    pile_up_line = "seq2\t151\tG\tG\t36\t0\t99\t12\t...........A\t:9<;;7=<<<<<"
@@ -37,7 +37,11 @@ class Pileup
     if cols.length == 6 ##should only be able to get 6 lines from mpileup
       @ref_name, @pos, @ref_base, @coverage, @read_bases, @read_quals = cols
     elsif (10..13).include?(cols.length) ##incase anyone tries to use deprecated pileup with -c flag we get upto 13 cols...
-      @ref_name, @pos, @ref_base, @consensus, @consensus_quality, @snp_quality, @rms_mapq, @coverage, @read_bases, @read_quals, @ar1, @ar2, @ar3 = cols
+      if cols[2] == '*' #indel
+        @ref_name, @pos, @ref_base, @consensus, @consensus_quality, @snp_quality, @rms_mapq, @coverage, @indel_1, @indel_2, @ar1, @ar2, @ar3 = cols
+      else #snp / identity
+        @ref_name, @pos, @ref_base, @consensus, @consensus_quality, @snp_quality, @rms_mapq, @coverage, @read_bases, @read_quals = cols
+      end
       @consensus_quality = @consensus_quality.to_f
       @snp_quality = @snp_quality.to_f
       @rms_mapq = @rms_mapq.to_f
@@ -77,7 +81,7 @@ class Pileup
     @ref_count
   end
   
-  # returns the consensus (most frequent) base from the pileup, if there are equally represented bases returns a string containing all equally represented bases in alphabetical order   
+  # returns the consensus (most frequent) base from the pileup, if there are equally represented bases returns a string of all equally represented bases in alphabetical order   
   def consensus
       if @consensus.nil?
         max = self.non_refs.values.max
@@ -94,6 +98,101 @@ class Pileup
       end
       @consensus
   end
+  
+  #returns basic VCF string as per samtools/misc sam2vcf.pl except that it scrimps on the ref for indels, returning a '*' instead of the reference allele
+  def to_vcf
+
+    alt,g = self.genotype_list 
+    alt = self.consensus.split(//).join(',') unless self.ref_base == '*'
+    alt = '.' if alt == self.ref_base
+    [self.ref_name, self.pos, '.', self.ref_base, alt, self.snp_quality.to_i, "0", "DP=#{self.coverage.to_i}", "GT:GQ:DP", "#{g}:#{self.consensus_quality.to_i}:#{self.coverage.to_i}" ].join("\t")
+  end
+  
+  private
+  def Pileup.vcf_header
+    %{##fileformat=VCFv3.3
+      ##INFO=DP,1,Integer,"Total Depth"
+      ##FORMAT=GT,1,String,"Genotype"
+      ##FORMAT=GQ,1,Integer,"Genotype Quality"
+      ##FORMAT=DP,1,Integer,"Read Depth"
+      #CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tDATA
+    }.join("\n")
+  end
+  
+  def parse_indel(alt)
+
+    return "D#{$'.length}" if alt =~/^-/ 
+    if alt=~/^\+/
+      return "I#{$'}"
+    elsif alt == '*' 
+      return nil
+     end
+  end
+  
+  def indel_gt
+    return "undef" if self.consensus.instance_of?(Array)
+    al1, al2 = self.consensus.split(/\//)
+    if al1 == al2 && al1 == '*'   
+      al1=self.indel_1 
+      al2=self.indel_2
+    end
+    alt1 = parse_indel(al1)
+    alt2 = parse_indel(al2)
+    alt,gt = nil,nil
+    
+    return nil if !alt1 and !alt2
+    if !alt1 
+      alt = alt2
+      gt = '0/1'
+    elsif !alt2
+      alt = alt1
+      gt - '0/1'
+    elsif alt1 == alt2
+      alt = alt1
+      gt = '1/1'
+    else
+      alt="#{alt1},#{alt2}"
+      gt= '1/2'
+    end
+    return [alt, gt]
+    
+  end
+  
+  def snp_gt
+    return ['.','0/0'] if self.ref_base == self.consensus
+    bases = Pileup.iupac_to_base(self.consensus)
+    if bases[0] == self.ref_base
+       return [bases[1],'0/1']
+    elsif bases[1] == self.ref_base
+       return [bases[0],'0/1']
+    else
+      return ["#{bases[0]},#{bases[1]}",'1/2']
+    end 
+  end
+  
+  public
+  def genotype_list
+    if self.ref_base == '*'
+      return indel_gt
+    else
+     return snp_gt
+   end
+  end
+  
+  public
+  #returns 
+  def Pileup.iupac_to_base(alt_base)
+      case alt_base
+            when 'K' then ['G','T']
+            when 'M' then ['A','C']
+            when 'S' then ['C','G']
+            when 'R' then ['A','G']
+            when 'W' then ['A','T']
+            when 'Y' then ['C','T']
+            else alt_base.split(//)
+      end
+  end
+  
   
 end
 end

@@ -14,6 +14,14 @@ rdoc
 # jeweler generated
 pkg
 
+lib/bio/db/sam/external/bcftools
+lib/bio/db/sam/external/libbam*
+lib/bio/db/sam/external/samtools
+snippets/*
+test/coverage.rb
+test/coverage_plot.rb
+test/feature.rb
+test/test_pileup.rb
 # Have editor/IDE/OS specific files you need to ignore? Consider using a global gitignore: 
 #
 # * Create a file at ~/.gitignore
