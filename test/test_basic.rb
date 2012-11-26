@@ -329,6 +329,15 @@ class TestBioDbSam < Test::Unit::TestCase
                   "*"=>{:length=>0, :mapped_reads=>0, :unmapped_reads=>0}
                  }, sam.index_stats)
   end
+  
+  def test_each_reference
+    sam = Bio::DB::Sam.new(:bam => @testBAMFile, :fasta => @testReference)
+    sam.each_reference do |name, length|
+      next if name == '*'
+      assert_equal name, "chr_1"
+      assert_equal length, 69930
+    end
+  end
 end
 
 class Feature 
