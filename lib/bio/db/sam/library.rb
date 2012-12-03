@@ -16,9 +16,9 @@ module Bio
             'dll'
           else
             case RUBY_DESCRIPTION
-            when /darwin.*java/
+            when /jruby.*darwin/
               '1.dylib'
-            when /linux.*java/
+            when /jruby.*linux/
             'so.1'
             end
           end
