@@ -4,6 +4,7 @@ require 'bio/db/sam/faidx'
 require 'bio/db/sam/sam'
 #require 'bio/db/pileup'
 #require 'bio/db/vcf'
+require 'systemu'
 
 module LibC
   extend FFI::Library
@@ -322,18 +323,19 @@ module Bio
               end
               sam_exe = File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools')
               sam_opts = sam_opts + ['-f', @fasta_path, @sam]
-              sam_command = [
-                sam_exe,
-                'mpileup',
-                sam_opts.flatten.collect{|s| s.inspect}.join(' '),
-                '2>/dev/null'
-              ].join(' ')
-
-              sam_pipe = IO.popen(sam_command)
-              while line = sam_pipe.gets
-                yield Bio::DB::Pileup.new(line)
+              
+              sam_opts_string = SystemUniversal.quote(*sam_opts)
+              cmdline = "#{sam_exe} mpileup #{sam_opts_string}"
+              status, stdout, stderr = systemu cmdline
+              
+              if status.exitstatus == 0
+                stdout.each_line do |line|
+                  yield Bio::DB::Pileup.new(line)
+                end
+              else
+                raise SAMException.new(), "Error running mpileup. Command line was '#{cmdline}'\nsamtools STDERR was:\n#{stderr}"
               end
-              sam_pipe.close
+
               #strptrs << FFI::MemoryPointer.from_string('-f')
               #strptrs << FFI::MemoryPointer.from_string(@fasta_path)
               #strptrs << FFI::MemoryPointer.from_string(@sam)
