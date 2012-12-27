@@ -320,8 +320,14 @@ module Bio
                 sam_opts << k #strptrs << FFI::MemoryPointer.from_string(k)
                 sam_opts << v.to_s  unless ["-R", "-B", "-E", "-6", "-A"].include?(k) #these are just flags so don't pass a value... strptrs << FFI::MemoryPointer.from_string(v.to_s)
               end
+              sam_exe = File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools')
               sam_opts = sam_opts + ['-f', @fasta_path, @sam]
-              sam_command = "#{File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools')} mpileup #{sam_opts.join(' ')} 2> /dev/null"
+              sam_command = [
+                sam_exe,
+                'mpileup',
+                sam_opts.flatten.collect{|s| s.inspect}.join(' '),
+                '2>/dev/null'
+              ].join(' ')
 
               sam_pipe = IO.popen(sam_command)
               while line = sam_pipe.gets
