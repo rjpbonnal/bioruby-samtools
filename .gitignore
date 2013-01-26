@@ -39,13 +39,17 @@ test/test_pileup.rb
 #
 # For TextMate
 #*.tmproj
-#tmtags
+tmtags
 #
 # For emacs:
 #*~
-#\#*
-#.\#*
+\#*
+.\#*
 #
 # For vim:
-#*.swp
+*.swp
 old_lib/
+
+#For the gems to work
+
+Gemfile.lock
