@@ -312,6 +312,38 @@ class TestBioDbSam < Test::Unit::TestCase
     assert_equal(10,vcf_list.length)
     vcf_list.each {|p| assert_kind_of(Bio::DB::Vcf, p)}
   end
+  
+  # test whether command line calls to mpileup are correctly escaped
+  def test_mpileup_escaping
+    test_dir = File.join('test','samples','pipe_char')
+    sam = Bio::DB::Sam.new(
+      :fasta => File.join(test_dir,'test_chr.fasta'),
+      :bam => File.join(test_dir, 'test.bam')
+    )
+    pileup_list = []
+    sam.mpileup(:region => "gi|123|chr_1:100-109") do |pile|
+      pileup_list << pile
+    end
+    assert_equal(10,pileup_list.length)
+    pileup_list.each  do |p|
+      assert_kind_of(Bio::DB::Pileup, p)
+    end
+  end
+  
+  # test whether command line calls to mpileup are correctly escaped
+  def test_mpileup_error_reporting
+    test_dir = File.join('test','samples','pipe_char')
+    sam = Bio::DB::Sam.new(
+      :fasta => File.join(test_dir,'does_not_exist.fasta'),
+      :bam => File.join(test_dir, 'test.bam')
+    )
+    assert_raise Bio::DB::SAMException do
+      pileup_list = []
+      sam.mpileup(:region => "gi|123|chr_1:100-109") do |pile|
+        pileup_list << pile
+      end
+    end
+  end
 
   #test whether the call to mpileup returns a vcf object if :g => true is used on the command-line
 #  def test_vcf

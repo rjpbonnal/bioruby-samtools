@@ -4,6 +4,7 @@ require 'bio/db/sam/faidx'
 require 'bio/db/sam/sam'
 #require 'bio/db/pileup'
 #require 'bio/db/vcf'
+require 'systemu'
 
 module LibC
   extend FFI::Library
@@ -320,14 +321,21 @@ module Bio
                 sam_opts << k #strptrs << FFI::MemoryPointer.from_string(k)
                 sam_opts << v.to_s  unless ["-R", "-B", "-E", "-6", "-A"].include?(k) #these are just flags so don't pass a value... strptrs << FFI::MemoryPointer.from_string(v.to_s)
               end
+              sam_exe = File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools')
               sam_opts = sam_opts + ['-f', @fasta_path, @sam]
-              sam_command = "#{File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools')} mpileup #{sam_opts.join(' ')} 2> /dev/null"
-
-              sam_pipe = IO.popen(sam_command)
-              while line = sam_pipe.gets
-                yield Bio::DB::Pileup.new(line)
+              
+              sam_opts_string = SystemUniversal.quote(*sam_opts)
+              cmdline = "#{sam_exe} mpileup #{sam_opts_string}"
+              status, stdout, stderr = systemu cmdline
+              
+              if status.exitstatus == 0
+                stdout.each_line do |line|
+                  yield Bio::DB::Pileup.new(line)
+                end
+              else
+                raise SAMException.new(), "Error running mpileup. Command line was '#{cmdline}'\nsamtools STDERR was:\n#{stderr}"
               end
-              sam_pipe.close
+
               #strptrs << FFI::MemoryPointer.from_string('-f')
               #strptrs << FFI::MemoryPointer.from_string(@fasta_path)
               #strptrs << FFI::MemoryPointer.from_string(@sam)
