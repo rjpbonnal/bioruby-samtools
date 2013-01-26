@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+
+<title>class Bio::DB::Vcf - Pileup</title>
+
+<link type="text/css" media="screen" href="../../rdoc.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../";
+</script>
+
+<script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/navigation.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/search_index.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/search.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/searcher.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/darkfish.js"></script>
+
+
+<body id="top" class="class">
+<nav id="metadata">
+  <nav id="home-section" class="section">
+  <h3 class="section-header">
+    <a href="../../index.html">Home</a>
+    <a href="../../table_of_contents.html#classes">Classes</a>
+    <a href="../../table_of_contents.html#methods">Methods</a>
+  </h3>
+</nav>
+
+
+  <nav id="search-section" class="section project-section" class="initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <h3 class="section-header">
+      <input type="text" name="search" placeholder="Search" id="search-field"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </h3>
+  </form>
+
+  <ul id="search-results" class="initially-hidden"></ul>
+</nav>
+
+
+  <div id="file-metadata">
+    <nav id="file-list-section" class="section">
+  <h3 class="section-header">Defined In</h3>
+  <ul>
+    <li>lib/bio/db/vcf.rb
+  </ul>
+</nav>
+
+    
+  </div>
+
+  <div id="class-metadata">
+    
+    <nav id="parent-class-section" class="section">
+  <h3 class="section-header">Parent</h3>
+  
+  <p class="link">Object
+  
+</nav>
+
+    
+    <!-- Method Quickref -->
+<nav id="method-list-section" class="section">
+  <h3 class="section-header">Methods</h3>
+
+  <ul class="link-list">
+    
+    <li><a href="#method-c-new">::new</a>
+    
+    <li><a href="#method-i-int_or_raw">#int_or_raw</a>
+    
+    <li><a href="#method-i-parse_line">#parse_line</a>
+    
+  </ul>
+</nav>
+
+  </div>
+
+  <div id="project-metadata">
+    <nav id="fileindex-section" class="section project-section">
+  <h3 class="section-header">Pages</h3>
+
+  <ul>
+  
+    <li class="file"><a href="../../LICENSE_txt.html">LICENSE</a>
+  
+  </ul>
+</nav>
+
+    <nav id="classindex-section" class="section project-section">
+  <h3 class="section-header">Class and Module Index</h3>
+
+  <ul class="link-list">
+  
+    <li><a href="../../Bio.html">Bio</a>
+  
+    <li><a href="../../Bio/DB.html">Bio::DB</a>
+  
+    <li><a href="../../Bio/DB/Alignment.html">Bio::DB::Alignment</a>
+  
+    <li><a href="../../Bio/DB/Pileup.html">Bio::DB::Pileup</a>
+  
+    <li><a href="../../Bio/DB/SAM.html">Bio::DB::SAM</a>
+  
+    <li><a href="../../Bio/DB/SAM/Library.html">Bio::DB::SAM::Library</a>
+  
+    <li><a href="../../Bio/DB/SAM/Tools.html">Bio::DB::SAM::Tools</a>
+  
+    <li><a href="../../Bio/DB/SAM/Tools/Bam1CoreT.html">Bio::DB::SAM::Tools::Bam1CoreT</a>
+  
+    <li><a href="../../Bio/DB/SAM/Tools/Bam1T.html">Bio::DB::SAM::Tools::Bam1T</a>
+  
+    <li><a href="../../Bio/DB/SAM/Tools/BamHeaderT.html">Bio::DB::SAM::Tools::BamHeaderT</a>
+  
+    <li><a href="../../Bio/DB/SAM/Tools/BamPileup1T.html">Bio::DB::SAM::Tools::BamPileup1T</a>
+  
+    <li><a href="../../Bio/DB/SAM/Tools/SamfileT.html">Bio::DB::SAM::Tools::SamfileT</a>
+  
+    <li><a href="../../Bio/DB/SAM/Tools/SamfileTX.html">Bio::DB::SAM::Tools::SamfileTX</a>
+  
+    <li><a href="../../Bio/DB/SAMException.html">Bio::DB::SAMException</a>
+  
+    <li><a href="../../Bio/DB/Sam.html">Bio::DB::Sam</a>
+  
+    <li><a href="../../Bio/DB/Tag.html">Bio::DB::Tag</a>
+  
+    <li><a href="../../Bio/DB/Vcf.html">Bio::DB::Vcf</a>
+  
+    <li><a href="../../LibC.html">LibC</a>
+  
+  </ul>
+</nav>
+
+  </div>
+</nav>
+
+<div id="documentation">
+  <h1 class="class">class Bio::DB::Vcf</h1>
+
+  <div id="description" class="description">
+    
+  </div><!-- description -->
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+    <!-- Attributes -->
+    <section id="attribute-method-details" class="method-section section">
+      <h3 class="section-header">Attributes</h3>
+
+      
+      <div id="attribute-i-alt" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">alt</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-chrom" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">chrom</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-filter" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">filter</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-format" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">format</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-id" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">id</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-info" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">info</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-pos" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">pos</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-qual" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">qual</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-ref" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">ref</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-samples" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">samples</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+    </section><!-- attribute-method-details -->
+    
+
+    <!-- Methods -->
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section section">
+      <h3 class="section-header">Public Class Methods</h3>
+
+    
+      <div id="method-c-new" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">(line=nil, sample_names=nil)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>create the vcf object, use the ordered list of sample names to label
+samples if provided [‘A’, ‘B’, ‘C’], otherwise uses, 1,2,3 etc
+vcf = Bio::DB::Vcf(“19       111   . A       C     9.6 .       .    
+GT:HQ       0|0:10,10     0|0:10,10   0/1:3,3”)</p>
+          
+
+          
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/vcf.rb, line 15</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">line</span>=<span class="ruby-keyword">nil</span>, <span class="ruby-identifier">sample_names</span>=<span class="ruby-keyword">nil</span>)
+  <span class="ruby-ivar">@info</span> = {}
+  <span class="ruby-ivar">@samples</span> = {}
+  <span class="ruby-identifier">parse_line</span>(<span class="ruby-identifier">line</span>, <span class="ruby-identifier">sample_names</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">line</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- new-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- new-method -->
+
+    
+    </section><!-- public-class-method-details -->
+  
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section section">
+      <h3 class="section-header">Public Instance Methods</h3>
+
+    
+      <div id="method-i-int_or_raw" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">int_or_raw</span><span
+            class="method-args">(x)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+
+          
+          <div class="method-source-code" id="int_or_raw-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/vcf.rb, line 21</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">int_or_raw</span>(<span class="ruby-identifier">x</span>)
+  <span class="ruby-constant">Integer</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">x</span>) <span class="ruby-keyword">rescue</span> <span class="ruby-identifier">x</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- int_or_raw-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- int_or_raw-method -->
+
+    
+      <div id="method-i-parse_line" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">parse_line</span><span
+            class="method-args">(line, sample_names=nil)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>gets the info in the <a href="Vcf.html">Vcf</a> lines and parses it,
+setting the attributes</p>
+          
+
+          
+          <div class="method-source-code" id="parse_line-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/vcf.rb, line 26</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">parse_line</span>(<span class="ruby-identifier">line</span>, <span class="ruby-identifier">sample_names</span>=<span class="ruby-keyword">nil</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">line</span>[<span class="ruby-value">0</span>,<span class="ruby-value">1</span>] <span class="ruby-operator">==</span> <span class="ruby-string">'#'</span>
+
+  <span class="ruby-identifier">f</span> = <span class="ruby-identifier">line</span>.<span class="ruby-identifier">chomp</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&quot;\t&quot;</span>, <span class="ruby-value">-1</span>)
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;VCF lines must have at least 8 fields&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">f</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">8</span>
+  <span class="ruby-ivar">@chrom</span> = <span class="ruby-identifier">f</span>[<span class="ruby-value">0</span>]
+  <span class="ruby-ivar">@pos</span> = <span class="ruby-identifier">f</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">to_i</span>
+  <span class="ruby-ivar">@id</span> =  <span class="ruby-string">'.'</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">f</span>[<span class="ruby-value">2</span>] <span class="ruby-operator">?</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">f</span>[<span class="ruby-value">2</span>]
+  <span class="ruby-ivar">@ref</span> = <span class="ruby-identifier">f</span>[<span class="ruby-value">3</span>]
+  <span class="ruby-ivar">@alt</span> = <span class="ruby-identifier">f</span>[<span class="ruby-value">4</span>]
+  <span class="ruby-ivar">@qual</span> = <span class="ruby-identifier">f</span>[<span class="ruby-value">5</span>].<span class="ruby-identifier">to_f</span>
+  <span class="ruby-ivar">@filter</span> = <span class="ruby-string">'.'</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">f</span>[<span class="ruby-value">6</span>] <span class="ruby-operator">?</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">f</span>[<span class="ruby-value">6</span>]
+
+  <span class="ruby-ivar">@info</span> = <span class="ruby-string">'.'</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">f</span>[<span class="ruby-value">7</span>] <span class="ruby-operator">?</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">:</span> {}
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@info</span>
+    <span class="ruby-identifier">info_vec</span> = <span class="ruby-identifier">f</span>[<span class="ruby-value">7</span>].<span class="ruby-identifier">split</span>(<span class="ruby-string">&quot;;&quot;</span>)
+    <span class="ruby-identifier">info_vec</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">keyval</span> = <span class="ruby-identifier">x</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&quot;=&quot;</span>, <span class="ruby-value">-1</span>)
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">keyval</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">2</span> <span class="ruby-comment"># If it's key=value</span>
+        <span class="ruby-ivar">@info</span>[<span class="ruby-identifier">keyval</span>[<span class="ruby-value">0</span>]] = <span class="ruby-identifier">keyval</span>[<span class="ruby-value">1</span>]
+      <span class="ruby-keyword">else</span> <span class="ruby-comment"># Otherwise, it's just a flag</span>
+        <span class="ruby-ivar">@info</span>[<span class="ruby-identifier">x</span>] = <span class="ruby-keyword">nil</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-ivar">@samples</span> = {}
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">f</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">8</span>  <span class="ruby-comment"># Has just upto info</span>
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Can't have format with no samples&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">f</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">9</span>
+  
+  <span class="ruby-ivar">@format</span> = <span class="ruby-identifier">f</span>[<span class="ruby-value">8</span>]
+
+  <span class="ruby-identifier">sample_keys</span> = <span class="ruby-ivar">@format</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&quot;:&quot;</span>)
+
+  <span class="ruby-identifier">num_samples</span> = <span class="ruby-identifier">f</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">-</span> <span class="ruby-value">9</span> <span class="ruby-comment"># How many fields are past the format</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">sample_names</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">nil</span> <span class="ruby-comment"># Make the sample names just [&quot;1&quot;, &quot;2&quot;, ... , &quot;num_samples}&quot;</span>
+    <span class="ruby-identifier">sample_names</span> = (<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-identifier">num_samples</span>).<span class="ruby-identifier">to_a</span>.<span class="ruby-identifier">map</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span> <span class="ruby-identifier">i</span>.<span class="ruby-identifier">to_s</span>} 
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">sample_names</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">num_samples</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Unexpected number of samples (#{num_samples}) based on the provided sample names (#{sample_names.inspect})&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">sample_names</span>.<span class="ruby-identifier">each_with_index</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">sample_name</span>, <span class="ruby-identifier">sample_index</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">i</span> = <span class="ruby-identifier">sample_index</span> <span class="ruby-operator">+</span> <span class="ruby-value">9</span> <span class="ruby-comment"># index into columns (f)</span>
+    <span class="ruby-identifier">sample_values</span> = <span class="ruby-identifier">f</span>[<span class="ruby-identifier">i</span>].<span class="ruby-identifier">split</span>(<span class="ruby-string">&quot;:&quot;</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Expected number of sample values to be &lt;= number of sample keys in FORMAT column Format=#{@format} but sample=#{f[i]}&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">sample_values</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">sample_keys</span>.<span class="ruby-identifier">size</span>
+    <span class="ruby-ivar">@samples</span>[<span class="ruby-identifier">sample_name</span>] = {}
+    <span class="ruby-identifier">sample_keys</span>.<span class="ruby-identifier">each_with_index</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value_index</span><span class="ruby-operator">|</span> <span class="ruby-ivar">@samples</span>[<span class="ruby-identifier">sample_name</span>][<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">sample_values</span>[<span class="ruby-identifier">value_index</span>] <span class="ruby-operator">||</span> <span class="ruby-string">&quot;&quot;</span>}
+  <span class="ruby-keyword">end</span>
+  
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>;
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- parse_line-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- parse_line-method -->
+
+    
+    </section><!-- public-instance-method-details -->
+  
+  </section><!-- 5Buntitled-5D -->
+
+</div><!-- documentation -->
+
+
+<footer id="validator-badges">
+  <p><a href="http://validator.w3.org/check/referer">[Validate]</a>
+  <p>Generated by <a href="https://github.com/rdoc/rdoc">RDoc</a> 3.12.
+  <p>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish Rdoc Generator</a> 3.
+</footer>
+

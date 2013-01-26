@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>deprecated_pileup (Bio::DB::Sam)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bio/db/sam.rb, line 357</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">deprecated_pileup</span>( <span class="ruby-identifier">cmd</span> )
+        
+        <span class="ruby-identifier">system</span>(<span class="ruby-value str">'samtools pileup &gt; /dev/null 2&gt;&amp;1'</span>)
+        <span class="ruby-comment cmt">##assumes samtools is in the path...</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$?</span>.<span class="ruby-identifier">exitstatus</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">RuntimeError</span>, <span class="ruby-value str">&quot;samtools is required on the path. A version of samtools with the pileup function is required&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+        
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-value str">&quot;No BAMFile provided&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@sam</span> <span class="ruby-keyword kw">and</span> <span class="ruby-ivar">@binary</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">SAMException</span>.<span class="ruby-identifier">new</span>(), <span class="ruby-value str">&quot;No FastA provided&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@fasta_path</span>
+        
+        <span class="ruby-identifier">command</span> = <span class="ruby-value str">'samtools pileup '</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">cmd</span> <span class="ruby-operator">+</span> <span class="ruby-node">&quot; -f #{@fasta_path}&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-node">&quot; #{@sam}&quot;</span> 
+        
+        <span class="ruby-identifier">pipe</span> = <span class="ruby-constant">IO</span>.<span class="ruby-identifier">popen</span>(<span class="ruby-identifier">command</span>)
+        <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">line</span> = <span class="ruby-identifier">pipe</span>.<span class="ruby-identifier">gets</span>
+          <span class="ruby-keyword kw">yield</span> <span class="ruby-constant">Pileup</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">line</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">pipe</span>.<span class="ruby-identifier">close</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

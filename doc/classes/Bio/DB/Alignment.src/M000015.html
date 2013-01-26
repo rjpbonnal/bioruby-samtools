@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>sam= (Bio::DB::Alignment)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bio/db/sam.rb, line 449</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">sam=</span>(<span class="ruby-identifier">sam</span>)
+        <span class="ruby-comment cmt">#p sam</span>
+        <span class="ruby-identifier">s</span> = <span class="ruby-identifier">sam</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">&quot;\t&quot;</span>)
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">qname</span> = <span class="ruby-identifier">s</span>[<span class="ruby-value">0</span>]
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">flag</span>  = <span class="ruby-identifier">s</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">to_i</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">rname</span> = <span class="ruby-identifier">s</span>[<span class="ruby-value">2</span>]
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">pos</span>   = <span class="ruby-identifier">s</span>[<span class="ruby-value">3</span>].<span class="ruby-identifier">to_i</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">mapq</span>  = <span class="ruby-identifier">s</span>[<span class="ruby-value">4</span>].<span class="ruby-identifier">to_i</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">cigar</span> = <span class="ruby-identifier">s</span>[<span class="ruby-value">5</span>]
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">mrnm</span>  = <span class="ruby-identifier">s</span>[<span class="ruby-value">6</span>]
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">mpos</span>  = <span class="ruby-identifier">s</span>[<span class="ruby-value">7</span>].<span class="ruby-identifier">to_i</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">isize</span> = <span class="ruby-identifier">s</span>[<span class="ruby-value">8</span>].<span class="ruby-identifier">to_i</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">seq</span>   = <span class="ruby-identifier">s</span>[<span class="ruby-value">9</span>]
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">qual</span> =  <span class="ruby-identifier">s</span>[<span class="ruby-value">10</span>]
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">tags</span> = {} 
+        <span class="ruby-value">11</span>.<span class="ruby-identifier">upto</span>(<span class="ruby-identifier">s</span>.<span class="ruby-identifier">size</span><span class="ruby-operator">-</span><span class="ruby-value">1</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">n</span><span class="ruby-operator">|</span> 
+          <span class="ruby-identifier">t</span> = <span class="ruby-constant">Tag</span>.<span class="ruby-identifier">new</span> 
+          <span class="ruby-identifier">t</span>.<span class="ruby-identifier">set</span>(<span class="ruby-identifier">s</span>[<span class="ruby-identifier">n</span>])
+          <span class="ruby-identifier">tags</span>[<span class="ruby-identifier">t</span>.<span class="ruby-identifier">tag</span>] = <span class="ruby-identifier">t</span>
+        }
+
+
+        <span class="ruby-comment cmt">#&lt;QNAME&gt; &lt;FLAG&gt; &lt;RNAME&gt; &lt;POS&gt; &lt;MAPQ&gt; &lt;CIGAR&gt; &lt;MRNM&gt; &lt;MPOS&gt; &lt;ISIZE&gt; &lt;SEQ&gt; &lt;QUAL&gt;          #[&lt;TAG&gt;:&lt;VTYPE&gt;:&lt;VALUE&gt; [...]] </span>
+
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

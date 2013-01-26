@@ -36,21 +36,30 @@ end
 task :compile do
   sh "tar xvfj #{SamToolsFile}"
   cd("samtools-#{Version}") do
-
+    sh "patch < ../Makefile-bioruby.patch"
     case Config::CONFIG['host_os']
       when /linux/
-        sh "CFLAGS='-g -Wall -O2 -fPIC' make -e"
+        #sh "CFLAGS='-g -Wall -O2 -fPIC' make -e"
+        sh "make"
         cp("libbam.a","#{path_external}")
-        sh "CFLAGS='-g -Wall -O2 -fPIC' make -e libbam.so.1-local"
+        #sh "CFLAGS='-g -Wall -O2 -fPIC' make -e libbam.so.1-local"
+        sh "make libbam.so.1-local"
+        cp("samtools", "#{path_external}")
         cp("libbam.so.1","#{path_external}")
       when /darwin/
         sh "make"
         cp("libbam.a","#{path_external}")
         sh "make libbam.1.dylib-local"
-        cp("libbam.1.dylib","#{path_external}")      
+        cp("libbam.1.dylib","#{path_external}")
+        sh "make"
+        cp('samtools', "#{path_external}")      
       when /mswin|mingw/ then raise NotImplementedError, "BWA library is not available for Windows platform"  
-    end#case
+    end #case
   end #cd
+  cd("samtools-#{Version}/bcftools") do
+    sh "make"
+    cp('bcftools', "#{path_external}")
+  end
 end
   
 task :clean do

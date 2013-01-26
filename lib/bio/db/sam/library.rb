@@ -13,7 +13,14 @@ module Bio
           when /darwin/
             '1.dylib'
           when /windows/
-            'dll'  
+            'dll'
+          else
+            case RUBY_DESCRIPTION
+            when /jruby.*darwin/
+              '1.dylib'
+            when /jruby.*linux/
+            'so.1'
+            end
           end
 
           File.join(File.expand_path(File.dirname(__FILE__)),'external',"libbam.#{lib_os}")

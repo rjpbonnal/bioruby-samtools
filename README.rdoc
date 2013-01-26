@@ -13,53 +13,48 @@ This project was born from the need to add support of BAM files to
 the gee_fu genome browser (http://github.com/danmaclean/gee_fu). 
 
 == Installation
-At the moment, the only way to "install" the module is to copy it to copy the content 
-of the lib folder on any lib folder you have. You must also copy your libbam.a (linux)
-or libbam.dll (windows) from samtools. If you have a Mac, add the following variable
-to the makefile of samtools
-
-DYFLAGS 	= -dynamiclib -lz
-
-and the following target:
-dylib: libbam.dylib
-libbam.dylib:$(LOBJS)
-		$(CC) $(CFLAGS) $(DYFLAGS) -o libbam.dylib $(LOBJS)
-
-Then, run 
-
-make dylib
-
-Finally, you copy the .dylib file to your lib folder. 
+'gem install bio-samtools'
 
 == Usage
-The easiest way to see in "action" samtools-ruby to call
-rake test. 
+See doc/tutorial.html or doc/tutorial.pdf for a walkthrough tutorial. The documentation in doc/index.html provides information on individual objects
+and methods.
 
+The easiest way to see bio-samtools in action is to try the tests:
+rake test 
+is all you should need to get the tests to run.
+
+However on some systems (at least the one belonging to one of our developers on Mac OS X Lion, with the Apple provided Ruby) then you can get
+a LoadError: no such file to load 'ffi', despite it being installed. This is something to do with RubyGems and rake test that we
+haven't got to the bottom of yet. The workaround is to run the tests manually. 
+1) change into the directory bio-samtools installed into (you can find this with the command 'gem which bio-samtools')
+2) run the tests as if they were any other ruby script eg ruby test/test_pileup.rb
 
 == Dependencies:
 -FFI (http://github.com/ffi/ffi)
--libbam
-	This can be obtained from samtools.  (http://samtools.sourceforge.net/ )
+
 	
 == FAQ.
 I´m getting a segmentation Fault, what did I do wrong?
-There are two known segmentation faults at the moment
+-There are two known segmentation faults at the moment
 	-When you try to load a text file as binary file
 	-When you try to lad a binary file as a text file
 
-If this is not the problem, or you have any other question,  don´t hesitate on 
-dropping a line to
-Ricardo dot Ramirez-Gonzalez at bbsrc dot ac dot uk
+I keep seeing this "Invalid gemspec in [some ruby gem path...]", what is wrong?
+- This appears to be a bug in RubyGems that doesn't affect the running of the tools. It will keep happening until someone updates RubyGems. If it really bugs you, downgrade RubyGems.
+
+
+To whom do I complain?
+-about bio-samtools? Try
+Ricardo dot Ramirez-Gonzalez at tgac dot ac dot uk
+dan.maclean@tsl.ac.uk
 
 == TODO
--Write a gem to install it
 -Filter to the fetching algorithm (give a condition that has to be satisfied to add the alignment to the list)
--Examples of how to use it, besides the test folder
--Operating system independent, DONE ( test needed)
+
 
 == IMPORTANT NOTE
--Libraries are downloaded, compiled and installed inside the gem at install time on the host system
--Library .a, I didn't check if it works on linux (test needed) 
+-Libraries (libbam) are downloaded, compiled and installed inside the gem at install time on the host system
+ 
 $ openssl dgst libbam.so.1
 MD5(libbam.so.1)= c45cfccfb41ffeb2730ee4b227d244c4
 
