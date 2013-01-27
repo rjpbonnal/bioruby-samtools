@@ -39,11 +39,14 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
+
+if RUBY_VERSION.start_with?("1.8")
 require 'rcov/rcovtask'
 Rcov::RcovTask.new do |test|
   test.libs << 'test'
   test.pattern = 'test/**/test_*.rb'
   test.verbose = true
+end
 end
 
 task :default => :test
