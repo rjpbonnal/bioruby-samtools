@@ -258,7 +258,7 @@ class TestBioDbSam < Test::Unit::TestCase
   end
   
   def test_avg_coverage
-    sam = Bio::DB::Sam.new({:fasta=>@testReference, :bam=>@testBAMFile })
+    sam = Bio::DB::Sam.new(:fasta=>@testReference, :bam=>@testBAMFile )
     sam.open
     cov = sam.average_coverage("chr_1", 60, 30)
     #p "Coverage: " + cov.to_s
@@ -370,6 +370,27 @@ class TestBioDbSam < Test::Unit::TestCase
       assert_equal length, 69930
     end
   end
+  
+  def test_view
+    sam = Bio::DB::Sam.new(:bam => @testBAMFile, :fasta => @testReference)
+    sam.open 
+    count = 0
+    sam.view() do |aln|
+      count = count +1
+    end
+    assert_equal count, 9
+    puts "woot..."
+  end
+  
+  def test_view_big
+    puts "...woot"
+    sam = Bio::DB::Sam.new(:bam => "/Users/macleand/Desktop/AT1/realigned.bam", :fasta => "/Users/macleand/src/data/ash_dieback/chalara_fraxinea/Kenninghall_wood_KW1/assemblies/gDNA/KW1_assembly_version1/Chalara_fraxinea_TGAC_s1v1_scaffolds.fa")
+    sam.open
+    sam.view do |aln|
+      puts aln
+    end
+  end
+  
 end
 
 class Feature 

@@ -69,7 +69,6 @@ module Bio
           @binary = false
 
         end
-        @fasta_lib = Bio::DB::FastaLengthDB.new(@fasta_path)
         @fasta_file = nil
         @sam_file   = nil
 
@@ -228,33 +227,36 @@ module Bio
         query
       end
 
-
-      def each_alignment
-        view
-      end
-      
-      def view 
-        load_index if @sam_index.nil? || @sam_index.null?
-        chr = FFI::MemoryPointer.new :int
-        beg = FFI::MemoryPointer.new :int
-        last = FFI::MemoryPointer.new :int
-        #query = query_string(chromosome, qstart,qend)
-        #qpointer = FFI::MemoryPointer.from_string(query)
-        header = @sam_file[:header]
+      #yields all alignments in turn
+      def view
+        fasta_db = Bio::DB::FastaLengthDB.new(:file => @fasta_path)
+        
+          load_index if @sam_index.nil? || @sam_index.null?
+        fasta_db.each do |chromosome, qend|
+          qstart = 1
+          
+          chr = FFI::MemoryPointer.new :int
+          beg = FFI::MemoryPointer.new :int
+          last = FFI::MemoryPointer.new :int
+          query = query_string(chromosome, qstart,qend) rescue ""
+          qpointer = FFI::MemoryPointer.from_string(query)
+          header = @sam_file[:header]
         Bio::DB::SAM::Tools.bam_parse_region(header,qpointer, chr, beg, last) 
         #raise SAMException.new(), "invalid query: " + query  if(chr.read_int < 0)
-        count = 0;
+          count = 0;
 
-        fetchAlignment = Proc.new do |bam_alignment, data|
-         alignment =  Alignment.new
-          alignment.set(bam_alignment, header)
-          function.call(alignment)
-          yield alignment.clone
-          count = count + 1
-          0  
+          fetchAlignment = Proc.new do |bam_alignment, data|
+          alignment =  Alignment.new
+            alignment.set(bam_alignment, header)
+            yield alignment.clone
+            count = count + 1
+            0  
+          end
+          Bio::DB::SAM::Tools.bam_fetch(@sam_file[:x][:bam], @sam_index,chr.read_int,beg.read_int, last.read_int, nil, fetchAlignment)
         end
-        Bio::DB::SAM::Tools.bam_fetch(@sam_file[:x][:bam], @sam_index,chr.read_int,beg.read_int, last.read_int, nil, fetchAlignment)
       end
+      
+      alias_method :each_alignment, :view
       
       #Returns an array of Alignments on a given region.
       def fetch(chromosome, qstart, qend)
