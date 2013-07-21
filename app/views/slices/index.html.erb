@@ -1,0 +1,9 @@
+<h1>Samtools on BaseSpace</h1>
+<p>
+You can create a small bam file, just enter the name of a gene and you will get its bam data. Download and share it.
+</p>
+<%= form_tag(slices_cut_path, method: "get") do %>
+  <%= label_tag(:g, "Search for gene:") %>
+  <%= text_field_tag(:g) %>
+  <%= submit_tag("Search") %>
+<% end %>

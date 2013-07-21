@@ -1,0 +1,4 @@
+<%= form_for @example, :url => { :action => "create" }, :html => {:class => "nifty_form"} do |f| %>
+  <%= f.text_field :gene_name %>
+  <%= f.submit "Create" %>
+<% end %>
