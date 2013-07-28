@@ -379,17 +379,28 @@ class TestBioDbSam < Test::Unit::TestCase
       count = count +1
     end
     assert_equal count, 9
-    puts "woot..."
   end
   
-  def test_view_big
-    puts "...woot"
-    sam = Bio::DB::Sam.new(:bam => "/Users/macleand/Desktop/AT1/realigned.bam", :fasta => "/Users/macleand/src/data/ash_dieback/chalara_fraxinea/Kenninghall_wood_KW1/assemblies/gDNA/KW1_assembly_version1/Chalara_fraxinea_TGAC_s1v1_scaffolds.fa")
-    sam.open
-    sam.view do |aln|
-      puts aln
+  def test_view_b
+    sam = Bio::DB::Sam.new(:bam =>"/Users/macleand/Desktop/AT1/realigned.bam", :fasta => "/Users/macleand/src/data/ash_dieback/chalara_fraxinea/Kenninghall_wood_KW1/assemblies/gDNA/KW1_assembly_version1/Chalara_fraxinea_TGAC_s1v1_scaffolds.fa")
+    sam.open 
+    count = 0
+    sam.view_b do |aln|
+
+      count = count +1
     end
+    puts "count is: #{count}"
+    assert_equal count, 9
   end
+  
+#  def test_view_big
+#    puts "...woot"
+#    sam = Bio::DB::Sam.new(:bam => "/Users/macleand/Desktop/AT1/realigned.bam", :fasta => "/Users/macleand/src/data/ash_dieback/chalara_fraxinea/Kenninghall_wood_KW1/assemblies/gDNA/KW1_assembly_version1/Chalara_fraxinea_TGAC_s1v1_scaffolds.fa")
+#    sam.open
+#    sam.view do |aln|
+#      puts aln
+#    end
+#  end
   
 end
 
