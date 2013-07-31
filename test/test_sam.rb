@@ -12,14 +12,33 @@ class TestBioDbSam < Test::Unit::TestCase
     @testTAMFile                = @test_folder + "/test.tam"
     @testBAMFile                = @test_folder + "/testu.bam"
     @testReference              = @test_folder + "/test_chr.fasta"
-  end
-  
-  def test_new
-    sam = Bio::DB::Sam.new(
+    @sam = Bio::DB::Sam.new(
         :fasta => @testReference, 
         :bam => @testBAMFile
     )
-    assert_kind_of Bio::DB::Sam, sam
+  end
+  
+  def test_new
+    assert_kind_of Bio::DB::Sam, @sam
+  end
+  
+  def test_view
+    #how to get Bio::DB::Alignment objects ..
+    @sam.view() do |line|
+      puts line
+    end
+    
+    #how to get binary 
+    f = File.open("view.bam", "w")
+    @sam.view( :b => true ) do |line|
+      print line
+    end
+    f.close
+    
+  end
+  
+  def test_fetch
+    
   end
   
 end
