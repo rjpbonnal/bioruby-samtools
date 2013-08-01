@@ -24,16 +24,16 @@ class TestBioDbSam < Test::Unit::TestCase
   
   def test_view
     #how to get Bio::DB::Alignment objects ..
-    @sam.view() do |line|
-      puts line
+    @sam.view() do |sam|
+      pp sam
     end
     
     #how to get binary 
-    f = File.open("view.bam", "w")
-    @sam.view( :b => true ) do |line|
-      print line
-    end
-    f.close
+    #f = File.open("view.bam", "w")
+    #@sam.view( :b => true ) do |line|
+    #  print line
+    #end
+    #f.close
     
   end
   

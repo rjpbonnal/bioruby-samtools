@@ -57,7 +57,8 @@ module Bio
         command = form_opt_string(@samtools, opts, [:b, :h, :H, :S, :u, :one, :x, :X, :c, :B])
         @last_command = command
         type = (opts[:u] or opts[:b]) ? :binary : :text
-        yield_from_pipe(command, String, type, &block)
+        klass = (type == :binary) ? String : Bio::DB::Alignment
+        yield_from_pipe(command, klass, type, &block)
       end
       
       private
