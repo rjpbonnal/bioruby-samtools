@@ -173,6 +173,14 @@ module Bio
         seq
       end
       
+      def faidx(chr,start,stop,opts={:as_bio => false})
+        if chr and start and stop
+          self.fetch_reference(chr,start,stop,opts)
+        else
+          command = "#{@samtools} faidx #{@fasta}"
+          system(command)
+        end
+      
       def index_stats
         stats = {}   
         command = form_opt_string(@samtools, "idxstats #{@fasta}", {}, [])
