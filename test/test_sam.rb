@@ -25,7 +25,7 @@ class TestBioDbSam < Test::Unit::TestCase
   def test_view
     #how to get Bio::DB::Alignment objects ..
     @sam.view() do |sam|
-      pp sam
+      #pp sam
     end
     
     #how to get binary 
@@ -38,6 +38,18 @@ class TestBioDbSam < Test::Unit::TestCase
   end
   
   def test_fetch
+    @sam.fetch("chr_1", 10,1000) do |sam|
+      #pp sam
+    end
+    #puts @sam.last_command
+  end
+  
+  def test_fetch_with_function
+    block = Proc.new {|a| pp a}
+    @sam.fetch_with_function("chr_1", 10,1000, &block)
+  end
+  
+  def test_average_coverage
     
   end
   

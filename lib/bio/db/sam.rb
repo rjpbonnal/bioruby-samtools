@@ -53,13 +53,32 @@ module Bio
       # :l => nil, # -l STR only output reads in library STR [null]
       # :r => nil, # -r STR only output reads in read group STR [null]
       # :s => nil # -s FLOAT fraction of templates to subsample; integer part as seed [-1]
+      # :chr => nil # name of reference sequence to get alignments from
+      # :start => nil # start position on reference sequence
+      # :stop => nil # end postion on reference sequence
       def view(opts={},&block)
-        command = form_opt_string(@samtools, opts, [:b, :h, :H, :S, :u, :one, :x, :X, :c, :B])
+        region = ""
+        if opts[:chr] and opts[:start] and opts[:stop]
+          region = "#{opts[:chr]}:#{opts[:start]}-#{opts[:stop]}"
+          [:chr, :start, :stop].each {|o| opts.delete(o)}
+        end
+        command = form_opt_string(@samtools, "view", opts, [:b, :h, :H, :S, :u, :one, :x, :X, :c, :B]) + " " + region
         @last_command = command
         type = (opts[:u] or opts[:b]) ? :binary : :text
         klass = (type == :binary) ? String : Bio::DB::Alignment
         yield_from_pipe(command, klass, type, &block)
       end
+      
+      def fetch(chr, start,stop, &block)
+        view(
+        :chr => chr,
+        :start => start,
+        :stop => stop, 
+        &block  
+        )
+      end
+      
+      alias_method :fetch_with_function, :fetch
       
       private
       
@@ -67,9 +86,9 @@ module Bio
       # @param program [Symbol] either `:samtools` or `:bcftools`
       # @param opts [Hash] the options hash
       # @param singles `flag` options [Array] the options in `opts` that are single options 
-      def form_opt_string(prog, opts, singles)
+      def form_opt_string(prog, command, opts, singles)
         opts_string = commandify(opts, singles)
-        "#{prog} view #{opts_string} #{@bams.join(' ')}"
+        "#{prog} #{command} #{opts_string} #{@bams.join(' ')}"
       end
       
       # turns an opts hash into a s
