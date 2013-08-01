@@ -45,12 +45,19 @@ class TestBioDbSam < Test::Unit::TestCase
   end
   
   def test_fetch_with_function
-    block = Proc.new {|a| pp a}
-    @sam.fetch_with_function("chr_1", 10,1000, &block)
+    #block = Proc.new {|a| pp a}
+    #@sam.fetch_with_function("chr_1", 10,1000, &block)
   end
   
-  def test_average_coverage
+  def test_chromosome_coverage
     
+  end
+  
+  def test_pileup
+    @sam.mpileup(:u => true) do |pileup|
+      pp pileup
+    end
+    puts @sam.last_command
   end
   
 end

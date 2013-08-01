@@ -62,7 +62,17 @@ module Bio
           region = "#{opts[:chr]}:#{opts[:start]}-#{opts[:stop]}"
           [:chr, :start, :stop].each {|o| opts.delete(o)}
         end
-        command = form_opt_string(@samtools, "view", opts, [:b, :h, :H, :S, :u, :one, :x, :X, :c, :B]) + " " + region
+        if opts[:at]
+          opts["@"] = opts[:at]
+          opts.delete(:at)
+        end
+        
+        if opts[:one]
+          opts["1"] = opts[:one]
+          opts.delete(:one)
+        end
+                
+        command = form_opt_string(@samtools, "view", opts, [:b, :h, :H, :S, :u, "1", :x, :X, :c, :B]) + " " + region
         @last_command = command
         type = (opts[:u] or opts[:b]) ? :binary : :text
         klass = (type == :binary) ? String : Bio::DB::Alignment
@@ -79,6 +89,69 @@ module Bio
       end
       
       alias_method :fetch_with_function, :fetch
+      
+      def chromosome_coverage(chr,start,length)
+        mpileup()
+        
+      end
+      
+      def mpileup(opts={}, &block)
+        #long option form to short samtools form..
+        long_opts = {
+        :region => :r,
+        :illumina_quals => :six,
+        :count_anomalous => :A,
+        :no_baq => :B,
+        :adjust_mapq => :C,
+        :max_per_bam_depth => :d,
+        :extended_baq => :E,
+        :exclude_reads_file => :G,
+        :list_of_positions => :l,
+        :mapping_quality_cap => :M,
+        :ignore_rg => :R,
+        :min_mapping_quality => :q,
+        :min_base_quality => :Q,
+        ###following options are for the -g -u option
+        :genotype_calling => :g,
+        :uncompressed_bcf => :u,
+        :extension_sequencing_probability => :e,
+        :homopolymer_error_coefficient => :h,
+        :no_indels => :I,
+        :skip_indel_over_average_depth => :L,
+        :gap_open_sequencing_error_probability => :o,
+        :platforms => :P 
+        }
+
+        ##convert any long_opts to short opts 
+        temp_opts = opts.dup
+        opts.each_pair do |k,v|
+          if long_opts[k]
+            temp_opts[long_opts[k]] = v 
+            temp_opts.delete(k)
+          end
+        end
+        opts = temp_opts
+        opts[:u] = true if opts[:g] #so that we always get uncompressed output
+        opts.delete(:g)
+        
+        opts[:f] = @fasta
+        
+        if opts[:six]
+          opts["6"] = nil
+          opts.delete(:six)
+        end
+        
+        command = form_opt_string(@samtools, "mpileup", opts, [:R, :B, :E, "6", :A, :g, :u, :I] )
+
+        if opts[:u]
+          command = command + " | #{@bcftools} view -cg -"
+        end
+        
+        klass = opts[:u] ? Bio::DB::Vcf : Bio::DB::Pileup
+        @last_command = command
+        yield_from_pipe(command, klass, :text, &block)
+
+      end
       
       private
       
@@ -107,11 +180,12 @@ module Bio
         true
       end
       
-      def yield_from_pipe(command, klass, type=:text, &block)
+      def yield_from_pipe(command, klass, type=:text, skip_comments=true, comment_char="#", &block)
         pipe = IO.popen(command)
         if type == :text
           while line = pipe.gets 
-            yield klass.new(line)
+            next if skip_comments and line[0] == comment_char
+            yield klass.new(line.chomp)
           end
         elsif type == :binary
           while c = pipe.gets(nil)
