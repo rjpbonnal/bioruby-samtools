@@ -99,6 +99,11 @@ module Bio
         return result
       end
       
+      def average_coverage(chr,start,length)
+        arr = self.chromosome_coverage(chr,start,length)
+        arr.inject{ |sum, el| sum + el }.to_f / arr.size
+      end
+      
       def mpileup(opts={}, &block)
         #long option form to short samtools form..
         long_opts = {
@@ -155,6 +160,28 @@ module Bio
         @last_command = command
         yield_from_pipe(command, klass, :text, &block)
 
+      end
+      
+      def fetch_reference(chr,start,stop, opts={:as_bio => false})
+        command = "#{@samtools} faidx #{@fasta} #{chr}:#{start}-#{stop}"
+        @last_command = command
+        seq = ""
+        yield_from_pipe(command, String, :text ) {|line| seq = seq + line unless line =~ /^>/}
+        if opts[:as_bio]
+          seq = Bio::Sequence::NA.new(seq).to_fasta("#{chr}:#{start}-#{stop}")
+        end
+        seq
+      end
+      
+      def index_stats
+        stats = {}   
+        command = form_opt_string(@samtools, "idxstats #{@fasta}", {}, [])
+        @last_command = command
+        yield_from_pipe(command, String, :text,skip_comments=true, comment_char="#") do |line|
+          info = line.chomp.split(/\t/)
+          stats[ info[0] ] = {:length => info[1].to_i, :mapped_reads => info[2].to_i, :unmapped_reads => info[3].to_i }
+        end
+        stats
       end
       
       private

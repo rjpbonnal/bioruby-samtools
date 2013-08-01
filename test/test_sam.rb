@@ -50,15 +50,29 @@ class TestBioDbSam < Test::Unit::TestCase
   end
   
   def test_chromosome_coverage
-    pp @sam.chromosome_coverage("chr_1", 322, 5)
-    pp @sam.last_command
+    #pp @sam.chromosome_coverage("chr_1", 322, 5)
   end
+  
+  def test_average_coverage
+    #pp @sam.average_coverage("chr_1", 322, 5)
+  end
+  
+  
   
   def test_pileup
     @sam.mpileup(:u => true) do |pileup|
       #pp pileup
     end
     #puts @sam.last_command
+  end
+  
+  def test_index_stats
+    #pp @sam.index_stats
+  end
+  
+  def test_fetch_reference
+    pp @sam.fetch_reference("chr_1", 10, 300, :as_bio => true)
+    puts @sam.last_command
   end
   
 end
