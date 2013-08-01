@@ -91,8 +91,12 @@ module Bio
       alias_method :fetch_with_function, :fetch
       
       def chromosome_coverage(chr,start,length)
-        mpileup()
-        
+        result = []
+        region = "#{chr}:#{start}-#{start + length}"
+        self.mpileup(:r => region) do |p|
+          result << p.coverage
+        end
+        return result
       end
       
       def mpileup(opts={}, &block)

@@ -50,14 +50,15 @@ class TestBioDbSam < Test::Unit::TestCase
   end
   
   def test_chromosome_coverage
-    
+    pp @sam.chromosome_coverage("chr_1", 322, 5)
+    pp @sam.last_command
   end
   
   def test_pileup
     @sam.mpileup(:u => true) do |pileup|
-      pp pileup
+      #pp pileup
     end
-    puts @sam.last_command
+    #puts @sam.last_command
   end
   
 end
