@@ -14,6 +14,9 @@ rdoc
 # jeweler generated
 pkg
 
+
+.idea/*
+
 lib/bio/db/sam/external/bcftools
 lib/bio/db/sam/external/libbam*
 lib/bio/db/sam/external/samtools
