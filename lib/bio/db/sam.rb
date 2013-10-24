@@ -1,29 +1,28 @@
 module Bio
   class DB
     class Sam
-      attr_accessor :bams, :fasta, :samtools, :bcftools, :last_command
+      attr_accessor :bam, :fasta, :samtools, :bcftools, :last_command
       
       # Creates a new Bio::DB::Sam object
       # @param fasta [String] the path to the Fasta reference sequence
-      # @param bam [String,Array] path or list of paths to bam files
-      # @param sam [String,Array] path or list of paths to bam files
+      # @param bam [String] path to bam files
       # @param samtools [String] path to alternative installation of samtools
-      # @param samtools [String] path to alternative installation of bcftools
+      # @param bcftools [String] path to alternative installation of bcftools
       # @return [Bio::DB::Sam] a new `Bio::DB::Sam` object
       def initialize(args)
         @fasta = args[:fasta]
-        @bams = args[:bam]
+        @bam = args[:bam]
         @samtools = args[:samtools] || File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools')
         @bcftools = args[:bcftools] || File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','bcftools')
         
         @files = [@files] if @files.instance_of?(String)
         @last_command = nil
-        raise ArgumentError, "Need Fasta and at least one BAM or SAM" if not @fasta or not @bams
+        raise ArgumentError, "Need Fasta and at least one BAM or SAM" if not @fasta or not @bam
         raise IOError, "File not found" if not files_ok?
         @bams = [@bams] if @bams.instance_of? String
         
       end
-      
+
       #backward compatibility method, returns true if file exists otherwise, complains and quits.
       def open
         files_ok?
@@ -57,22 +56,22 @@ module Bio
       # :start => nil # start position on reference sequence
       # :stop => nil # end postion on reference sequence
       def view(opts={},&block)
-        region = ""
+        region = String.new
         if opts[:chr] and opts[:start] and opts[:stop]
           region = "#{opts[:chr]}:#{opts[:start]}-#{opts[:stop]}"
           [:chr, :start, :stop].each {|o| opts.delete(o)}
         end
         if opts[:at]
-          opts["@"] = opts[:at]
+          opts['@'] = opts[:at]
           opts.delete(:at)
         end
         
         if opts[:one]
-          opts["1"] = opts[:one]
+          opts['1'] = opts[:one]
           opts.delete(:one)
         end
                 
-        command = form_opt_string(@samtools, "view", opts, [:b, :h, :H, :S, :u, "1", :x, :X, :c, :B]) + " " + region
+        command = form_opt_string(@samtools, 'view', opts, [:b, :h, :H, :S, :u, '1', :x, :X, :c, :B]) + " " + region
         @last_command = command
         type = (opts[:u] or opts[:b]) ? :binary : :text
         klass = (type == :binary) ? String : Bio::DB::Alignment
@@ -96,7 +95,7 @@ module Bio
         self.mpileup(:r => region) do |p|
           result << p.coverage
         end
-        return result
+        result
       end
       
       def average_coverage(chr,start,length)
@@ -180,7 +179,37 @@ module Bio
           command = "#{@samtools} faidx #{@fasta}"
           system(command)
         end
-      
+      end
+
+      #:out_index name of index
+      def index(opts={})
+        opts.merge!({:out_index=>nil})
+        command = form_opt_string(@samtools, "index",opts) + " #{opts[:out_index]}"
+        @last_command = command
+        system(command)
+      end
+
+      #:out_bam name of outfile
+      #:r  remove unmapped reads and secondary alignments
+      def fix_mates(opts={})
+        opts.merge!({:out_index=>nil})
+        command = "#{form_opt_string(@samtools, "fixmate", opts, [:r])} #{opts[:out_bam]}"
+        @last_command = command
+        system(command)
+      end
+
+      alias_method :fixmate, :fix_mates
+
+      def flag_stats(opts={})
+        command = form_opt_string(@samtools, "flagstat", opts, [])
+        @last_command = command
+        strings = []
+        yield_from_pipe(command,String) {|line| strings << line.chomp}
+        strings
+      end
+
+      alias_method :flagstat, :flag_stats
+
       def index_stats
         stats = {}   
         command = form_opt_string(@samtools, "idxstats #{@fasta}", {}, [])
@@ -191,16 +220,133 @@ module Bio
         end
         stats
       end
+
+      alias_method :idxstats, :index_stats
+
+
+      #:n       sort by read names
+      #:r       attach RG tag (inferred from file names)
+      #:u       uncompressed BAM output
+      #:f       overwrite the output BAM if exist
+      #:one       compress level 1
+      #:l INT   compression level, from 0 to 9 [-1]
+      #:at INT   number of BAM compression threads [0]
+      #:R STR   merge file in the specified region STR [all]
+      #:h FILE  copy the header in FILE to <out.bam> [in1.bam]
+      #:out FILE     out file name
+      #:bams FILES or Bio::DB::Sam list of input bams, or Bio::DB::Sam objects
+      def self.merge(opts={})
+        if opts[:one]
+          opts['1'] = nil
+          opts.delete(:one)
+        end
+
+        if opts[:at]
+          opts['@'] = opts[:at]
+          opts.delete(:at)
+        end
+
+        out = opts[:out]
+        opts.delete(:out)
+
+        bam_list = opts[:bams].collect do |b|
+          b.bam rescue b
+        end.join(' ')
+
+        opts.delete(:bams)
+
+        command = "#{form_opt_string(@samtools, "merge", opts, [:n, :r, :u, :f, '1'] )} #{out} #{bam_list}"
+        @last_command = command
+        system(command)
+
+      end
+
+      #:h  header.sam
+      #:out FILE     out file name
+      #:bams FILES or Bio::DB::Sam list of input bams, or Bio::DB::Sam objects
+      def self.cat(opts)
+
+        out = opts[:out]
+        opts.delete(:out)
+
+        bam_list = opts[:bams].collect do |b|
+          b.bam rescue b
+        end.join(' ')
+
+        command = "#{form_opt_string(@samtools, "cat", opts, [:h])} -o #{out} #{bam_list}"
+        @last_command = command
+        system(command)
+
+      end
+
+      #program  one of 'samtools' 'bcftools'
+      #command one of the commands relevant to the program
+      def self.docs(program, command)
+        return "program must be 'samtools' or 'bcftools' " if not ['samtools', 'bcftools'].include? program
+        command = "#{program} #{command}"
+        `#{command}`
+      end
+
+      #:s   rmdup for SE reads
+      #:S   treat PE reads as SE in rmdup (force -s)
+      #:out FILE output bam
+      def remove_duplicates(opts={})
+        out = opts[:out]
+        opts.delete(:out)
+        command = "#{form_opt_string(@samtools, "rmdup", opts, [:s, :S])} #{out} #{@bam}"
+        @last_command = command
+        system(command)
+      end
+
+      alias_method :rmdup, :remove_duplicates
       
+      #        :n  sort by read name
+      #        :f        use <out.prefix> as full file name instead of prefix
+      #        :o        final output to stdout returns bio::db::alignment
+      #        :l INT    compression level, from 0 to 9 [-1]
+      #        :at INT    number of sorting and compression threads [1]
+      #        :m INT    max memory per thread; suffix K/M/G recognized [768M]
+      #        :prefix prefix for output bamfile
+      def sort(opts={})
+        opts.merge!({:prefix => "sorted"})
+        prefix = opts[:prefix]
+        opts.delete(:prefix)
+        command = form_opt_string(@samtools, "sort", opts, [:n, :f, :o])
+        command = command + " " + prefix
+        @last_command = command
+        if opts[:o]
+          yield_from_pipe(command, Bio::DB::Alignment)
+        else
+          system(command)
+        end
+      end
+
+
+      # :b <bed>            list of positions or regions
+      # :l <int>            minQLen
+      # :q <int>            base quality threshold
+      # :Q <int>            mapping quality threshold
+      # :r <chr:from-to>    region
+      #returns an array for each position with [sequence_name, position, depth]
+      def depth(opts={})
+        command = form_opt_string(@samtools, "depth", opts)
+        @last_command = command
+        puts command
+        yield_from_pipe(command, String) do |line|
+          yield line.split(/\t/)
+        end
+
+      end
+
       private
       
       # returns a command string from a program
       # @param program [Symbol] either `:samtools` or `:bcftools`
       # @param opts [Hash] the options hash
       # @param singles `flag` options [Array] the options in `opts` that are single options 
-      def form_opt_string(prog, command, opts, singles)
+      def form_opt_string(prog, command, opts, singles=[])
         opts_string = commandify(opts, singles)
-        "#{prog} #{command} #{opts_string} #{@bams.join(' ')}"
+        "#{prog} #{command} #{opts_string} #{@bam}"
       end
       
       # turns an opts hash into a s
@@ -222,12 +368,12 @@ module Bio
       def yield_from_pipe(command, klass, type=:text, skip_comments=true, comment_char="#", &block)
         pipe = IO.popen(command)
         if type == :text
-          while line = pipe.gets 
+          while (line = pipe.gets)
             next if skip_comments and line[0] == comment_char
             yield klass.new(line.chomp)
           end
         elsif type == :binary
-          while c = pipe.gets(nil)
+          while (c = pipe.gets(nil))
             yield c
           end
         end

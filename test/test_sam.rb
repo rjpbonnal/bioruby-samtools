@@ -57,8 +57,8 @@ class TestBioDbSam < Test::Unit::TestCase
     #pp @sam.average_coverage("chr_1", 322, 5)
   end
   
-  
-  
+
+
   def test_pileup
     @sam.mpileup(:u => true) do |pileup|
       #pp pileup
@@ -71,8 +71,43 @@ class TestBioDbSam < Test::Unit::TestCase
   end
   
   def test_fetch_reference
-    pp @sam.fetch_reference("chr_1", 10, 300, :as_bio => true)
-    puts @sam.last_command
+    #pp @sam.fetch_reference("chr_1", 10, 300, :as_bio => true)
+    #puts @sam.last_command
   end
   
+  def test_sort
+    @sam.sort
+  end
+
+  def test_mpileup
+    @sam.mpileup  do |pileup|
+      #puts pileup.class
+    end
+  end
+
+  def test_depth
+    @sam.depth do |arr|
+
+    end
+  end
+
+  def test_index
+
+  end
+
+  def test_fixmate
+
+  end
+
+  def test_flagstat
+     @sam.flag_stats
+  end
+
+  def test_merge
+
+  end
+
+  def test_rmdup
+
+  end
 end
