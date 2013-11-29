@@ -3,6 +3,7 @@ module Bio
     class Sam
       attr_accessor :bam, :fasta, :samtools, :bcftools, :last_command
       
+      
       # Creates a new Bio::DB::Sam object
       # @param fasta [String] the path to the Fasta reference sequence
       # @param bam [String] path to bam files
@@ -319,6 +320,29 @@ module Bio
         else
           system(command)
         end
+      end
+      
+      
+      def tview(opts={})
+        #to do
+      end
+       
+      def reheader(header_sam)
+        command = "#{@samtools} reheader #{header_sam} #{@bam}"
+        system(command)
+      end
+      
+      
+      def calmd(opts={})
+        #to do
+      end
+      
+      def targetcut(opts={})
+        #to do
+      end
+      
+      def phase(opts={})
+        #to do
       end
 
 
