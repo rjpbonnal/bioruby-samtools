@@ -173,14 +173,17 @@ module Bio
         seq
       end
       
-      def faidx(chr,start,stop,opts={:as_bio => false})
-        if chr and start and stop
-          self.fetch_reference(chr,start,stop,opts)
-        else
-          command = "#{@samtools} faidx #{@fasta}"
-          system(command)
-        end
+  
+    def faidx(opts={})
+      if opts.has_key?(:chr) and opts.has_key?(:start) and opts.has_key?(:stop)
+      opts={:as_bio => false}
+      self.fetch_reference(:chr,:start,:stop,opts)
+      else
+        command = "#{@samtools} faidx #{@fasta}"
+        @last_command = command
+        system(command)
       end
+    end
 
       #:out_index name of index
       def index(opts={})
@@ -329,12 +332,22 @@ module Bio
        
       def reheader(header_sam)
         command = "#{@samtools} reheader #{header_sam} #{@bam}"
+        @last_command = command
         system(command)
       end
       
-      
+      #	-A 	When used jointly with -r this option overwrites the original base quality.
+      #	:e 	Convert a the read base to = if it is identical to the aligned reference base. Indel caller does not support the = bases at the moment.
+      #	:u 	Output uncompressed BAM
+      #	:b 	Output compressed BAM
+      #	:S 	The input is SAM with header lines
+      #	:C INT 	Coefficient to cap mapping quality of poorly mapped reads. See the pileup command for details. [0]
+      #	:r 	Compute the BQ tag (without -A) or cap base quality by BAQ (with -A).
+      #	:E 	Extended BAQ calculation. This option trades specificity for sensitivity, though the effect is minor. 
       def calmd(opts={})
-        #to do
+        command = "#{form_opt_string(@samtools, "calmd", opts, [:E, :e, :u, :b, :S, :r] )} #{bam}"
+        @last_command = command
+        system(command)
       end
       
       def targetcut(opts={})

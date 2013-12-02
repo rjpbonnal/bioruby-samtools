@@ -11,6 +11,7 @@ testSamFile = "/Users/ethering/temp/samtools_data/Map2.sam"
         :fasta => testReference, 
         :bam => testBAMFile
     )
-
-#@sam.faidx("scaffold_1", 1, 5928454)
-@sam.reheader(testSamFile)
+#opts={:chr=>'scaffold_1', :start=>1, :stop=>5928454}
+opts={}
+@sam.faidx(opts)
+#@sam.calmd(:C => '30')
