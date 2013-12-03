@@ -174,16 +174,16 @@ module Bio
       end
       
   
-    def faidx(opts={})
-      if opts.has_key?(:chr) and opts.has_key?(:start) and opts.has_key?(:stop)
-      opts={:as_bio => false}
-      self.fetch_reference(:chr,:start,:stop,opts)
-      else
-        command = "#{@samtools} faidx #{@fasta}"
-        @last_command = command
-        system(command)
+      def faidx(opts={})
+        if opts.has_key?(:chr) and opts.has_key?(:start) and opts.has_key?(:stop)
+        opts={:as_bio => false}
+        self.fetch_reference(:chr,:start,:stop,opts)
+        else
+          command = "#{@samtools} faidx #{@fasta}"
+          @last_command = command
+          system(command)
+        end
       end
-    end
 
       #:out_index name of index
       def index(opts={})
@@ -345,7 +345,8 @@ module Bio
       #	:r 	Compute the BQ tag (without -A) or cap base quality by BAQ (with -A).
       #	:E 	Extended BAQ calculation. This option trades specificity for sensitivity, though the effect is minor. 
       def calmd(opts={})
-        command = "#{form_opt_string(@samtools, "calmd", opts, [:E, :e, :u, :b, :S, :r] )} #{bam}"
+        command = "#{form_opt_string(@samtools, "calmd",  opts, [:E, :e, :u, :b, :S, :r] )} #{@fasta}"
+        puts command
         @last_command = command
         system(command)
       end
