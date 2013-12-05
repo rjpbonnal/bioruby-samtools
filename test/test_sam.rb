@@ -39,7 +39,7 @@ class TestBioDbSam < Test::Unit::TestCase
   
   def test_fetch
     @sam.fetch("chr_1", 10,1000) do |sam|
-      #pp sam
+      assertEqual?(sam.class, Bio::DB::Alignment)
     end
     #puts @sam.last_command
   end

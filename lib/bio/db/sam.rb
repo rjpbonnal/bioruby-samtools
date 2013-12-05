@@ -346,17 +346,25 @@ module Bio
       #	:E 	Extended BAQ calculation. This option trades specificity for sensitivity, though the effect is minor. 
       def calmd(opts={})
         command = "#{form_opt_string(@samtools, "calmd",  opts, [:E, :e, :u, :b, :S, :r] )} #{@fasta}"
-        puts command
         @last_command = command
         system(command)
       end
       
       def targetcut(opts={})
-        #to do
+        command = "#{form_opt_string(@samtools, "targetcut", opts, [] )}"
+        @last_command = command
+        system(command)
       end
-      
+      # :A Drop reads with ambiguous phase.
+      # :b STR 	Prefix of BAM output. When this option is in use, phase-0 reads will be saved in file STR.0.bam and phase-1 reads in STR.1.bam. Phase unknown reads will be randomly allocated to one of the two files. Chimeric reads with switch errors will be saved in STR.chimeric.bam. [null]
+      # :F Do not attempt to fix chimeric reads.
+      # :k INT 	Maximum length for local phasing. [13]
+      # :q INT 	Minimum Phred-scaled LOD to call a heterozygote. [40]
+      # :Q INT 	Minimum base quality to be used in het calling. [13] 
       def phase(opts={})
-        #to do
+        command = "#{form_opt_string(@samtools, "phase", opts, [:A, :F] )}"
+        @last_command = command
+        system(command)
       end
 
 
