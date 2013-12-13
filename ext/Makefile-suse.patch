@@ -1,0 +1,11 @@
+--- Makefile	2013-12-10 14:06:29.868639418 +0000
++++ Makefile.opensuse	2013-12-10 14:06:56.548222174 +0000
+@@ -13,7 +13,7 @@
+ INCLUDES=	-I.
+ SUBDIRS=	. bcftools misc
+ LIBPATH=
+-LIBCURSES=	-lcurses # -lXCurses
++LIBCURSES=	-lncurses # -lXCurses
+ 
+ .SUFFIXES:.c .o
+ 
