@@ -164,6 +164,7 @@ module Bio
       
       def fetch_reference(chr,start,stop, opts={:as_bio => false})
         command = "#{@samtools} faidx #{@fasta} #{chr}:#{start}-#{stop}"
+        puts command
         @last_command = command
         seq = ""
         yield_from_pipe(command, String, :text ) {|line| seq = seq + line unless line =~ /^>/}
@@ -187,8 +188,8 @@ module Bio
 
       #:out_index name of index
       def index(opts={})
-        opts.merge!({:out_index=>nil})
-        command = form_opt_string(@samtools, "index",opts) + " #{opts[:out_index]}"
+        command = "#{@samtools} index #{@bam} #{opts[:out_index]}"
+        puts command
         @last_command = command
         system(command)
       end
@@ -216,9 +217,9 @@ module Bio
 
       def index_stats
         stats = {}   
-        command = form_opt_string(@samtools, "idxstats #{@fasta}", {}, [])
+        command = form_opt_string(@samtools, "idxstats #{@bam}", {}, [])
         @last_command = command
-        yield_from_pipe(command, String, :text,skip_comments=true, comment_char="#") do |line|
+        yield_from_pipe(command, String, :text, skip_comments=true, comment_char="#") do |line|
           info = line.chomp.split(/\t/)
           stats[ info[0] ] = {:length => info[1].to_i, :mapped_reads => info[2].to_i, :unmapped_reads => info[3].to_i }
         end
@@ -312,12 +313,15 @@ module Bio
       #        :m INT    max memory per thread; suffix K/M/G recognized [768M]
       #        :prefix prefix for output bamfile
       def sort(opts={})
-        opts.merge!({:prefix => "sorted"})
+        if !opts.has_key?(:prefix)
+          opts.merge!({:prefix => "sorted"})
+        end
         prefix = opts[:prefix]
         opts.delete(:prefix)
         command = form_opt_string(@samtools, "sort", opts, [:n, :f, :o])
         command = command + " " + prefix
         @last_command = command
+        puts command
         if opts[:o]
           yield_from_pipe(command, Bio::DB::Alignment)
         else
@@ -326,8 +330,10 @@ module Bio
       end
       
       
-      def tview(opts={})
-        #to do
+      def tview()
+        command = "#{@samtools} tview #{@bam} #{@fasta}"
+        @last_command = command
+        system(command)
       end
        
       def reheader(header_sam)

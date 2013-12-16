@@ -10,7 +10,7 @@ class TestBioDbSam < Test::Unit::TestCase
   def setup
     @test_folder                = "test/samples/small"
     @testTAMFile                = @test_folder + "/test.tam"
-    @testBAMFile                = @test_folder + "/testu.bam"
+    @testBAMFile                = @test_folder + "/testu_fixedmates.bam"
     @testReference              = @test_folder + "/test_chr.fasta"
     @sam = Bio::DB::Sam.new(
         :fasta => @testReference, 
@@ -25,7 +25,7 @@ class TestBioDbSam < Test::Unit::TestCase
   def test_view
     #how to get Bio::DB::Alignment objects ..
     @sam.view() do |sam|
-      #pp sam
+      assert_equal(sam.class, Bio::DB::Alignment)
     end
     
     #how to get binary 
@@ -39,60 +39,81 @@ class TestBioDbSam < Test::Unit::TestCase
   
   def test_fetch
     @sam.fetch("chr_1", 10,1000) do |sam|
-      assertEqual?(sam.class, Bio::DB::Alignment)
+      assert_equal(sam.class, Bio::DB::Alignment)
     end
     #puts @sam.last_command
   end
   
   def test_fetch_with_function
-    #block = Proc.new {|a| pp a}
-    #@sam.fetch_with_function("chr_1", 10,1000, &block)
+    block = Proc.new {|a| assert_equal(a.class, Bio::DB::Alignment)}
+    @sam.fetch_with_function("chr_1", 10,1000, &block)
   end
   
   def test_chromosome_coverage
-    #pp @sam.chromosome_coverage("chr_1", 322, 5)
+    pp @sam.chromosome_coverage("chr_1", 322, 5)
   end
   
   def test_average_coverage
     #pp @sam.average_coverage("chr_1", 322, 5)
   end
-  
-
-
-  def test_pileup
-    @sam.mpileup(:u => true) do |pileup|
-      #pp pileup
-    end
-    #puts @sam.last_command
-  end
-  
+   
   def test_index_stats
-    #pp @sam.index_stats
+    @sam.index_stats.each_pair do |seq, stat|
+      assert_send([['chr_1' , '*'], :member?, seq])
+    end
   end
   
   def test_fetch_reference
-    #pp @sam.fetch_reference("chr_1", 10, 300, :as_bio => true)
-    #puts @sam.last_command
+    seq_expected = "CCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTA"
+    seq_fetched = @sam.fetch_reference("chr_1", 1, 70, :as_bio => false)
+    assert_equal(seq_fetched, seq_expected)
   end
   
   def test_sort
-    @sam.sort
+    @sam.sort(:prefix=>"test_sorted")
+    sortedsam = "test_sorted.bam"
+    @sortsam = Bio::DB::Sam.new(
+        :fasta => @testReference, 
+        :bam => sortedsam
+    )
+    pos = 0
+    @sortsam.view()do |sam|
+      assert(sam.pos > pos, "Not sorted by position")
+      pos = sam.pos
+    end
   end
 
   def test_mpileup
-    @sam.mpileup  do |pileup|
-      #puts pileup.class
+    @sam.mpileup(:g => false) do |pileup|
+      assert_equal(pileup.class, Bio::DB::Pileup)
+      assert_kind_of(Bio::DB::Pileup, pileup)
+      assert_equal(pileup.ref_name, 'chr_1')
+    end
+
+    @sam.mpileup(:u => true) do |pileup|
+      assert_kind_of(Bio::DB::Vcf, pileup)
+      assert_equal(pileup.chrom, 'chr_1')
     end
   end
 
   def test_depth
-    @sam.depth do |arr|
-
+    #the depth of coverage should be '1' at all positions
+    @sam.depth(:r=>"chr_1:25-42") do |al|
+    assert_equal(al[2].to_i, 1)
     end
   end
 
   def test_index
-
+    @sam.index()
+    test_bai_file = @testBAMFile+".bai"
+    assert_nothing_thrown do
+      File.open(test_bai_file, "r")
+    end
+    test_bai_file = @test_folder+"/different_index.bam.bai"
+    @sam.index(:out_index=> test_bai_file)
+    assert_nothing_thrown do
+      File.open(test_bai_file, "r")
+    end
   end
 
   def test_fixmate
