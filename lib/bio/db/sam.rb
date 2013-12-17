@@ -164,7 +164,7 @@ module Bio
       
       def fetch_reference(chr,start,stop, opts={:as_bio => false})
         command = "#{@samtools} faidx #{@fasta} #{chr}:#{start}-#{stop}"
-        puts command
+        #puts command
         @last_command = command
         seq = ""
         yield_from_pipe(command, String, :text ) {|line| seq = seq + line unless line =~ /^>/}
@@ -189,7 +189,7 @@ module Bio
       #:out_index name of index
       def index(opts={})
         command = "#{@samtools} index #{@bam} #{opts[:out_index]}"
-        puts command
+        #puts command
         @last_command = command
         system(command)
       end
@@ -197,8 +197,14 @@ module Bio
       #:out_bam name of outfile
       #:r  remove unmapped reads and secondary alignments
       def fix_mates(opts={})
-        opts.merge!({:out_index=>nil})
-        command = "#{form_opt_string(@samtools, "fixmate", opts, [:r])} #{opts[:out_bam]}"
+        #opts.merge!({:out_index=>nil})
+        remove_reads = ""
+        if opts[:r]
+          remove_reads = "-r"
+        end
+        
+        command = "#{@samtools} fixmate #{remove_reads} #{@bam} #{opts[:out_bam]}"
+        #puts command
         @last_command = command
         system(command)
       end
@@ -207,6 +213,7 @@ module Bio
 
       def flag_stats(opts={})
         command = form_opt_string(@samtools, "flagstat", opts, [])
+        #puts command
         @last_command = command
         strings = []
         yield_from_pipe(command,String) {|line| strings << line.chomp}
@@ -240,7 +247,7 @@ module Bio
       #:h FILE  copy the header in FILE to <out.bam> [in1.bam]
       #:out FILE     out file name
       #:bams FILES or Bio::DB::Sam list of input bams, or Bio::DB::Sam objects
-      def self.merge(opts={})
+      def merge(opts={})
         if opts[:one]
           opts['1'] = nil
           opts.delete(:one)
@@ -259,9 +266,12 @@ module Bio
         end.join(' ')
 
         opts.delete(:bams)
+        options = commandify(opts, [:n, :r, :u, :f, '1'] )
+        #command = "#{form_opt_string(@samtools, "merge", opts, [:n, :r, :u, :f, '1'] )} #{out} #{bam_list}"
+        command = "#{@samtools} merge #{options} #{out} #{bam_list}"
 
-        command = "#{form_opt_string(@samtools, "merge", opts, [:n, :r, :u, :f, '1'] )} #{out} #{bam_list}"
         @last_command = command
+        puts command
         system(command)
 
       end
@@ -321,7 +331,7 @@ module Bio
         command = form_opt_string(@samtools, "sort", opts, [:n, :f, :o])
         command = command + " " + prefix
         @last_command = command
-        puts command
+        #puts command
         if opts[:o]
           yield_from_pipe(command, Bio::DB::Alignment)
         else
@@ -383,7 +393,7 @@ module Bio
       def depth(opts={})
         command = form_opt_string(@samtools, "depth", opts)
         @last_command = command
-        puts command
+        #puts command
         yield_from_pipe(command, String) do |line|
           yield line.split(/\t/)
         end
