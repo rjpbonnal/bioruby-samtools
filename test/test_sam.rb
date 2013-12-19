@@ -168,6 +168,18 @@ class TestBioDbSam < Test::Unit::TestCase
   end
 
   def test_rmdup
+    #dupes contains 4 reads mapped once and one read mapped to the same place 268 times.
+    dupes = @test_folder + "/dupes.bam"
+    unduped = @test_folder + "/dupes_rmdup.bam"
+    bam_with_dupes = Bio::DB::Sam.new(:fasta => @testReference, :bam => dupes)
+    bam_with_dupes.remove_duplicates(:s=>true, :out=>unduped)
 
+    unduped_bam = Bio::DB::Sam.new(:fasta => @testReference, :bam => unduped)
+    #rmdup should remove 267 of the 268 reads mapping to the same place, so producing a bam file with 5 reads
+    readcount = 0
+    unduped_bam.view()do |sam|
+        readcount +=1  
+    end
+    assert_equal(readcount, 5)
   end
 end
