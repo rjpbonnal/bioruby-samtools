@@ -226,7 +226,7 @@ module Bio
         stats = {}   
         command = form_opt_string(@samtools, "idxstats #{@bam}", {}, [])
         @last_command = command
-        yield_from_pipe(command, String, :text, skip_comments=true, comment_char="#") do |line|
+        yield_from_pipe(command, String, :text, true, "#") do |line|
           info = line.chomp.split(/\t/)
           stats[ info[0] ] = {:length => info[1].to_i, :mapped_reads => info[2].to_i, :unmapped_reads => info[3].to_i }
         end
@@ -279,16 +279,17 @@ module Bio
       #:h  header.sam
       #:out FILE     out file name
       #:bams FILES or Bio::DB::Sam list of input bams, or Bio::DB::Sam objects
-      def self.cat(opts)
-
+      def cat(opts={})
         out = opts[:out]
         opts.delete(:out)
 
         bam_list = opts[:bams].collect do |b|
           b.bam rescue b
         end.join(' ')
-
-        command = "#{form_opt_string(@samtools, "cat", opts, [:h])} -o #{out} #{bam_list}"
+        opts.delete(:bams)
+        options = commandify(opts, [:h] )
+        command = "#{@samtools} cat #{options} -o #{out} #{bam_list}"
+        puts command
         @last_command = command
         system(command)
 
@@ -345,9 +346,16 @@ module Bio
         @last_command = command
         system(command)
       end
-       
-      def reheader(header_sam)
-        command = "#{@samtools} reheader #{header_sam} #{@bam}"
+      
+      #:out FILE output bam 
+      def reheader(header_sam, opts={})
+        if opts.has_key?(:out)
+          out=opts[:out]
+          command = "#{@samtools} reheader #{header_sam} #{@bam} > #{out}"
+        else
+          command = "#{@samtools} reheader #{header_sam} #{@bam}"
+        end
+        puts command
         @last_command = command
         system(command)
       end
@@ -360,12 +368,14 @@ module Bio
       #	:C INT 	Coefficient to cap mapping quality of poorly mapped reads. See the pileup command for details. [0]
       #	:r 	Compute the BQ tag (without -A) or cap base quality by BAQ (with -A).
       #	:E 	Extended BAQ calculation. This option trades specificity for sensitivity, though the effect is minor. 
-      def calmd(opts={})
-        command = "#{form_opt_string(@samtools, "calmd",  opts, [:E, :e, :u, :b, :S, :r] )} #{@fasta}"
+      def calmd(opts={}, &block)
+        command = form_opt_string(@samtools, "calmd",  opts, [:E, :e, :u, :b, :S, :r] )+ " " + @fasta
         @last_command = command
-        system(command)
+        type = :text 
+        klass = Bio::DB::Alignment
+        yield_from_pipe(command, klass, type, true, "@",&block)
       end
-      
+
       def targetcut(opts={})
         command = "#{form_opt_string(@samtools, "targetcut", opts, [] )}"
         @last_command = command

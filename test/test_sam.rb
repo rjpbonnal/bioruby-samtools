@@ -25,38 +25,49 @@ class TestBioDbSam < Test::Unit::TestCase
   def test_view
     #how to get Bio::DB::Alignment objects ..
     @sam.view() do |sam|
-      #test that all the objects are Bio::DB::Alignment objects
+      #test that all the objects are Bio::DB::Alignment objects and their reference is 'chr_1'
       assert_equal(sam.class, Bio::DB::Alignment)
+      assert_equal(sam.rname, "chr_1")
     end
-    
-    #how to get binary 
-    #f = File.open("view.bam", "w")
-    #@sam.view( :b => true ) do |line|
-    #  print line
-    #end
-    #f.close
-    
   end
   
   def test_fetch
     @sam.fetch("chr_1", 10,1000) do |sam|
       #test that all the objects are Bio::DB::Alignment objects
       assert_equal(sam.class, Bio::DB::Alignment)
+      assert_equal(sam.rname, "chr_1")
     end
-    #puts @sam.last_command
   end
   
   def test_fetch_with_function
+    #pass the assert to method
     block = Proc.new {|a| assert_equal(a.class, Bio::DB::Alignment)}
     @sam.fetch_with_function("chr_1", 10,1000, &block)
   end
   
   def test_chromosome_coverage
-    pp @sam.chromosome_coverage("chr_1", 322, 5)
+    #the coverage should only be 1.0 or 2.0
+    cov = @sam.chromosome_coverage("chr_1", 33, 19)
+    cov.each do |pu|
+      assert_send([[1.0 , 2.0], :member?, pu])
+    end
   end
   
   def test_average_coverage
-    #pp @sam.average_coverage("chr_1", 322, 5)
+    #there should be 10 positions with cov of 1.0 and 10 with cov of 2.0, so average of 1.5
+    avcov = @sam.average_coverage("chr_1", 33, 19)
+    assert_equal(avcov, 1.5)
+  end
+  
+  def test_faidx
+    @sam.faidx()
+    test_fai_file = @testReference+".fai"
+    #test that the .fai file exists
+    assert_nothing_thrown do
+      File.open(test_fai_file, "r")
+    end
+    #test that the file is not empty
+    assert(File.size(test_fai_file) > 0, "From test_faidx: .fai file is empty")
   end
    
   def test_index_stats
@@ -90,7 +101,29 @@ class TestBioDbSam < Test::Unit::TestCase
       pos = sam.pos
     end
   end
+  
+  def test_reheader
+    #bam file with reference 'chr_1'
+    cat_file = @test_folder + "/maps_cated.bam"
+    bam_in = Bio::DB::Sam.new(:fasta => @testReference, :bam => cat_file)
+    #sam file with reference 'chr_2'
+    sam_header = @test_folder + "/map_for_reheader.sam"
+    outfile = @test_folder + "/reheader.bam"
+    
+    bam_in.reheader(sam_header, :out=>outfile)
+    reheader_bam = Bio::DB::Sam.new(:fasta => @testReference, :bam => outfile)
+    #check that the reference is 'chr_2'
+    reheader_bam.view()do |sam|
+      assert_equal(sam.rname, "chr_2")
+    end
+  end
 
+  def test_calmd
+    @sam.calmd() do 
+    
+    
+  end
+  
   def test_mpileup
     #create an mpileup
     @sam.mpileup(:g => false) do |pileup|
@@ -164,6 +197,27 @@ class TestBioDbSam < Test::Unit::TestCase
       assert_kind_of(Bio::DB::Alignment, al)
       no_reads_mapped+=1
     end
+    assert_equal(no_reads_mapped, 10)
+  end
+  
+  def test_cat
+    #same files used for merge, but we'll cat them instead
+    bam1 = @test_folder + "/map_to_merge1.bam"
+    bam2 = @test_folder + "/map_to_merge2.bam"
+    
+    bam_files = [bam1, bam2]
+    
+    cat_bam_file = @test_folder + "/maps_cated.bam"
+    
+    @sam.merge(:out=>cat_bam_file, :bams=>bam_files)
+    cated_bam = Bio::DB::Sam.new(:fasta => @testReference, :bam => cat_bam_file)
+    
+    no_reads_mapped = 0;
+    cated_bam.view() do |al|
+      assert_kind_of(Bio::DB::Alignment, al)
+      no_reads_mapped+=1
+    end
+    #there should be 10 reads in the cat'd maps
     assert_equal(no_reads_mapped, 10)
   end
 
