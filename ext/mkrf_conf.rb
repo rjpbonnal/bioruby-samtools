@@ -37,6 +37,8 @@ task :compile do
   sh "tar xvfj #{SamToolsFile}"
   cd("samtools-#{Version}") do
     sh "patch < ../Makefile-bioruby.patch"
+    # This patch replace CURSES lib with NCURSES which it is the only one available in OpenSUSE
+    sh "patch < ../Makefile-suse.patch"
     case Config::CONFIG['host_os']
       when /linux/
         #sh "CFLAGS='-g -Wall -O2 -fPIC' make -e"
