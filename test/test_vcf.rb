@@ -65,4 +65,8 @@ class TestVcf < Test::Unit::TestCase
                    "3"=>{"DP"=>"5", "GT"=>"1/1", "HQ"=>".,", "GQ"=>"43"}}, @vcf4.samples)
   end
   
+  def test_int_or_raw
+    @vcf1.int_or_raw(1)
+  end
+  
 end
