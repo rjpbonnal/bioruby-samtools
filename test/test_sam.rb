@@ -119,8 +119,10 @@ class TestBioDbSam < Test::Unit::TestCase
   end
 
   def test_calmd
-    @sam.calmd() do 
-    
+    no_md_sam = @test_folder + "/no_md.sam"
+    md = Bio::DB::Sam.new(:fasta => @testReference, :bam => no_md_sam)
+    block = Proc.new {|a| assert(a.tags.has_key?('MD'), "From test_calmd: couldn't find the MD tag")}
+    md.calmd(:S=>true, &block)
     
   end
   
@@ -154,12 +156,14 @@ class TestBioDbSam < Test::Unit::TestCase
     assert_nothing_thrown do
       File.open(test_bai_file, "r")
     end
+    assert(File.size(test_bai_file) > 0, "From test_index: .bai file is empty")
     #as above, but give the output a different name
     test_bai_file = @test_folder+"/different_index.bam.bai"
     @sam.index(:out_index=> test_bai_file)
     assert_nothing_thrown do
       File.open(test_bai_file, "r")
     end
+    assert(File.size(test_bai_file) > 0, "From test_index: .bai file is empty")
   end
 
   def test_fixmate
@@ -168,10 +172,10 @@ class TestBioDbSam < Test::Unit::TestCase
     assert_nothing_thrown do
       File.open(mates_fixed_bam, "r")
     end
-    
+    assert(File.size(mates_fixed_bam) > 0, "From test_fixmate: .bam file is empty")
   end
 
-  def test_flagstat
+  def test_flagstats
     #get the stats
     stats = @sam.flag_stats()
     #the number of reads mapped will be the first character on the first line.
@@ -235,5 +239,19 @@ class TestBioDbSam < Test::Unit::TestCase
         readcount +=1  
     end
     assert_equal(readcount, 5)
+  end
+  
+  def test_targetcut
+    sorted_bam = @test_folder + "/sorted.bam"
+    cut = Bio::DB::Sam.new(:fasta => @testReference, :bam => sorted_bam)
+    assert_nothing_thrown do
+      cut.targetcut
+    end
+  end
+  
+  def test_docs
+    #force an error (use 'samtool' instead of 'samtools')
+    output = Bio::DB::Sam.docs('samtool', 'tview')
+    assert_equal(output, "program must be 'samtools' or 'bcftools'")
   end
 end

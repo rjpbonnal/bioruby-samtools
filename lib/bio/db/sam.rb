@@ -298,7 +298,7 @@ module Bio
       #program  one of 'samtools' 'bcftools'
       #command one of the commands relevant to the program
       def self.docs(program, command)
-        return "program must be 'samtools' or 'bcftools' " if not ['samtools', 'bcftools'].include? program
+        return "program must be 'samtools' or 'bcftools'" if not ['samtools', 'bcftools'].include? program
         command = "#{program} #{command}"
         `#{command}`
       end
