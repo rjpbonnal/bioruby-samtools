@@ -11,12 +11,10 @@ gem "systemu", ">=2.5.2"
 group :development do
   gem "shoulda", ">= 0"
   gem "shoulda-context"
-  gem "shoulda-matchers"
+  gem  "shoulda-matchers"
   gem "bundler", "> 1.0.21"
   gem "jeweler"
   gem "rcov", ">=0", :platforms => :ruby_18
   gem "simplecov", ">= 0",   :platforms => :ruby_19
-  gem "bio", ">= 1.4.2"
-  gem "ffi"
   gem 'rdoc'
 end
