@@ -1,27 +1,12 @@
---- Makefile	2011-10-27 14:57:06.000000000 +0200
-+++ ../Makefile-bioruby	2011-10-27 14:57:41.000000000 +0200
-@@ -1,10 +1,11 @@
+--- Makefile.bk	2014-02-01 19:56:14.000000000 +0000
++++ Makefile	2014-02-01 20:47:30.000000000 +0000
+@@ -1,7 +1,7 @@
  CC=			gcc
--CFLAGS=		-g -Wall -O2 #-m64 #-arch ppc
-+CFLAGS=		-g -Wall -O2 -fPIC #-m64 #-fPIC #-arch ppc
- DFLAGS=		-D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -D_USE_KNETFILE -D_CURSES_LIB=1
+-CFLAGS=		-g -Wall -O2
++CFLAGS=		-g -Wall -O2 -fPIC 
+ #LDFLAGS=		-Wl,-rpath,\$$ORIGIN/../lib
+-DFLAGS=		-D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -D_USE_KNETFILE -D_CURSES_LIB=1
++DFLAGS=		-D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -D_USE_KNETFILE -D_CURSES_LIB=0
  KNETFILE_O=	knetfile.o
  LOBJS=		bgzf.o kstring.o bam_aux.o bam.o bam_import.o sam.o bam_index.o	\
  			bam_pileup.o bam_lpileup.o bam_md.o razf.o faidx.o bedidx.o \
--			$(KNETFILE_O) bam_sort.o sam_header.o bam_reheader.o kprobaln.o bam_cat.o
-+			$(KNETFILE_O) bam_sort.o sam_header.o bam_reheader.o kprobaln.o bam_cat.o bam_plcmd.o \
-+			bam2bcf.o bam2bcf_indel.o sample.o bcftools/bcf.o bcftools/bcfutils.o errmod.o bcftools/fet.o
- AOBJS=		bam_tview.o bam_plcmd.o sam_view.o	\
- 			bam_rmdup.o bam_rmdupse.o bam_mate.o bam_stat.o bam_color.o	\
- 			bamtk.o kaln.o bam2bcf.o bam2bcf_indel.o errmod.o sample.o \
-@@ -81,8 +82,8 @@
- dylib:
- 		@$(MAKE) cleanlocal; \
- 		case `uname` in \
--			Linux) $(MAKE) CFLAGS="$(CFLAGS) -fPIC" libbam.so.1-local;; \
--			Darwin) $(MAKE) CFLAGS="$(CFLAGS) -fPIC" libbam.1.dylib-local;; \
-+			Linux) $(MAKE) CFLAGS="$(CFLAGS)  -fPIC" libbam.so.1-local;; \
-+			Darwin) $(MAKE) CFLAGS="$(CFLAGS) -fPIC" libbam.1.dylib-local ;; \
- 			*) echo 'Unknown OS';; \
- 		esac
- 

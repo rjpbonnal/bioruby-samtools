@@ -17,6 +17,9 @@ module Bio
   class DB
     class Sam
       attr_reader :sam_file
+      attr_accessor :minumum_ratio_for_iup_consensus
+      attr_reader :cached_regions
+      @minumum_ratio_for_iup_consensus = 0.20
 
       # To make a new sam object. Initialize expects a hash optsa with the following elemets:
       # fasta:: The fasta file with the reference. (nil)
@@ -159,17 +162,10 @@ module Bio
       #This is a simple average coverage just calculated with the first and last
       #possition of the alignment, ignoring the gaps.
       def chromosome_coverage(chromosome, qstart, len)
-        #  reference = fetch_reference(chromosome, qstart,len)
-        #  len = reference.length if len > reference.length
-        #p qend.to_s + "-" + qstart.to_s + "framesize " + (qend - qstart).to_s
+        
         coverages = Array.new(len, 0)
 
         chr_cov_proc = Proc.new do |alignment|
-          #last = qstart + len
-          #first = qstart
-          #last = alignment.calend if last > alignment.calend
-          #first = alignment.pos if first < alignment.pos
-          # p first
           last = alignment.calend - qstart
           first = alignment.pos - qstart
           if last < first
