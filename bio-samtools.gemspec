@@ -223,6 +223,7 @@ Gem::Specification.new do |s|
     end
   else
     s.add_dependency(%q<ffi>, [">= 0"])
+    s.add_dependency(%q<systemu>, [">= 0"])
     s.add_dependency(%q<bio>, [">= 1.4.2"])
     s.add_dependency(%q<shoulda>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
