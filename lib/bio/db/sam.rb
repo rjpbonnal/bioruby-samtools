@@ -4,12 +4,12 @@ module Bio
       attr_accessor :bam, :fasta, :samtools, :bcftools, :last_command
       
       
-      # Creates a new Bio::DB::Sam object
-      # @param fasta [String] the path to the Fasta reference sequence
-      # @param bam [String] path to bam files
-      # @param samtools [String] path to alternative installation of samtools
-      # @param bcftools [String] path to alternative installation of bcftools
-      # @return [Bio::DB::Sam] a new `Bio::DB::Sam` object
+      #Creates a new Bio::DB::Sam object
+      #* fasta [String] - the path to the Fasta reference sequence
+      #* bam [String] - path to bam files
+      #* samtools [String] - path to alternative installation of samtools
+      #* bcftools [String] - path to alternative installation of bcftools
+      #* returns [Bio::DB::Sam] a new `Bio::DB::Sam` object
       def initialize(args)
         @fasta = args[:fasta]
         @bam = args[:bam]
@@ -29,33 +29,34 @@ module Bio
         files_ok?
       end
       
-      # runs the samtools view command
-      # @param opts [Hash] options for view as follows
-      # :b => nil, # -b output BAM
-      # :h => nil, # -h print header for the SAM output
-      # :H => nil, # -H print header only (no alignments)
-      # :S => nil, # -S input is SAM
-      # :u => nil, # -u uncompressed BAM output (force -b)
-      # :one => nil, # -1 fast compression (force -b)
-      # :x => nil, # -x output FLAG in HEX (samtools-C specific)
-      # :X => nil, # -X output FLAG in string (samtools-C specific)
-      # :c => nil, # -c print only the count of matching records
-      # :B => nil, # -B collapse the backward CIGAR operation
-      # :at => nil, # -@ INT number of BAM compression threads [0]
-      # :L => nil, # -L FILE output alignments overlapping the input BED FILE [null]
-      # :t => nil, # -t FILE list of reference names and lengths (force -S) [null]
-      # :T => nil, # -T FILE reference sequence file (force -S) [null]
-      # :o => nil, # -o FILE output file name [stdout]
-      # :R => nil, # -R FILE list of read groups to be outputted [null]
-      # :f => nil, # -f INT required flag  0 for unset [0]
-      # :F => nil, # -F INT filtering flag  0 for unset [0]
-      # :q => nil, # -q INT minimum mapping quality [0]
-      # :l => nil, # -l STR only output reads in library STR [null]
-      # :r => nil, # -r STR only output reads in read group STR [null]
-      # :s => nil # -s FLOAT fraction of templates to subsample; integer part as seed [-1]
-      # :chr => nil # name of reference sequence to get alignments from
-      # :start => nil # start position on reference sequence
-      # :stop => nil # end postion on reference sequence
+      #runs the samtools view command
+      #@param opts [Hash] options for view as follows
+      #== args
+      #* b - output BAM
+      #* h - print header for the SAM output
+      #* H - print header only (no alignments)
+      #* S - input is SAM
+      #* u - uncompressed BAM output (force -b)
+      #* one - fast compression (force -b)
+      #* x - output FLAG in HEX (samtools-C specific)
+      #* X - output FLAG in string (samtools-C specific)
+      #* c - print only the count of matching records
+      #* B - collapse the backward CIGAR operation
+      #* at - INT number of BAM compression threads [0]
+      #* L - FILE output alignments overlapping the input BED FILE [null]
+      #* t - FILE list of reference names and lengths (force -S) [null]
+      #* T - FILE reference sequence file (force -S) [null]
+      #* o - FILE output file name [stdout]
+      #* R - FILE list of read groups to be outputted [null]
+      #* f - INT required flag  0 for unset [0]
+      #* F - INT filtering flag  0 for unset [0]
+      #* q - INT minimum mapping quality [0]
+      #* l - STR only output reads in library STR [null]
+      #* r - STR only output reads in read group STR [null]
+      #* s - FLOAT fraction of templates to subsample; integer part as seed [-1]
+      #* chr - name of reference sequence to get alignments from
+      #* start - start position on reference sequence
+      #* stop - end postion on reference sequence
       def view(opts={},&block)
         region = String.new
         if opts[:chr] and opts[:start] and opts[:stop]
@@ -79,6 +80,11 @@ module Bio
         yield_from_pipe(command, klass, type, &block)
       end
       
+      #fetches a subsequence and calls code block
+      #* chr - the reference name for the subsequence
+      #* start - the start position for the subsequence
+      #* stop - the stop position for the subsequence
+      #* &block - the the block of code to execute
       def fetch(chr, start,stop, &block)
         view(
         :chr => chr,
@@ -90,6 +96,10 @@ module Bio
       
       alias_method :fetch_with_function, :fetch
       
+      #returns an array of coverage for each location for which there are mapped reads
+      #* chr - the reference name
+      #* start - the start position 
+      #* length - the length of the region queried
       def chromosome_coverage(chr,start,length)
         result = []
         region = "#{chr}:#{start}-#{start + length}"
@@ -99,11 +109,38 @@ module Bio
         result
       end
       
+      #returns the average coverage over the region queried
+      #* chr - the reference name
+      #* start - the start position 
+      #* length - the length of the region queried
       def average_coverage(chr,start,length)
         arr = self.chromosome_coverage(chr,start,length)
         arr.inject{ |sum, el| sum + el }.to_f / arr.size
       end
       
+      #returns a Bio::DB::Pileup or Bio::DB::VCF object
+      #* region - Only generate pileup in region [chrom:start-stop] 
+      #* illumina_quals - Assume the quality is in the Illumina 1.3+ encoding
+      #* count_anomalous - Do not skip anomalous read pairs in variant calling
+      #* no_baq - Disable probabilistic realignment for the computation of base alignment quality (BAQ). BAQ is the Phred-scaled probability of a read base being misaligned. Applying this option greatly helps to reduce false SNPs caused by misalignments.
+      #* adjust_mapq - [INT] Coefficient for downgrading mapping quality for reads containing excessive mismatches. Given a read with a phred-scaled probability q of being generated from the mapped position, the new mapping quality is about sqrt((INT-q)/INT)*INT. A zero value disables this functionality; if enabled, the recommended value for BWA is 50. [0] 
+      #* max_per_bam_depth - [INT] At a position, read maximally INT reads per input BAM. [250] 
+      #* extended_baq - Extended BAQ computation. This option helps sensitivity especially for MNPs, but may hurt specificity a little bit.
+      #* exclude_reads_file - [FILE] exclude read groups listed in FILE [null]
+      #* list_of_positions - [FILE] BED or position list file containing a list of regions or sites where pileup or BCF should be generated [null]
+      #* mapping_quality_cap - [INT] cap mapping quality at INT [60]
+      #* ignore_rg - ignore read group tags
+      #* min_mapping_quality - [INT] skip alignments with mapQ smaller than INT [0]
+      #* min_base_quality - [INT] skip bases with baseQ/BAQ smaller than INT [13]
+      #* ###following options are for the -g -u option
+      #* genotype_calling - generate BCF output (genotype likelihoods)
+      #* uncompressed_bcf - generate uncompress BCF output
+      #* extension_sequencing_probability - [INT] Phred-scaled gap extension seq error probability [20]
+      #* homopolymer_error_coefficient - [INT] coefficient for homopolymer errors [100]
+      #* no_indels - do not perform indel calling
+      #* skip_indel_over_average_depth - [INT] max per-sample depth for INDEL calling [250]
+      #* gap_open_sequencing_error_probability - [INT] Phred-scaled gap open sequencing error probability [40]
+      #* platforms - [STRING] comma separated list of platforms for indels [all]
       def mpileup(opts={}, &block)
         #long option form to short samtools form..
         long_opts = {
@@ -162,6 +199,11 @@ module Bio
 
       end
       
+      #fetches a subsequence from a reference genome and option returns it as a Bio::Sequence::NA object
+      #* chr -  [STRING] the reference name for the subsequence
+      #* start - [INT] the start position for the subsequence
+      #* stop - [INT] the stop position for the subsequence
+      #* as_bio - boolean stating if the returned object should be a Bio::Sequence::NA object
       def fetch_reference(chr,start,stop, opts={:as_bio => false})
         command = "#{@samtools} faidx #{@fasta} #{chr}:#{start}-#{stop}"
         #puts command
@@ -174,7 +216,11 @@ module Bio
         seq
       end
       
-  
+      #Index reference sequence in the FASTA format or extract subsequence from indexed reference sequence. If no region is specified, faidx will index the file and create <ref.fasta>.fai on the disk. If regions are speficified, the subsequences will be retrieved and printed to stdout in the FASTA format.
+      #Options - if a subsequence is required
+      #* chr - [STRING] the reference name of the subsequence
+      #* start - [INT] the start position for the subsequence
+      #* stop - [INT] the stop position for the subsequence
       def faidx(opts={})
         if opts.has_key?(:chr) and opts.has_key?(:start) and opts.has_key?(:stop)
         opts={:as_bio => false}
@@ -185,8 +231,9 @@ module Bio
           system(command)
         end
       end
-
-      #:out_index name of index
+      
+      #Index sorted alignment for fast random access. Index file <aln.bam>.bai will be created of no out_index is provided.
+      #* out_index - [STRING] name of index
       def index(opts={})
         command = "#{@samtools} index #{@bam} #{opts[:out_index]}"
         #puts command
@@ -194,15 +241,15 @@ module Bio
         system(command)
       end
 
-      #:out_bam name of outfile
-      #:r  remove unmapped reads and secondary alignments
+      #Fill in mate coordinates, ISIZE and mate related flags from a name-sorted alignment
+      #* out_bam name of outfile
+      #* r - remove unmapped reads and secondary alignments
       def fix_mates(opts={})
         #opts.merge!({:out_index=>nil})
         remove_reads = ""
         if opts[:r]
           remove_reads = "-r"
         end
-        
         command = "#{@samtools} fixmate #{remove_reads} #{@bam} #{opts[:out_bam]}"
         #puts command
         @last_command = command
@@ -211,6 +258,7 @@ module Bio
 
       alias_method :fixmate, :fix_mates
 
+      #generate simple stats with regard to the number and pairing of reads mapped to a reference
       def flag_stats(opts={})
         command = form_opt_string(@samtools, "flagstat", opts, [])
         #puts command
@@ -222,6 +270,7 @@ module Bio
 
       alias_method :flagstat, :flag_stats
 
+      #Retrieve and print stats in the index file. The output is TAB delimited with each line consisting of reference sequence name, sequence length, number of mapped reads and number unmapped reads.
       def index_stats
         stats = {}   
         command = form_opt_string(@samtools, "idxstats #{@bam}", {}, [])
@@ -235,18 +284,18 @@ module Bio
 
       alias_method :idxstats, :index_stats
 
-
-      #:n       sort by read names
-      #:r       attach RG tag (inferred from file names)
-      #:u       uncompressed BAM output
-      #:f       overwrite the output BAM if exist
-      #:one       compress level 1
-      #:l INT   compression level, from 0 to 9 [-1]
-      #:at INT   number of BAM compression threads [0]
-      #:R STR   merge file in the specified region STR [all]
-      #:h FILE  copy the header in FILE to <out.bam> [in1.bam]
-      #:out FILE     out file name
-      #:bams FILES or Bio::DB::Sam list of input bams, or Bio::DB::Sam objects
+      #Merge multiple sorted alignments
+      #* n - sort by read names
+      #* r - attach RG tag (inferred from file names)
+      #* u - uncompressed BAM output
+      #* f - overwrite the output BAM if exist
+      #* one - compress level 1
+      #* l  - [INT] compression level, from 0 to 9 [-1]
+      #* at - [INT] number of BAM compression threads [0]
+      #* R - [STRING] merge file in the specified region STR [all]
+      #* h - [FILE] copy the header in FILE to <out.bam> [in1.bam]
+      #* out - [FILE] out file name
+      #* bams - [FILES] or Bio::DB::Sam list of input bams, or Bio::DB::Sam objects
       def merge(opts={})
         if opts[:one]
           opts['1'] = nil
@@ -276,9 +325,9 @@ module Bio
 
       end
 
-      #:h  header.sam
-      #:out FILE     out file name
-      #:bams FILES or Bio::DB::Sam list of input bams, or Bio::DB::Sam objects
+      #* h - header.sam
+      #* out -[FILE] out file name
+      #* bams -[FILES] or Bio::DB::Sam list of input bams, or Bio::DB::Sam objects
       def cat(opts={})
         out = opts[:out]
         opts.delete(:out)
@@ -295,17 +344,17 @@ module Bio
 
       end
 
-      #program  one of 'samtools' 'bcftools'
-      #command one of the commands relevant to the program
+      #* program  - one of 'samtools' 'bcftools'
+      #* command - one of the commands relevant to the program
       def self.docs(program, command)
         return "program must be 'samtools' or 'bcftools'" if not ['samtools', 'bcftools'].include? program
         command = "#{program} #{command}"
         `#{command}`
       end
 
-      #:s   rmdup for SE reads
-      #:S   treat PE reads as SE in rmdup (force -s)
-      #:out FILE output bam
+      #* s - rmdup for SE reads
+      #* S - treat PE reads as SE in rmdup (force -s)
+      #* out - [FILE] output bam
       def remove_duplicates(opts={})
         out = opts[:out]
         opts.delete(:out)
@@ -316,13 +365,13 @@ module Bio
 
       alias_method :rmdup, :remove_duplicates
       
-      #        :n  sort by read name
-      #        :f        use <out.prefix> as full file name instead of prefix
-      #        :o        final output to stdout returns bio::db::alignment
-      #        :l INT    compression level, from 0 to 9 [-1]
-      #        :at INT    number of sorting and compression threads [1]
-      #        :m INT    max memory per thread; suffix K/M/G recognized [768M]
-      #        :prefix prefix for output bamfile
+      #* n - sort by read name
+      #* f - use <out.prefix> as full file name instead of prefix
+      #* o - final output to stdout returns bio::db::alignment
+      #* l - [INT]  compression level, from 0 to 9 [-1]
+      #* at - [INT] number of sorting and compression threads [1]
+      #* m - [INT] max memory per thread; suffix K/M/G recognized [768M]
+      #* prefix - [STRING] prefix for output bamfile
       def sort(opts={})
         if !opts.has_key?(:prefix)
           opts.merge!({:prefix => "sorted"})
@@ -340,14 +389,28 @@ module Bio
         end
       end
       
-      
-      def tview()
-        command = "#{@samtools} tview #{@bam} #{@fasta}"
+      #* d - display, output as (H)tml or (C)urses or (T)ext 
+      #* p - [chr:pos] go directly to this position
+      #* s - [STR] display only reads from this sample or group
+      def tview(opts={})
+        if opts[:d]
+          opts['d'] = opts[:d]
+          opts.delete(:d)
+        end
+        if opts[:p]
+          opts['p'] = opts[:p]
+          opts.delete(:p)
+        end
+        if opts[:s]
+          opts['s'] = opts[:s]
+          opts.delete(:s)
+        end
+        command = "#{form_opt_string(@samtools, "tview", opts)}"
         @last_command = command
         system(command)
       end
       
-      #:out FILE output bam 
+      #* out - [FILE] output bam file
       def reheader(header_sam, opts={})
         if opts.has_key?(:out)
           out=opts[:out]
@@ -360,14 +423,15 @@ module Bio
         system(command)
       end
       
-      #	-A 	When used jointly with -r this option overwrites the original base quality.
-      #	:e 	Convert a the read base to = if it is identical to the aligned reference base. Indel caller does not support the = bases at the moment.
-      #	:u 	Output uncompressed BAM
-      #	:b 	Output compressed BAM
-      #	:S 	The input is SAM with header lines
-      #	:C INT 	Coefficient to cap mapping quality of poorly mapped reads. See the pileup command for details. [0]
-      #	:r 	Compute the BQ tag (without -A) or cap base quality by BAQ (with -A).
-      #	:E 	Extended BAQ calculation. This option trades specificity for sensitivity, though the effect is minor. 
+      #Generate the MD tag. If the MD tag is already present, this command will give a warning if the MD tag generated is different from the existing tag. Output SAM by default.
+      #* A - When used jointly with -r this option overwrites the original base quality.
+      #* e - Convert a the read base to = if it is identical to the aligned reference base. Indel caller does not support the = bases at the moment.
+      #* u - Output uncompressed BAM
+      #* b - Output compressed BAM
+      #* S - The input is SAM with header lines
+      #* C - [INT] Coefficient to cap mapping quality of poorly mapped reads. See the pileup command for details. [0]
+      #* r - Compute the BQ tag (without -A) or cap base quality by BAQ (with -A).
+      #* E - Extended BAQ calculation. This option trades specificity for sensitivity, though the effect is minor. 
       def calmd(opts={}, &block)
         command = form_opt_string(@samtools, "calmd",  opts, [:E, :e, :u, :b, :S, :r] )+ " " + @fasta
         @last_command = command
@@ -376,17 +440,30 @@ module Bio
         yield_from_pipe(command, klass, type, true, "@",&block)
       end
 
+      #Identifies target regions by examining the continuity of read depth, computes haploid consensus sequences of targets and outputs a SAM with each sequence corresponding to a target. When option -f is in use, BAQ will be applied. 
+      #* Q - [INT] Minimum base quality for a base to be considered [13] 
+      #* i - in penalty
+      #* 0 - em0
+      #* 1 - em1
+      #* 2 - em2
+      #* f - reference
       def targetcut(opts={})
+        if opts[:f]
+          opts['f'] = @fasta
+          opts.delete(:s)
+        end
+        
         command = "#{form_opt_string(@samtools, "targetcut", opts, [] )}"
         @last_command = command
         system(command)
       end
-      # :A Drop reads with ambiguous phase.
-      # :b STR 	Prefix of BAM output. When this option is in use, phase-0 reads will be saved in file STR.0.bam and phase-1 reads in STR.1.bam. Phase unknown reads will be randomly allocated to one of the two files. Chimeric reads with switch errors will be saved in STR.chimeric.bam. [null]
-      # :F Do not attempt to fix chimeric reads.
-      # :k INT 	Maximum length for local phasing. [13]
-      # :q INT 	Minimum Phred-scaled LOD to call a heterozygote. [40]
-      # :Q INT 	Minimum base quality to be used in het calling. [13] 
+      
+      # A - Drop reads with ambiguous phase.
+      # b - [STR] Prefix of BAM output. When this option is in use, phase-0 reads will be saved in file STR.0.bam and phase-1 reads in STR.1.bam. Phase unknown reads will be randomly allocated to one of the two files. Chimeric reads with switch errors will be saved in STR.chimeric.bam. [null]
+      # F - Do not attempt to fix chimeric reads.
+      # k - [INT] Maximum length for local phasing. [13]
+      # q - [INT] Minimum Phred-scaled LOD to call a heterozygote. [40]
+      # Q - [INT] Minimum base quality to be used in het calling. [13] 
       def phase(opts={})
         command = "#{form_opt_string(@samtools, "phase", opts, [:A, :F] )}"
         @last_command = command
@@ -394,12 +471,12 @@ module Bio
       end
 
 
-      # :b <bed>            list of positions or regions
-      # :l <int>            minQLen
-      # :q <int>            base quality threshold
-      # :Q <int>            mapping quality threshold
-      # :r <chr:from-to>    region
       #returns an array for each position with [sequence_name, position, depth]
+      #* b - list of positions or regions in BED format
+      #* l - [INT] minQLen
+      #* q - [INT] base quality threshold
+      #* Q - [INT] mapping quality threshold
+      #* r - [chr:from-to] region
       def depth(opts={})
         command = form_opt_string(@samtools, "depth", opts)
         @last_command = command

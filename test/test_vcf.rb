@@ -3,6 +3,7 @@ $: << File.expand_path('.')
 require 'rubygems'
 require 'bio/db/vcf'
 require "test/unit"
+gem 'test-unit'
 
 
 class TestVcf < Test::Unit::TestCase

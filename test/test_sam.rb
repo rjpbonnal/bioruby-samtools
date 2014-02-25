@@ -3,9 +3,24 @@ $: << File.expand_path('.')
 require 'rubygems'
 require 'bio/db/sam'
 require "test/unit"
+gem 'test-unit'
 
 
 class TestBioDbSam < Test::Unit::TestCase
+  
+  class << self
+    def shutdown
+      File.delete("test/samples/small/different_index.bam.bai")
+      File.delete("test/samples/small/dupes_rmdup.bam")
+      File.delete("test/samples/small/mates_fixed.bam")
+      File.delete("test/samples/small/reheader.bam")
+      File.delete("test/samples/small/test_chr.fasta.fai")
+      File.delete("test/samples/small/test_sorted.bam")
+      File.delete("test/samples/small/maps_merged.bam")
+      File.delete("test/samples/small/maps_cated.bam")
+    end
+  end
+  
   
   def setup
     @test_folder                = "test/samples/small"
@@ -18,10 +33,36 @@ class TestBioDbSam < Test::Unit::TestCase
     )
   end
   
+  
+  
   def test_new
-    assert_kind_of Bio::DB::Sam, @sam
+    assert_kind_of(Bio::DB::Sam, @sam)
   end
   
+  def test_index
+    test_bai_file = @testBAMFile+".bai"
+    #test to see if the index file exists. If so, delete it
+    if File.exist?(test_bai_file) == true
+      puts "bam index exists....deleting..."
+      File.delete(test_bai_file)
+    end
+     #index the bam file
+    @sam.index()
+    
+    #make sure the .bai file exists
+    assert_nothing_thrown do
+      File.open(test_bai_file, "r")
+    end
+    assert(File.size(test_bai_file) > 0, "From test_index: .bai file is empty")
+    #as above, but give the output a different name
+    test_bai_file = @test_folder+"/different_index.bam.bai"
+    @sam.index(:out_index=> test_bai_file)
+    assert_nothing_thrown do
+      File.open(test_bai_file, "r")
+    end
+    assert(File.size(test_bai_file) > 0, "From test_index: .bai file is empty")
+  end
+
   def test_view
     #how to get Bio::DB::Alignment objects ..
     @sam.view() do |sam|
@@ -55,8 +96,13 @@ class TestBioDbSam < Test::Unit::TestCase
   
   def test_average_coverage
     #there should be 10 positions with cov of 1.0 and 10 with cov of 2.0, so average of 1.5
+    test_bai_file = @testBAMFile+".bai"
+    if File.exist?(test_bai_file) == false
+      @sam.index()
+    end
     avcov = @sam.average_coverage("chr_1", 33, 19)
     assert_equal(avcov, 1.5)
+    File.delete(test_bai_file)
   end
   
   def test_faidx
@@ -103,14 +149,10 @@ class TestBioDbSam < Test::Unit::TestCase
   end
   
   def test_reheader
-    #bam file with reference 'chr_1'
-    cat_file = @test_folder + "/maps_cated.bam"
-    bam_in = Bio::DB::Sam.new(:fasta => @testReference, :bam => cat_file)
-    #sam file with reference 'chr_2'
     sam_header = @test_folder + "/map_for_reheader.sam"
     outfile = @test_folder + "/reheader.bam"
     
-    bam_in.reheader(sam_header, :out=>outfile)
+    @sam.reheader(sam_header, :out=>outfile)
     reheader_bam = Bio::DB::Sam.new(:fasta => @testReference, :bam => outfile)
     #check that the reference is 'chr_2'
     reheader_bam.view()do |sam|
@@ -146,24 +188,6 @@ class TestBioDbSam < Test::Unit::TestCase
     @sam.depth(:r=>"chr_1:25-42") do |al|
       assert_equal(al[2].to_i, 1)
     end
-  end
-
-  def test_index
-    #index the bam file
-    @sam.index()
-    test_bai_file = @testBAMFile+".bai"
-    #make sure the .bai file exists
-    assert_nothing_thrown do
-      File.open(test_bai_file, "r")
-    end
-    assert(File.size(test_bai_file) > 0, "From test_index: .bai file is empty")
-    #as above, but give the output a different name
-    test_bai_file = @test_folder+"/different_index.bam.bai"
-    @sam.index(:out_index=> test_bai_file)
-    assert_nothing_thrown do
-      File.open(test_bai_file, "r")
-    end
-    assert(File.size(test_bai_file) > 0, "From test_index: .bai file is empty")
   end
 
   def test_fixmate
@@ -253,5 +277,5 @@ class TestBioDbSam < Test::Unit::TestCase
     #force an error (use 'samtool' instead of 'samtools')
     output = Bio::DB::Sam.docs('samtool', 'tview')
     assert_equal(output, "program must be 'samtools' or 'bcftools'")
-  end
+  end   
 end

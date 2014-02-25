@@ -56,8 +56,8 @@ module Bio
         @non_ref_count = nil
       end
       
-      # Calculate the total count of each non-reference nucleotide and return a hash of all 4 nt counts, returns a hash
-      #    pile.non_refs #{:A => 1, :C => 0, :T => 0, :G => 0}
+      #Calculate the total count of each non-reference nucleotide and return a hash of all 4 nt counts
+      #returns a hash pile.non_refs #{:A => 1, :C => 0, :T => 0, :G => 0}
       def non_refs
         if @non_ref_count_hash.nil?
            @non_ref_count_hash = {:A => self.read_bases.count("Aa"), :C => self.read_bases.count("Cc"), :G => self.read_bases.count("Gg"), :T => self.read_bases.count("Tt")}
@@ -127,6 +127,7 @@ module Bio
         end
       end
       
+      #returns the genotype of the indel
       def indel_gt
         return "undef" if self.consensus.instance_of?(Array)
         al1, al2 = self.consensus.split(/\//)

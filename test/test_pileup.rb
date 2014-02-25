@@ -3,6 +3,7 @@ $: << File.expand_path('.')
 require 'rubygems'
 require 'bio/db/pileup'
 require "test/unit"
+gem 'test-unit'
 
 
 class TestPileup < Test::Unit::TestCase
@@ -21,6 +22,7 @@ class TestPileup < Test::Unit::TestCase
   
   def test_ref_count
     assert_equal(21, @pu.ref_count)
+    assert_equal('T', @pu2.consensus)
   end
   
   def test_non_refs
@@ -30,10 +32,7 @@ class TestPileup < Test::Unit::TestCase
     assert_equal(0, @pu.non_refs[:C])
   end
   
-  def test_ref_count
-    assert_equal('T', @pu2.consensus)
-  end
-  
+   
   def test_to_vcf
     @vcf = Bio::DB::Vcf.new(@pu.to_vcf)
      assert_equal('seq1', @vcf.chrom)
