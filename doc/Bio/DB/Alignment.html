@@ -573,13 +573,14 @@ for clarity. primary is the negation of is_negative from the BAM format</p>
 
         <div class="method-description">
           
-          
+          <p>parses the <a href="SAM.html">SAM</a> string into its constituents and set
+its attributes</p>
           
           
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/alignment.rb, line 20</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/alignment.rb, line 22</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">sam_string</span>)
   <span class="ruby-identifier">s</span> = <span class="ruby-identifier">sam_string</span>.<span class="ruby-identifier">chomp</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&quot;\t&quot;</span>)
   <span class="ruby-ivar">@qname</span> = <span class="ruby-identifier">s</span>[<span class="ruby-value">0</span>]

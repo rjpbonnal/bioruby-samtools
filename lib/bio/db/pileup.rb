@@ -118,15 +118,8 @@ module Bio
         }.join("\n")
       end
       
-      def parse_indel(alt)
-        return "D#{$'.length}" if alt =~/^-/ 
-        if alt=~/^\+/
-          return "I#{$'}"
-        elsif alt == '*' 
-          return nil
-        end
-      end
       
+ 
       #returns the genotype of the indel
       def indel_gt
         return "undef" if self.consensus.instance_of?(Array)
@@ -156,7 +149,7 @@ module Bio
         return [alt, gt]
         
       end
-      
+      #returns the genotype of the snp
       def snp_gt
         return ['.','0/0'] if self.ref_base == self.consensus
         bases = Pileup.iupac_to_base(self.consensus)
@@ -169,6 +162,7 @@ module Bio
         end 
       end
       
+      #identifies the reference base and returns the indel or snp genotype as applicable
       public
       def genotype_list
         if self.ref_base == '*'
@@ -178,8 +172,8 @@ module Bio
         end
       end
       
+      #returns the two bases for the corresponding iupac code
       public
-      #returns 
       def Pileup.iupac_to_base(alt_base)
           case alt_base
                 when 'K' then ['G','T']
@@ -191,6 +185,17 @@ module Bio
                 else alt_base.split(//)
           end
       end
+      
+      #identifies if the indel is an insertion or a deletion  
+      def parse_indel(alt)
+        return "D#{$'.length}" if alt =~/^-/ 
+        if alt=~/^\+/
+          return "I#{$'}"
+        elsif alt == '*' 
+          return nil
+        end
+      end
+      
       
       #returns pileup format line
       def to_s

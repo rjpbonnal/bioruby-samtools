@@ -83,6 +83,8 @@
     
     <li ><a href="#method-i-non_refs">#non_refs</a>
     
+    <li ><a href="#method-i-parse_indel">#parse_indel</a>
+    
     <li ><a href="#method-i-ref_count">#ref_count</a>
     
     <li ><a href="#method-i-to_s">#to_s</a>
@@ -376,13 +378,13 @@
 
         <div class="method-description">
           
-          <p>returns</p>
+          <p>returns the two bases for the corresponding iupac code</p>
           
           
 
           
           <div class="method-source-code" id="iupac_to_base-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/pileup.rb, line 182</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/pileup.rb, line 177</span>
 <span class="ruby-keyword">def</span> <span class="ruby-constant">Pileup</span>.<span class="ruby-identifier">iupac_to_base</span>(<span class="ruby-identifier">alt_base</span>)
     <span class="ruby-keyword">case</span> <span class="ruby-identifier">alt_base</span>
           <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;K&#39;</span> <span class="ruby-keyword">then</span> [<span class="ruby-string">&#39;G&#39;</span>,<span class="ruby-string">&#39;T&#39;</span>]
@@ -479,13 +481,14 @@ pile = Bio::DB::Pileup.new(pile_up_line)</pre>
 
         <div class="method-description">
           
-          
+          <p>identifies the reference base and returns the indel or snp genotype as
+applicable</p>
           
           
 
           
           <div class="method-source-code" id="genotype_list-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/pileup.rb, line 172</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/pileup.rb, line 167</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">genotype_list</span>
   <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ref_base</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;*&#39;</span>
     <span class="ruby-keyword">return</span> <span class="ruby-identifier">indel_gt</span>
@@ -553,10 +556,8 @@ pile = Bio::DB::Pileup.new(pile_up_line)</pre>
         <div class="method-description">
           
           <p>Calculate the total count of each non-reference nucleotide and return a
-hash of all 4 nt counts, returns a hash</p>
-
-<pre class="ruby"><span class="ruby-identifier">pile</span>.<span class="ruby-identifier">non_refs</span> <span class="ruby-comment">#{:A =&gt; 1, :C =&gt; 0, :T =&gt; 0, :G =&gt; 0}</span>
-</pre>
+hash of all 4 nt counts returns a hash pile.non_refs #{:A =&gt; 1, :C =&gt;
+0, :T =&gt; 0, :G =&gt; 0}</p>
           
           
 
@@ -577,6 +578,44 @@ hash of all 4 nt counts, returns a hash</p>
 
         
       </div><!-- non_refs-method -->
+
+    
+      <div id="method-i-parse_indel" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">parse_indel</span><span
+            class="method-args">(alt)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>identifies if the indel is an insertion or a deletion</p>
+          
+          
+
+          
+          <div class="method-source-code" id="parse_indel-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/pileup.rb, line 190</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">parse_indel</span>(<span class="ruby-identifier">alt</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-node">&quot;D#{$&#39;.length}&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">alt</span> <span class="ruby-operator">=~</span><span class="ruby-regexp">/^-/</span> 
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">alt</span><span class="ruby-operator">=~</span><span class="ruby-regexp">/^\+/</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-node">&quot;I#{$&#39;}&quot;</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">alt</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;*&#39;</span> 
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- parse_indel-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- parse_indel-method -->
 
     
       <div id="method-i-ref_count" class="method-detail ">
@@ -634,7 +673,7 @@ hash of all 4 nt counts, returns a hash</p>
 
           
           <div class="method-source-code" id="to_s-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/pileup.rb, line 195</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/pileup.rb, line 201</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">to_s</span>
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@read_quals</span> <span class="ruby-keyword">and</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@consensus_quality</span> <span class="ruby-comment">#6col</span>
     [<span class="ruby-ivar">@ref_name</span>, <span class="ruby-ivar">@pos</span>, <span class="ruby-ivar">@ref_base</span>, <span class="ruby-ivar">@coverage</span>.<span class="ruby-identifier">to_i</span>, <span class="ruby-ivar">@read_bases</span>, <span class="ruby-ivar">@read_quals</span>].<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;\t&quot;</span>)    

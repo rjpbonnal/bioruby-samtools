@@ -1,6 +1,7 @@
 module Bio
   class DB
     
+    #a class to represent the SAM OPT values, presented in SAM as TAG:VTYPE:VALUE 
     class Tag
       attr_accessor :tag, :type, :value
       def set(str)
@@ -17,6 +18,7 @@ module Bio
       #primary is the negation of is_negative from the BAM format
       attr_accessor :is_paired, :is_mapped, :query_unmapped, :mate_unmapped, :query_strand, :mate_strand, :first_in_pair,:second_in_pair, :primary, :failed_quality, :is_duplicate
       
+      #parses the SAM string into its constituents and set its attributes
       def initialize(sam_string)
         s = sam_string.chomp.split("\t")
         @qname = s[0]

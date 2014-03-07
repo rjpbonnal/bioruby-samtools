@@ -22,6 +22,10 @@ class TestPileup < Test::Unit::TestCase
   
   def test_ref_count
     assert_equal(21, @pu.ref_count)
+  end
+  
+  def test_consensus
+    assert_equal('C', @pu.consensus)
     assert_equal('T', @pu2.consensus)
   end
   
@@ -37,6 +41,7 @@ class TestPileup < Test::Unit::TestCase
     @vcf = Bio::DB::Vcf.new(@pu.to_vcf)
      assert_equal('seq1', @vcf.chrom)
   end
+  
   
   def test_indel_gt
     indel =  @pu3.send(:indel_gt)
@@ -64,6 +69,16 @@ class TestPileup < Test::Unit::TestCase
     iupac.each do |pu|
       assert_send([['A' , 'G'], :member?, pu])
     end
+  end
+  
+  def test_parse_indel
+    assert_equal('IAG/+AG', @pu3.parse_indel(@pu3.consensus))
+  end
+  
+  def test_to_s
+    #check whether there are the correct number of tabs in the string (number of columns -1)
+    assert_equal(12, @pu3.to_s.count("\t"))
+    assert_equal(5, @pu.to_s.count("\t"))
   end
   
 end
