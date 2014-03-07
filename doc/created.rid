@@ -1,9 +1,9 @@
-Fri, 07 Mar 2014 10:59:22 +0000
-./lib/bio/db/alignment.rb	Tue, 25 Feb 2014 16:38:56 +0000
+Fri, 07 Mar 2014 12:43:00 +0000
+./lib/bio/db/alignment.rb	Fri, 07 Mar 2014 11:50:30 +0000
 ./lib/bio/db/pileup.rb	Fri, 07 Mar 2014 10:51:34 +0000
 ./lib/bio/db/sam/faidx_old.rb	Thu, 28 Nov 2013 11:06:34 +0000
 ./lib/bio/db/sam/library.rb	Thu, 28 Nov 2013 11:03:39 +0000
-./lib/bio/db/sam.rb	Mon, 24 Feb 2014 14:27:35 +0000
-./lib/bio/db/vcf.rb	Mon, 06 Jan 2014 13:44:05 +0000
+./lib/bio/db/sam.rb	Fri, 07 Mar 2014 11:44:38 +0000
+./lib/bio/db/vcf.rb	Fri, 07 Mar 2014 12:38:34 +0000
 ./lib/bio-samtools.rb	Thu, 28 Nov 2013 11:06:34 +0000
 ./LICENSE.txt	Thu, 28 Nov 2013 11:03:38 +0000

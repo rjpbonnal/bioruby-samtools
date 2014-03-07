@@ -303,8 +303,9 @@
           
           <p>create the vcf object, use the ordered list of sample names to label
 samples if provided [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;], otherwise
-uses, 1,2,3 etc vcf = Bio::DB::Vcf(“19   111       .     A   C 9.6     .  
-. GT:HQ   0|0:10,10 0|0:10,10       0/1:3,3”)</p>
+uses, 1,2,3 etc</p>
+
+<pre>vcf = Bio::DB::Vcf(&quot;19       111   . A       C     9.6 .       .     GT:HQ       0|0:10,10     0|0:10,10   0/1:3,3&quot;)</pre>
           
           
 
@@ -345,13 +346,16 @@ uses, 1,2,3 etc vcf = Bio::DB::Vcf(“19   111       .     A   C 9.6     .
 
         <div class="method-description">
           
-          
+          <p>tests if the current variable is an Integer</p>
+<ul><li>
+<p>x - any variable</p>
+</li></ul>
           
           
 
           
           <div class="method-source-code" id="int_or_raw-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/vcf.rb, line 21</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/vcf.rb, line 23</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">int_or_raw</span>(<span class="ruby-identifier">x</span>)
   <span class="ruby-constant">Integer</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">x</span>) <span class="ruby-keyword">rescue</span> <span class="ruby-identifier">x</span>
 <span class="ruby-keyword">end</span></pre>
@@ -385,7 +389,7 @@ setting the attributes</p>
 
           
           <div class="method-source-code" id="parse_line-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/vcf.rb, line 26</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/vcf.rb, line 28</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">parse_line</span>(<span class="ruby-identifier">line</span>, <span class="ruby-identifier">sample_names</span>=<span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">line</span>[<span class="ruby-value">0</span>,<span class="ruby-value">1</span>] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;#&#39;</span>
     

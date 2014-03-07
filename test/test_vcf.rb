@@ -67,7 +67,13 @@ class TestVcf < Test::Unit::TestCase
   end
   
   def test_int_or_raw
-    @vcf1.int_or_raw(1)
+    assert_nothing_raised do
+      @vcf1.int_or_raw(1)
+    end
+    assert_raise do
+      @vcf1.int_or_raw(A)
+    end
   end
+  
   
 end

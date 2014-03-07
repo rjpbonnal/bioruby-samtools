@@ -10,14 +10,16 @@ module Bio
       public
       attr_accessor :chrom, :pos, :id, :ref, :alt, :qual, :filter, :info, :format, :samples
     
-      #create the vcf object, use the ordered list of sample names to label samples if provided ['A', 'B', 'C'], otherwise uses, 1,2,3 etc
-      #vcf = Bio::DB::Vcf("19	111	.	A	C	9.6	.	.	GT:HQ	0|0:10,10	0|0:10,10	0/1:3,3")
+      #create the vcf object, use the ordered list of sample names to label samples if provided ['A', 'B', 'C'], otherwise uses, 1,2,3 etc  
+      #    vcf = Bio::DB::Vcf("19	111	.	A	C	9.6	.	.	GT:HQ	0|0:10,10	0|0:10,10	0/1:3,3")
       def initialize(line=nil, sample_names=nil)
         @info = {}
         @samples = {}
         parse_line(line, sample_names) if line != nil
       end
     
+      #tests if the current variable is an Integer
+      #* x - any variable
       def int_or_raw(x)
         Integer.new(x) rescue x
       end

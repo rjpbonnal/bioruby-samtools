@@ -11,11 +11,13 @@ module Bio
       end
     end
     
+    #Attrobites frp, the flag field (see chapter 2.2.2 of the sam file documentation)
+    #query_strand and mate_strand are true if they are forward. It is the opposite to
+    #the definition in the BAM format for clarity.
+    #primary is the negation of is_negative from the BAM format
     class Alignment
       attr_accessor :qname, :flag, :rname,:pos,:mapq,:cigar, :mrnm, :mpos, :isize, :seq, :qual, :tags, :al, :samstr, :calend, :qlen
-      #Attrobites frp, the flag field (see chapter 2.2.2 of the sam file documentation)
-      #query_strand and mate_strand are true if they are forward. It is the opposite to the definition in the BAM format for clarity.
-      #primary is the negation of is_negative from the BAM format
+
       attr_accessor :is_paired, :is_mapped, :query_unmapped, :mate_unmapped, :query_strand, :mate_strand, :first_in_pair,:second_in_pair, :primary, :failed_quality, :is_duplicate
       
       #parses the SAM string into its constituents and set its attributes

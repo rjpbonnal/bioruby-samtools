@@ -298,7 +298,7 @@
 
           
           <div class="method-source-code" id="docs-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 349</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 348</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">docs</span>(<span class="ruby-identifier">program</span>, <span class="ruby-identifier">command</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;program must be &#39;samtools&#39; or &#39;bcftools&#39;&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-keyword">not</span> [<span class="ruby-string">&#39;samtools&#39;</span>, <span class="ruby-string">&#39;bcftools&#39;</span>].<span class="ruby-identifier">include?</span> <span class="ruby-identifier">program</span>
   <span class="ruby-identifier">command</span> = <span class="ruby-node">&quot;#{program} #{command}&quot;</span>
@@ -400,7 +400,7 @@
 
           
           <div class="method-source-code" id="average_coverage-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 116</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 114</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">average_coverage</span>(<span class="ruby-identifier">chr</span>,<span class="ruby-identifier">start</span>,<span class="ruby-identifier">length</span>)
   <span class="ruby-identifier">arr</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">chromosome_coverage</span>(<span class="ruby-identifier">chr</span>,<span class="ruby-identifier">start</span>,<span class="ruby-identifier">length</span>)
   <span class="ruby-identifier">arr</span>.<span class="ruby-identifier">inject</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">sum</span>, <span class="ruby-identifier">el</span><span class="ruby-operator">|</span> <span class="ruby-identifier">sum</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">el</span> }.<span class="ruby-identifier">to_f</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">arr</span>.<span class="ruby-identifier">size</span>
@@ -457,7 +457,7 @@ sensitivity, though the effect is minor.</p>
 
           
           <div class="method-source-code" id="calmd-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 435</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 439</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">calmd</span>(<span class="ruby-identifier">opts</span>={}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-identifier">command</span> = <span class="ruby-identifier">form_opt_string</span>(<span class="ruby-ivar">@samtools</span>, <span class="ruby-string">&quot;calmd&quot;</span>,  <span class="ruby-identifier">opts</span>, [<span class="ruby-value">:E</span>, <span class="ruby-value">:e</span>, <span class="ruby-value">:u</span>, <span class="ruby-value">:b</span>, <span class="ruby-value">:S</span>, <span class="ruby-value">:r</span>] )<span class="ruby-operator">+</span> <span class="ruby-string">&quot; &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@fasta</span>
   <span class="ruby-ivar">@last_command</span> = <span class="ruby-identifier">command</span>
@@ -488,7 +488,9 @@ sensitivity, though the effect is minor.</p>
 
         <div class="method-description">
           
-          <ul><li>
+          <p>Concatenate BAMs. The sequence dictionary of each input BAM must be
+identical.</p>
+<ul><li>
 <p>h - header.sam</p>
 </li><li>
 <p>out -[FILE] out file name</p>
@@ -501,7 +503,7 @@ sensitivity, though the effect is minor.</p>
 
           
           <div class="method-source-code" id="cat-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 331</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 330</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">cat</span>(<span class="ruby-identifier">opts</span>={})
   <span class="ruby-identifier">out</span> = <span class="ruby-identifier">opts</span>[<span class="ruby-value">:out</span>]
   <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:out</span>)
@@ -554,7 +556,7 @@ reads</p>
 
           
           <div class="method-source-code" id="chromosome_coverage-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 103</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 101</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">chromosome_coverage</span>(<span class="ruby-identifier">chr</span>,<span class="ruby-identifier">start</span>,<span class="ruby-identifier">length</span>)
   <span class="ruby-identifier">result</span> = []
   <span class="ruby-identifier">region</span> = <span class="ruby-node">&quot;#{chr}:#{start}-#{start + length}&quot;</span>
@@ -603,7 +605,7 @@ reads</p>
 
           
           <div class="method-source-code" id="depth-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 480</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 485</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">depth</span>(<span class="ruby-identifier">opts</span>={})
   <span class="ruby-identifier">command</span> = <span class="ruby-identifier">form_opt_string</span>(<span class="ruby-ivar">@samtools</span>, <span class="ruby-string">&quot;depth&quot;</span>, <span class="ruby-identifier">opts</span>)
   <span class="ruby-ivar">@last_command</span> = <span class="ruby-identifier">command</span>
@@ -653,7 +655,7 @@ the FASTA format. Options - if a subsequence is required</p>
 
           
           <div class="method-source-code" id="faidx-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 224</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 222</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">faidx</span>(<span class="ruby-identifier">opts</span>={})
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value">:chr</span>) <span class="ruby-keyword">and</span> <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value">:start</span>) <span class="ruby-keyword">and</span> <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value">:stop</span>)
   <span class="ruby-identifier">opts</span>={<span class="ruby-value">:as_bio</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span>}
@@ -702,7 +704,7 @@ the FASTA format. Options - if a subsequence is required</p>
 
           
           <div class="method-source-code" id="fetch-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 88</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 86</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">chr</span>, <span class="ruby-identifier">start</span>,<span class="ruby-identifier">stop</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-identifier">view</span>(
   <span class="ruby-value">:chr</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">chr</span>,
@@ -755,7 +757,7 @@ Bio::Sequence::NA object</p>
 
           
           <div class="method-source-code" id="fetch_reference-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 207</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 205</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">fetch_reference</span>(<span class="ruby-identifier">chr</span>,<span class="ruby-identifier">start</span>,<span class="ruby-identifier">stop</span>, <span class="ruby-identifier">opts</span>={<span class="ruby-value">:as_bio</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span>})
   <span class="ruby-identifier">command</span> = <span class="ruby-node">&quot;#{@samtools} faidx #{@fasta} #{chr}:#{start}-#{stop}&quot;</span>
   <span class="ruby-comment">#puts command</span>
@@ -830,7 +832,7 @@ alignment</p>
 
           
           <div class="method-source-code" id="fix_mates-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 247</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 245</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">fix_mates</span>(<span class="ruby-identifier">opts</span>={})
   <span class="ruby-comment">#opts.merge!({:out_index=&gt;nil})</span>
   <span class="ruby-identifier">remove_reads</span> = <span class="ruby-string">&quot;&quot;</span>
@@ -904,7 +906,7 @@ to a reference</p>
 
           
           <div class="method-source-code" id="flag_stats-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 262</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 260</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">flag_stats</span>(<span class="ruby-identifier">opts</span>={})
   <span class="ruby-identifier">command</span> = <span class="ruby-identifier">form_opt_string</span>(<span class="ruby-ivar">@samtools</span>, <span class="ruby-string">&quot;flagstat&quot;</span>, <span class="ruby-identifier">opts</span>, [])
   <span class="ruby-comment">#puts command</span>
@@ -1006,7 +1008,7 @@ to a reference</p>
 
           
           <div class="method-source-code" id="index-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 237</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 235</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">index</span>(<span class="ruby-identifier">opts</span>={})
   <span class="ruby-identifier">command</span> = <span class="ruby-node">&quot;#{@samtools} index #{@bam} #{opts[:out_index]}&quot;</span>
   <span class="ruby-comment">#puts command</span>
@@ -1044,7 +1046,7 @@ number of mapped reads and number unmapped reads.</p>
 
           
           <div class="method-source-code" id="index_stats-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 274</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 272</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">index_stats</span>
   <span class="ruby-identifier">stats</span> = {}   
   <span class="ruby-identifier">command</span> = <span class="ruby-identifier">form_opt_string</span>(<span class="ruby-ivar">@samtools</span>, <span class="ruby-node">&quot;idxstats #{@bam}&quot;</span>, {}, [])
@@ -1112,7 +1114,7 @@ or <a href="Sam.html">Bio::DB::Sam</a> objects</p>
 
           
           <div class="method-source-code" id="merge-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 299</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 297</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">merge</span>(<span class="ruby-identifier">opts</span>={})
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">opts</span>[<span class="ruby-value">:one</span>]
     <span class="ruby-identifier">opts</span>[<span class="ruby-string">&#39;1&#39;</span>] = <span class="ruby-keyword">nil</span>
@@ -1202,7 +1204,7 @@ regions or sites where pileup or BCF should be generated [null]</p>
 </li><li>
 <p>min_base_quality - [INT] skip bases with baseQ/BAQ smaller than INT [13]</p>
 </li><li>
-<p>###following options are for the -g -u option</p>
+<p>##following options are for the -g -u option</p>
 </li><li>
 <p>genotype_calling - generate BCF output (genotype likelihoods)</p>
 </li><li>
@@ -1229,7 +1231,7 @@ sequencing error probability [40]</p>
 
           
           <div class="method-source-code" id="mpileup-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 144</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 142</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">mpileup</span>(<span class="ruby-identifier">opts</span>={}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-comment">#long option form to short samtools form..</span>
   <span class="ruby-identifier">long_opts</span> = {
@@ -1344,20 +1346,29 @@ complains and quits.</p>
 
         <div class="method-description">
           
-          <p>A - Drop reads with ambiguous phase. b - [STR] Prefix of BAM output. When
-this option is in use, phase-0 reads will be saved in file STR.0.bam and
-phase-1 reads in STR.1.bam. Phase unknown reads will be randomly allocated
-to one of the two files. Chimeric reads with switch errors will be saved in
-STR.chimeric.bam. [null] F - Do not attempt to fix chimeric reads. k -
-[INT] Maximum length for local phasing. [13] q - [INT] Minimum Phred-scaled
-LOD to call a heterozygote. [40] Q - [INT] Minimum base quality to be used
-in het calling. [13]</p>
+          <p>Call and phase heterozygous SNPs</p>
+<ul><li>
+<p>A - Drop reads with ambiguous phase.</p>
+</li><li>
+<p>b - [STR] Prefix of BAM output. When this option is in use, phase-0 reads
+will be saved in file STR.0.bam and phase-1 reads in STR.1.bam. Phase
+unknown reads will be randomly allocated to one of the two files. Chimeric
+reads with switch errors will be saved in STR.chimeric.bam. [null]</p>
+</li><li>
+<p>F - Do not attempt to fix chimeric reads.</p>
+</li><li>
+<p>k - [INT] Maximum length for local phasing. [13]</p>
+</li><li>
+<p>q - [INT] Minimum Phred-scaled LOD to call a heterozygote. [40]</p>
+</li><li>
+<p>Q - [INT] Minimum base quality to be used in het calling. [13]</p>
+</li></ul>
           
           
 
           
           <div class="method-source-code" id="phase-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 467</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 472</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">phase</span>(<span class="ruby-identifier">opts</span>={})
   <span class="ruby-identifier">command</span> = <span class="ruby-node">&quot;#{form_opt_string(@samtools, &quot;phase&quot;, opts, [:A, :F] )}&quot;</span>
   <span class="ruby-ivar">@last_command</span> = <span class="ruby-identifier">command</span>
@@ -1386,7 +1397,10 @@ in het calling. [13]</p>
 
         <div class="method-description">
           
-          <ul><li>
+          <p>Replace the header of the current bam file with the header in header_sam</p>
+<ul><li>
+<p>header_sam - the sam file from which the new header will be taken</p>
+</li><li>
 <p>out - [FILE] output bam file</p>
 </li></ul>
           
@@ -1394,7 +1408,7 @@ in het calling. [13]</p>
 
           
           <div class="method-source-code" id="reheader-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 414</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 418</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">reheader</span>(<span class="ruby-identifier">header_sam</span>, <span class="ruby-identifier">opts</span>={})
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value">:out</span>)
     <span class="ruby-identifier">out</span>=<span class="ruby-identifier">opts</span>[<span class="ruby-value">:out</span>]
@@ -1429,7 +1443,9 @@ in het calling. [13]</p>
 
         <div class="method-description">
           
-          <ul><li>
+          <p>Remove potential PCR duplicates: if multiple read pairs have identical
+external coordinates, only retain the pair with highest mapping quality.</p>
+<ul><li>
 <p>s - rmdup for SE reads</p>
 </li><li>
 <p>S - treat PE reads as SE in rmdup (force -s)</p>
@@ -1504,7 +1520,8 @@ in het calling. [13]</p>
 
         <div class="method-description">
           
-          <ul><li>
+          <p>Sort alignments by leftmost coordinates</p>
+<ul><li>
 <p>n - sort by read name</p>
 </li><li>
 <p>f - use &lt;out.prefix&gt; as full file name instead of prefix</p>
@@ -1524,7 +1541,7 @@ in het calling. [13]</p>
 
           
           <div class="method-source-code" id="sort-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 375</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 376</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">sort</span>(<span class="ruby-identifier">opts</span>={})
   <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">opts</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value">:prefix</span>)
     <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">merge!</span>({<span class="ruby-value">:prefix</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;sorted&quot;</span>})
@@ -1586,7 +1603,7 @@ option -f is in use, BAQ will be applied.</p>
 
           
           <div class="method-source-code" id="targetcut-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 450</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 454</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">targetcut</span>(<span class="ruby-identifier">opts</span>={})
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">opts</span>[<span class="ruby-value">:f</span>]
     <span class="ruby-identifier">opts</span>[<span class="ruby-string">&#39;f&#39;</span>] = <span class="ruby-ivar">@fasta</span>
@@ -1620,7 +1637,8 @@ option -f is in use, BAQ will be applied.</p>
 
         <div class="method-description">
           
-          <ul><li>
+          <p>used to generate a text alignment viewer</p>
+<ul><li>
 <p>d - display, output as (H)tml or (C)urses or (T)ext</p>
 </li><li>
 <p>p - [chr:pos] go directly to this position</p>
@@ -1632,7 +1650,7 @@ option -f is in use, BAQ will be applied.</p>
 
           
           <div class="method-source-code" id="tview-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 395</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 397</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">tview</span>(<span class="ruby-identifier">opts</span>={})
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">opts</span>[<span class="ruby-value">:d</span>]
     <span class="ruby-identifier">opts</span>[<span class="ruby-string">&#39;d&#39;</span>] = <span class="ruby-identifier">opts</span>[<span class="ruby-value">:d</span>]
@@ -1673,10 +1691,7 @@ option -f is in use, BAQ will be applied.</p>
 
         <div class="method-description">
           
-          <p>runs the samtools view command @param opts [Hash] options for view as
-follows</p>
-
-<h2 id="method-i-view-label-args">args<span><a href="#method-i-view-label-args">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+          <p>runs the samtools view command</p>
 <ul><li>
 <p>b - output BAM</p>
 </li><li>
@@ -1733,7 +1748,7 @@ follows</p>
 
           
           <div class="method-source-code" id="view-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 60</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/sam.rb, line 58</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">view</span>(<span class="ruby-identifier">opts</span>={},<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-identifier">region</span> = <span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">opts</span>[<span class="ruby-value">:chr</span>] <span class="ruby-keyword">and</span> <span class="ruby-identifier">opts</span>[<span class="ruby-value">:start</span>] <span class="ruby-keyword">and</span> <span class="ruby-identifier">opts</span>[<span class="ruby-value">:stop</span>]

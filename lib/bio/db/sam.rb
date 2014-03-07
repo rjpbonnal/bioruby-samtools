@@ -29,9 +29,7 @@ module Bio
         files_ok?
       end
       
-      #runs the samtools view command
-      #@param opts [Hash] options for view as follows
-      #== args
+      #runs the samtools view command   
       #* b - output BAM
       #* h - print header for the SAM output
       #* H - print header only (no alignments)
@@ -131,8 +129,8 @@ module Bio
       #* mapping_quality_cap - [INT] cap mapping quality at INT [60]
       #* ignore_rg - ignore read group tags
       #* min_mapping_quality - [INT] skip alignments with mapQ smaller than INT [0]
-      #* min_base_quality - [INT] skip bases with baseQ/BAQ smaller than INT [13]
-      #* ###following options are for the -g -u option
+      #* min_base_quality - [INT] skip bases with baseQ/BAQ smaller than INT [13]   
+      #* ##following options are for the -g -u option
       #* genotype_calling - generate BCF output (genotype likelihoods)
       #* uncompressed_bcf - generate uncompress BCF output
       #* extension_sequencing_probability - [INT] Phred-scaled gap extension seq error probability [20]
@@ -325,6 +323,7 @@ module Bio
 
       end
 
+      #Concatenate BAMs. The sequence dictionary of each input BAM must be identical.
       #* h - header.sam
       #* out -[FILE] out file name
       #* bams -[FILES] or Bio::DB::Sam list of input bams, or Bio::DB::Sam objects
@@ -352,6 +351,7 @@ module Bio
         `#{command}`
       end
 
+      #Remove potential PCR duplicates: if multiple read pairs have identical external coordinates, only retain the pair with highest mapping quality.
       #* s - rmdup for SE reads
       #* S - treat PE reads as SE in rmdup (force -s)
       #* out - [FILE] output bam
@@ -365,6 +365,7 @@ module Bio
 
       alias_method :rmdup, :remove_duplicates
       
+      #Sort alignments by leftmost coordinates
       #* n - sort by read name
       #* f - use <out.prefix> as full file name instead of prefix
       #* o - final output to stdout returns bio::db::alignment
@@ -389,6 +390,7 @@ module Bio
         end
       end
       
+      #used to generate a text alignment viewer
       #* d - display, output as (H)tml or (C)urses or (T)ext 
       #* p - [chr:pos] go directly to this position
       #* s - [STR] display only reads from this sample or group
@@ -410,6 +412,8 @@ module Bio
         system(command)
       end
       
+      #Replace the header of the current bam file with the header in header_sam
+      #* header_sam - the sam file from which the new header will be taken
       #* out - [FILE] output bam file
       def reheader(header_sam, opts={})
         if opts.has_key?(:out)
@@ -458,12 +462,13 @@ module Bio
         system(command)
       end
       
-      # A - Drop reads with ambiguous phase.
-      # b - [STR] Prefix of BAM output. When this option is in use, phase-0 reads will be saved in file STR.0.bam and phase-1 reads in STR.1.bam. Phase unknown reads will be randomly allocated to one of the two files. Chimeric reads with switch errors will be saved in STR.chimeric.bam. [null]
-      # F - Do not attempt to fix chimeric reads.
-      # k - [INT] Maximum length for local phasing. [13]
-      # q - [INT] Minimum Phred-scaled LOD to call a heterozygote. [40]
-      # Q - [INT] Minimum base quality to be used in het calling. [13] 
+      #Call and phase heterozygous SNPs
+      #* A - Drop reads with ambiguous phase.
+      #* b - [STR] Prefix of BAM output. When this option is in use, phase-0 reads will be saved in file STR.0.bam and phase-1 reads in STR.1.bam. Phase unknown reads will be randomly allocated to one of the two files. Chimeric reads with switch errors will be saved in STR.chimeric.bam. [null]
+      #* F - Do not attempt to fix chimeric reads.
+      #* k - [INT] Maximum length for local phasing. [13]
+      #* q - [INT] Minimum Phred-scaled LOD to call a heterozygote. [40]
+      #* Q - [INT] Minimum base quality to be used in het calling. [13] 
       def phase(opts={})
         command = "#{form_opt_string(@samtools, "phase", opts, [:A, :F] )}"
         @last_command = command
