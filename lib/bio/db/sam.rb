@@ -17,6 +17,7 @@ module Bio
         @bcftools = args[:bcftools] || File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','bcftools')
         
         @files = [@files] if @files.instance_of?(String)
+
         @last_command = nil
         raise ArgumentError, "Need Fasta and at least one BAM or SAM" if not @fasta or not @bam
         raise IOError, "File not found" if not files_ok?
@@ -105,6 +106,58 @@ module Bio
           result << p.coverage
         end
         result
+      end
+      
+      
+      #returns an svg file or object, plotting coverage for each location for which there are mapped reads
+      #* chr - the reference name
+      #* start - the start position 
+      #* length - the length of the region queried
+      #OPTIONS
+      #* bin - the amount of bins to split the histogram into. The arithmetic mean score for each bin will be plotted. [default 30 bins]
+      #* svg - a file to write the svg image to [default a String object containing the SVG]
+      def plot_coverage(chr,start,length, opts={})
+        if opts[:bin]
+          bin = length/opts[:bin]
+        else
+          bin = length/30
+        end
+        result = []
+        region = "#{chr}:#{start}-#{start + length}"
+        self.mpileup(:r => region) do |p|
+          result << p.coverage
+        end
+        p = Bio::Graphics::Page.new(:width => 1000, 
+             :height => 200, 
+             :number_of_intervals => 10,
+             :font_size => 14
+             )
+        data_track = p.add_track(:glyph => :histogram, 
+                        :stroke_color => 'black',
+                        :fill_color => 'gold',
+                        :track_height => 150,
+                        :name => 'read coverage', 
+                        :label => true, 
+                        :stroke_width => '1', 
+                        :x_round => 1,
+                        :y_round => 1 )
+        index = 0;        
+        result.each_slice(bin) {|slice| 
+        #result.each_with_index {|val, index|
+        data_feature = Bio::Graphics::MiniFeature.new(:start => start + index,
+                       :end => (start + index + bin),
+                       :segment_height => slice.inject{|sum,x| sum + x }.to_f / slice.size)
+        data_track.add(data_feature)
+        index+=bin
+        }
+        if opts[:svg]
+          svg = opts[:svg].to_s
+          p.write(svg)
+        else
+          return p.get_markup
+        end
+       
+       
       end
       
       #returns the average coverage over the region queried
