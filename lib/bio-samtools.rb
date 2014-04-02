@@ -1,4 +1,6 @@
-require 'ffi'
+require 'bio-svgenes'
+require 'bio'
 require 'bio/db/sam'
 require 'bio/db/pileup'
 require 'bio/db/vcf'
+require 'bio/db/alignment'

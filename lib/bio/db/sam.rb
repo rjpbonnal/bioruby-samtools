@@ -1,655 +1,592 @@
-require 'bio/db/sam/library'
-require 'bio/db/sam/bam'
-require 'bio/db/sam/faidx'
-require 'bio/db/sam/sam'
-#require 'bio/db/pileup'
-#require 'bio/db/vcf'
-require 'systemu'
-
-module LibC
-  extend FFI::Library
-  ffi_lib FFI::Library::LIBC
-  attach_function :free, [ :pointer ], :void
-  # call #attach_function to attach to malloc, free, memcpy, bcopy, etc.
-end
-
 module Bio
   class DB
     class Sam
-      attr_reader :sam_file
-      attr_accessor :minumum_ratio_for_iup_consensus
-      attr_reader :cached_regions
-      @minumum_ratio_for_iup_consensus = 0.20
+      attr_accessor :bam, :fasta, :samtools, :bcftools, :last_command
+      
+      
+      #Creates a new Bio::DB::Sam object
+      #* fasta [String] - the path to the Fasta reference sequence
+      #* bam [String] - path to bam files
+      #* samtools [String] - path to alternative installation of samtools
+      #* bcftools [String] - path to alternative installation of bcftools
+      #* returns [Bio::DB::Sam] a new `Bio::DB::Sam` object
+      def initialize(args)
+        @fasta = args[:fasta]
+        @bam = args[:bam]
+        @samtools = args[:samtools] || File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools')
+        @bcftools = args[:bcftools] || File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','bcftools')
+        
+        @files = [@files] if @files.instance_of?(String)
 
-      # To make a new sam object. Initialize expects a hash optsa with the following elemets:
-      # fasta:: The fasta file with the reference. (nil)
-      # bam:: path to a binary SAM file (nil)
-      # tam:: path to a text SAM file (nil) 
-      # compressed:: If the binary file is compressed (true)
-      # write:: If the file is to be writen (false). Not supported yet. 
-      # *NOTE:* you can't use binary and text formats simultaneusly. To make queries, the file has to be a sorted binary. 
-      # This function doesn't actually open the file, it just prepares the object to be opened in a later stage. 
-      #
-      def initialize(optsa={})
-        opts =  { :fasta => nil,  :bam => nil,:tam => nil, :compressed => true, :write => false }.merge!(optsa)
+        @last_command = nil
+        raise ArgumentError, "Need Fasta and at least one BAM or SAM" if not @fasta or not @bam
+        raise IOError, "File not found" if not files_ok?
+        @bams = [@bams] if @bams.instance_of? String
+        
+      end
 
-
-
-        @fasta_path = opts[:fasta]
-        @compressed = opts[:compressed]
-        @write = opts[:write]
-        bam = opts[:bam]
-        tam = opts[:tam]
-
-        if bam == nil && tam == nil && @fasta_path == nil then
-          raise SAMException.new(), "No alignment or reference file"
-        elsif bam != nil && tam != nil then
-          raise SAMException.new(), "Alignment has to be in either text or binary format, not both"
-        elsif bam != nil then
-          @binary = true
-          @sam = bam     
-        elsif tam != nil then
-          @sam = tam     
-          @binary = false
-
-        end
-        @fasta_file = nil
-        @sam_file   = nil
-
-        ObjectSpace.define_finalizer(self,  self.class.method(:finalize).to_proc)
+      #backward compatibility method, returns true if file exists otherwise, complains and quits.
+      def open
+        files_ok?
       end
       
-      #Function that actually opens the sam file
-      #Throws a SAMException if the file can't be open.
-      def open()
+      #runs the samtools view command   
+      #* b - output BAM
+      #* h - print header for the SAM output
+      #* H - print header only (no alignments)
+      #* S - input is SAM
+      #* u - uncompressed BAM output (force -b)
+      #* one - fast compression (force -b)
+      #* x - output FLAG in HEX (samtools-C specific)
+      #* X - output FLAG in string (samtools-C specific)
+      #* c - print only the count of matching records
+      #* B - collapse the backward CIGAR operation
+      #* at - INT number of BAM compression threads [0]
+      #* L - FILE output alignments overlapping the input BED FILE [null]
+      #* t - FILE list of reference names and lengths (force -S) [null]
+      #* T - FILE reference sequence file (force -S) [null]
+      #* o - FILE output file name [stdout]
+      #* R - FILE list of read groups to be outputted [null]
+      #* f - INT required flag  0 for unset [0]
+      #* F - INT filtering flag  0 for unset [0]
+      #* q - INT minimum mapping quality [0]
+      #* l - STR only output reads in library STR [null]
+      #* r - STR only output reads in read group STR [null]
+      #* s - FLOAT fraction of templates to subsample; integer part as seed [-1]
+      #* chr - name of reference sequence to get alignments from
+      #* start - start position on reference sequence
+      #* stop - end postion on reference sequence
+      def view(opts={},&block)
+        region = String.new
+        if opts[:chr] and opts[:start] and opts[:stop]
+          region = "#{opts[:chr]}:#{opts[:start]}-#{opts[:stop]}"
+          [:chr, :start, :stop].each {|o| opts.delete(o)}
+        end
+        if opts[:at]
+          opts['@'] = opts[:at]
+          opts.delete(:at)
+        end
+        
+        if opts[:one]
+          opts['1'] = opts[:one]
+          opts.delete(:one)
+        end
+                
+        command = form_opt_string(@samtools, 'view', opts, [:b, :h, :H, :S, :u, '1', :x, :X, :c, :B]) + " " + region
+        @last_command = command
+        type = (opts[:u] or opts[:b]) ? :binary : :text
+        klass = (type == :binary) ? String : Bio::DB::Alignment
+        yield_from_pipe(command, klass, type, &block)
+      end
+      
+      #fetches a subsequence and calls code block
+      #* chr - the reference name for the subsequence
+      #* start - the start position for the subsequence
+      #* stop - the stop position for the subsequence
+      #* &block - the the block of code to execute
+      def fetch(chr, start,stop, &block)
+        view(
+        :chr => chr,
+        :start => start,
+        :stop => stop, 
+        &block  
+        )
+      end
+      
+      alias_method :fetch_with_function, :fetch
+      
+      #returns an array of coverage for each location for which there are mapped reads
+      #* chr - the reference name
+      #* start - the start position 
+      #* length - the length of the region queried
+      def chromosome_coverage(chr,start,length)
+        result = []
+        region = "#{chr}:#{start}-#{start + length}"
+        self.mpileup(:r => region) do |p|
+          result << p.coverage
+        end
+        result
+      end
+      
+      
+      #returns an svg file or object, plotting coverage for each location for which there are mapped reads
+      #* chr - the reference name
+      #* start - the start position 
+      #* length - the length of the region queried
+      #OPTIONS
+      #* bin - the amount of bins to split the histogram into. The arithmetic mean score for each bin will be plotted. [default 30 bins]
+      #* svg - a file to write the svg image to [default a String object containing the SVG]
+      def plot_coverage(chr,start,length, opts={})
+        if opts[:bin]
+          bin = length/opts[:bin]
+        else
+          bin = length/30
+        end
+        result = []
+        region = "#{chr}:#{start}-#{start + length}"
+        self.mpileup(:r => region) do |p|
+          result << p.coverage
+        end
+        p = Bio::Graphics::Page.new(:width => 1000, 
+             :height => 200, 
+             :number_of_intervals => 10,
+             :font_size => 14
+             )
+        data_track = p.add_track(:glyph => :histogram, 
+                        :stroke_color => 'black',
+                        :fill_color => 'gold',
+                        :track_height => 150,
+                        :name => 'read coverage', 
+                        :label => true, 
+                        :stroke_width => '1', 
+                        :x_round => 1,
+                        :y_round => 1 )
+        index = 0;        
+        result.each_slice(bin) {|slice| 
+        #result.each_with_index {|val, index|
+        data_feature = Bio::Graphics::MiniFeature.new(:start => start + index,
+                       :end => (start + index + bin),
+                       :segment_height => slice.inject{|sum,x| sum + x }.to_f / slice.size)
+        data_track.add(data_feature)
+        index+=bin
+        }
+        if opts[:svg]
+          svg = opts[:svg].to_s
+          p.write(svg)
+        else
+          return p.get_markup
+        end
+       
+       
+      end
+      
+      #returns the average coverage over the region queried
+      #* chr - the reference name
+      #* start - the start position 
+      #* length - the length of the region queried
+      def average_coverage(chr,start,length)
+        arr = self.chromosome_coverage(chr,start,length)
+        arr.inject{ |sum, el| sum + el }.to_f / arr.size
+      end
+      
+      #returns a Bio::DB::Pileup or Bio::DB::VCF object
+      #* region - Only generate pileup in region [chrom:start-stop] 
+      #* illumina_quals - Assume the quality is in the Illumina 1.3+ encoding
+      #* count_anomalous - Do not skip anomalous read pairs in variant calling
+      #* no_baq - Disable probabilistic realignment for the computation of base alignment quality (BAQ). BAQ is the Phred-scaled probability of a read base being misaligned. Applying this option greatly helps to reduce false SNPs caused by misalignments.
+      #* adjust_mapq - [INT] Coefficient for downgrading mapping quality for reads containing excessive mismatches. Given a read with a phred-scaled probability q of being generated from the mapped position, the new mapping quality is about sqrt((INT-q)/INT)*INT. A zero value disables this functionality; if enabled, the recommended value for BWA is 50. [0] 
+      #* max_per_bam_depth - [INT] At a position, read maximally INT reads per input BAM. [250] 
+      #* extended_baq - Extended BAQ computation. This option helps sensitivity especially for MNPs, but may hurt specificity a little bit.
+      #* exclude_reads_file - [FILE] exclude read groups listed in FILE [null]
+      #* list_of_positions - [FILE] BED or position list file containing a list of regions or sites where pileup or BCF should be generated [null]
+      #* mapping_quality_cap - [INT] cap mapping quality at INT [60]
+      #* ignore_rg - ignore read group tags
+      #* min_mapping_quality - [INT] skip alignments with mapQ smaller than INT [0]
+      #* min_base_quality - [INT] skip bases with baseQ/BAQ smaller than INT [13]   
+      #* ##following options are for the -g -u option
+      #* genotype_calling - generate BCF output (genotype likelihoods)
+      #* uncompressed_bcf - generate uncompress BCF output
+      #* extension_sequencing_probability - [INT] Phred-scaled gap extension seq error probability [20]
+      #* homopolymer_error_coefficient - [INT] coefficient for homopolymer errors [100]
+      #* no_indels - do not perform indel calling
+      #* skip_indel_over_average_depth - [INT] max per-sample depth for INDEL calling [250]
+      #* gap_open_sequencing_error_probability - [INT] Phred-scaled gap open sequencing error probability [40]
+      #* platforms - [STRING] comma separated list of platforms for indels [all]
+      def mpileup(opts={}, &block)
+        #long option form to short samtools form..
+        long_opts = {
+        :region => :r,
+        :illumina_quals => :six,
+        :count_anomalous => :A,
+        :no_baq => :B,
+        :adjust_mapq => :C,
+        :max_per_bam_depth => :d,
+        :extended_baq => :E,
+        :exclude_reads_file => :G,
+        :list_of_positions => :l,
+        :mapping_quality_cap => :M,
+        :ignore_rg => :R,
+        :min_mapping_quality => :q,
+        :min_base_quality => :Q,
+        ###following options are for the -g -u option
+        :genotype_calling => :g,
+        :uncompressed_bcf => :u,
+        :extension_sequencing_probability => :e,
+        :homopolymer_error_coefficient => :h,
+        :no_indels => :I,
+        :skip_indel_over_average_depth => :L,
+        :gap_open_sequencing_error_probability => :o,
+        :platforms => :P 
+        }
 
-        raise SAMException.new(), "Writing not supported yet" if @write
-        raise SAMException.new(), "No SAM file specified" unless @sam 
-
-        opts = @write ? "w" : "r"
-        if @binary then  
-          opts += "b" 
-          if @write then
-            unless @compressed then 
-              opts += "u"
-            end
+        ##convert any long_opts to short opts 
+        temp_opts = opts.dup
+        opts.each_pair do |k,v|
+          if long_opts[k]
+            temp_opts[long_opts[k]] = v 
+            temp_opts.delete(k)
           end
         end
-        valid = ["r", "w", "wh", "rb", "wb" , "wbu"]
-        unless valid.include?(opts) then
-          raise SAMException.new(), "Invalid options for samopen: " + opts 
-        end
-
-        samFile = Bio::DB::SAM::Tools.samopen(@sam, opts, nil)
-        if samFile.null? then
-          @sam_file = nil
-          raise SAMException.new(), "File not opened:  " + @sam
-        end
-        @sam_file = Bio::DB::SAM::Tools::SamfileT.new(samFile)
-
-      end
-
-      #Prints a description of the sam file in a text format containg if it is binary or text, the path
-      #and the fasta file of the reference
-      def to_s()
-        (@binary ? "Binary" : "Text") + " file: " + @sam + " with fasta: " + @fasta_path
-      end
-
-      #Closes the sam file and destroys the C pointers using the functions provided by libbam
-      def close()
-        Bio::DB::SAM::Tools.fai_destroy(@fasta_index) unless @fasta_index.nil? || @fasta_index.null?
-        Bio::DB::SAM::Tools.bam_index_destroy(@sam_index) unless @sam_index.nil? || @sam_index.null?
-        Bio::DB::SAM::Tools.samclose(@sam_file) unless @sam_file.nil? 
-        @sam_file = nil
-        @fasta_index = nil
-      end
-
-      # Destructor method that closes the file before letting the object be garbage collected.
-      def Sam.finalize(id)
-        id.close()
-        puts "Finalizing #{id}  at #{Time.new}"       
-      end
-
-      #Loads the bam index to be used for fetching. If the index doesn't exists the index is built provided that
-      #the user has writing access to the folder where the BAM file is located. If the creation of the file fails
-      #a SAMException is thrown. 
-      #If the index doesn't exist, loading it will take more time. It is suggested to generate the index separatedly
-      #if the bam file sits on a server where the executing user may not have writing permissions in the server.
-      def load_index()
-        raise SAMException.new(), "Indexes are only supported by BAM files, please use samtools to convert your SAM file" unless @binary
-        @sam_index = Bio::DB::SAM::Tools.bam_index_load(@sam)
-        if @sam_index.null? then
-          p "Generating index for: " + @sam
-          Bio::DB::SAM::Tools.bam_index_build(@sam)
-          @sam_index = Bio::DB::SAM::Tools.bam_index_load(@sam)
-          raise SAMException.new(), "Unable to generate bam index for: " + @sam if @sam_index.nil? || @sam_index.null?
-        end
-      end
-
-      #Loads the reference file to be able to query regions of it. This requires the fai index to exist in the same
-      #folder than the reference. If it doesn't exisits, this functions attempts to generate it. If user doesn't
-      #have writing permissions on the folder, or the creation of the fai fails for any reason, a SAMException is thrown.
-      def load_reference()
-        raise SAMException.new(), "No path for the refernce fasta file. " if @fasta_path.nil?
-
-        @fasta_index = Bio::DB::SAM::Tools.fai_load(@fasta_path)
-
-        if @fasta_index.null? then
-          p "Generating index for: " + @fasta_path
-          Bio::DB::SAM::Tools.fai_build(@fasta_path)
-          @fasta_index =  Bio::DB::SAM::Tools.fai_load(@fasta_path)
-          raise SAMException.new(), "Unable to generate fasta index for: " + @fasta_path if @fasta_index.nil? ||  @fasta_index.null?
-        end
-
-      end
-
-      #Returns the average coverage of a region in a bam file.
-      def average_coverage(chromosome, qstart, len)
-
-        #reference = fetch_reference(chromosome, qstart,len)
-        # len = reference.length if len > reference.length
-
-
-        coverages = chromosome_coverage(chromosome, qstart, len)
-        total = 0
-        len.times{ |i| total= total + coverages[i] }
-        avg_cov = total.to_f / len
-        #LibC.free reference
-        avg_cov
-      end
-
-      #Returns an array with the coverage at each possition in the queried region
-      #This is a simple average coverage just calculated with the first and last
-      #possition of the alignment, ignoring the gaps.
-      def chromosome_coverage(chromosome, qstart, len)
+        opts = temp_opts
+        opts[:u] = true if opts[:g] #so that we always get uncompressed output
+        opts.delete(:g)
         
-        coverages = Array.new(len, 0)
-
-        chr_cov_proc = Proc.new do |alignment|
-          last = alignment.calend - qstart
-          first = alignment.pos - qstart
-          if last < first
-            tmp = last
-            last = first
-            first = last
-          end
-
-          #  STDERR.puts "#{first} #{last}\n"
-          first.upto(last-1) { |i|
-
-            coverages[i-1] = 1 + coverages[i-1]  if i-1 < len && i > 0
-          }
+        opts[:f] = @fasta
+        
+        if opts[:six]
+          opts["6"] = nil
+          opts.delete(:six)
         end
+        
+        command = form_opt_string(@samtools, "mpileup", opts, [:R, :B, :E, "6", :A, :g, :u, :I] )
 
-        fetch_with_function(chromosome, qstart, qstart+len,  chr_cov_proc)
-        #p coverages
-        coverages
-      end
-
-      #Returns the sequence for a given region.
-      def fetch_reference(chromosome, qstart,qend)
-        load_reference if @fasta_index.nil? || @fasta_index.null? 
-        query = query_string(chromosome, qstart,qend)
-        len = FFI::MemoryPointer.new :int
-        reference = Bio::DB::SAM::Tools.fai_fetch(@fasta_index, query, len)
-        raise SAMException.new(), "Unable to get sequence for reference: "+query if reference.nil?
-
-        reference
-      end
-
-      #Generates a query sting to be used by the region parser in samtools. 
-      #In principle, you shouldn't need to use this function.
-      def query_string(chromosome, qstart,qend)
-        query = chromosome + ":" + qstart.to_s + "-" + qend.to_s 
-        query
-      end
-
-      #Returns an array of Alignments on a given region.
-      def fetch(chromosome, qstart, qend)
-        als = Array.new
-        fetchAlignment = Proc.new do |alignment|
-          als.push(alignment.clone)   
-          0  
+        if opts[:u]
+          command = command + " | #{@bcftools} view -cg -"
         end
-        fetch_with_function(chromosome, qstart, qend, fetchAlignment)
-        als
-      end  
+        
+        klass = opts[:u] ? Bio::DB::Vcf : Bio::DB::Pileup
+        @last_command = command
+        yield_from_pipe(command, klass, :text, &block)
 
-      #Executes a function on each Alignment inside the queried region of the chromosome. The chromosome
-      #can be either the textual name or a FixNum with the internal index. However, you need to get the
-      #internal index with the provided API, otherwise the pointer is outside the scope of the C library. 
-      #Returns the count of alignments in the region. 
-      #WARNING: Accepts an index already parsed by the library. It fails when you use your own FixNum (FFI-bug?)
-      def fetch_with_function(chromosome, qstart, qend, function)
-        load_index if @sam_index.nil? || @sam_index.null?
-        chr = FFI::MemoryPointer.new :int
-        beg = FFI::MemoryPointer.new :int
-        last = FFI::MemoryPointer.new :int
-        query = query_string(chromosome, qstart,qend)
-        qpointer = FFI::MemoryPointer.from_string(query)
-        header = @sam_file[:header]
-        Bio::DB::SAM::Tools.bam_parse_region(header,qpointer, chr, beg, last) 
-        #raise SAMException.new(), "invalid query: " + query  if(chr.read_int < 0)
-        count = 0;
-
-        fetchAlignment = Proc.new do |bam_alignment, data|
-          alignment =  Alignment.new
-          alignment.set(bam_alignment, header)
-          function.call(alignment)
-          count = count + 1
-          0  
-        end
-        Bio::DB::SAM::Tools.bam_fetch(@sam_file[:x][:bam], @sam_index,chr.read_int,beg.read_int, last.read_int, nil, fetchAlignment)
-        #LibC.free chr
-        #LibC.free beg
-        #LibC.free last
-        #LibC.free qpointer
-        count
       end
       
-      #Merges n BAM files. This doesn't require to create a SAM object
-      #files:: An array with the paths to the files.
-      #merged_file:: The path to the merged file
-      #headers:: The BAM file containing the header
-      #add_RG:: If true, the RG tag is added (infered from the filenames)
-      #by_qname:: If true, the bamfiles should by ordered by query name, if false, by coordinates. 
-      def self.merge(files, merged_file, headers, add_RG, by_qname)
-        strptrs = []
-        strptrs << FFI::MemoryPointer.from_string("merge")
-        files.each do |file|
-          strptrs << FFI::MemoryPointer.from_string(file)
+      #fetches a subsequence from a reference genome and option returns it as a Bio::Sequence::NA object
+      #* chr -  [STRING] the reference name for the subsequence
+      #* start - [INT] the start position for the subsequence
+      #* stop - [INT] the stop position for the subsequence
+      #* as_bio - boolean stating if the returned object should be a Bio::Sequence::NA object
+      def fetch_reference(chr,start,stop, opts={:as_bio => false})
+        command = "#{@samtools} faidx #{@fasta} #{chr}:#{start}-#{stop}"
+        #puts command
+        @last_command = command
+        seq = ""
+        yield_from_pipe(command, String, :text ) {|line| seq = seq + line unless line =~ /^>/}
+        if opts[:as_bio]
+          seq = Bio::Sequence::NA.new(seq).to_fasta("#{chr}:#{start}-#{stop}")
         end
-        strptrs << nil
-
-        # Now load all the pointers into a native memory block
-        argv = FFI::MemoryPointer.new(:pointer, strptrs.length)
-        strptrs.each_with_index do |p, i|
-           argv[i].put_pointer(0,  p)
+        seq
+      end
+      
+      #Index reference sequence in the FASTA format or extract subsequence from indexed reference sequence. If no region is specified, faidx will index the file and create <ref.fasta>.fai on the disk. If regions are speficified, the subsequences will be retrieved and printed to stdout in the FASTA format.
+      #Options - if a subsequence is required
+      #* chr - [STRING] the reference name of the subsequence
+      #* start - [INT] the start position for the subsequence
+      #* stop - [INT] the stop position for the subsequence
+      def faidx(opts={})
+        if opts.has_key?(:chr) and opts.has_key?(:start) and opts.has_key?(:stop)
+        opts={:as_bio => false}
+        self.fetch_reference(:chr,:start,:stop,opts)
+        else
+          command = "#{@samtools} faidx #{@fasta}"
+          @last_command = command
+          system(command)
         end
-        #void bam_merge_core(int by_qname, const char *out, const char *headers, int n, char * const *fn, int add_RG)
-        Bio::DB::SAM::Tools.bam_merge_core(by_qname, merged_file, headers, strptrs.length, argv, add_RG)
+      end
+      
+      #Index sorted alignment for fast random access. Index file <aln.bam>.bai will be created of no out_index is provided.
+      #* out_index - [STRING] name of index
+      def index(opts={})
+        command = "#{@samtools} index #{@bam} #{opts[:out_index]}"
+        #puts command
+        @last_command = command
+        system(command)
       end
 
-      #calls the mpileup function, opts is a hash of options identical to the command line options for mpileup.
-      #is an iterator that yields a Pileup object for each postion
-      #the command line options that generate/affect BCF/VCF are ignored ie (g,u,e,h,I,L,o,p)
-      #call the option as a symbol of the flag, eg -r for region is called :r => "some SAM compatible region"
-      #eg bam.mpileup(:r => "chr1:1000-2000", :q => 50) gets the bases with quality > 50 on chr1 between 1000-5000 
-      def mpileup( opts={})
+      #Fill in mate coordinates, ISIZE and mate related flags from a name-sorted alignment
+      #* out_bam name of outfile
+      #* r - remove unmapped reads and secondary alignments
+      def fix_mates(opts={})
+        #opts.merge!({:out_index=>nil})
+        remove_reads = ""
+        if opts[:r]
+          remove_reads = "-r"
+        end
+        command = "#{@samtools} fixmate #{remove_reads} #{@bam} #{opts[:out_bam]}"
+        #puts command
+        @last_command = command
+        system(command)
+      end
 
-              raise SAMException.new(), "No BAMFile provided" unless @sam and @binary
-              raise SAMException.new(), "No FastA provided" unless @fasta_path
-              #long option form to short samtools form..
-              long_opts = {
-              :region => :r,
-              :illumina_quals => :six,
-              :count_anomalous => :A,
-              :no_baq => :B,
-              :adjust_mapq => :C,
-              :max_per_bam_depth => :d,
-              :extended_baq => :E,
-              :exclude_reads_file => :G,
-              :list_of_positions => :l,
-              :mapping_quality_cap => :M,
-              :ignore_rg => :R,
-              :min_mapping_quality => :q,
-              :min_base_quality => :Q
-              }
-              ##convert any long_opts to short opts 
-              temp_opts = opts.dup
-              opts.each_pair do |k,v|
-                if long_opts[k]
-                  temp_opts[long_opts[k]] = v 
-                  temp_opts.delete(k)
-                end
-              end
-              opts = temp_opts
-              ##remove any calls to -g or -u for mpileup, bcf output is not yet supported
-              ##and also associated output options
-              [:g, :u, :e, :h, :I, :L, :o, :p].each {|x| opts.delete(x) }
+      alias_method :fixmate, :fix_mates
 
-              sam_opts = []
-              #strptrs << FFI::MemoryPointer.from_string("mpileup")
-              opts.each do |k,v|
-                next unless opts[k] ##dont bother unless the values provided are true.. 
-                k = '6' if k == :six
-                k = '-' + k.to_s
-                sam_opts << k #strptrs << FFI::MemoryPointer.from_string(k)
-                sam_opts << v.to_s  unless ["-R", "-B", "-E", "-6", "-A"].include?(k) #these are just flags so don't pass a value... strptrs << FFI::MemoryPointer.from_string(v.to_s)
-              end
-              sam_exe = File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools')
-              sam_opts = sam_opts + ['-f', @fasta_path, @sam]
-              
-              sam_opts_string = SystemUniversal.quote(*sam_opts)
-              cmdline = "#{sam_exe} mpileup #{sam_opts_string}"
-              status, stdout, stderr = systemu cmdline
-              
-              if status.exitstatus == 0
-                stdout.each_line do |line|
-                  yield Bio::DB::Pileup.new(line)
-                end
-              else
-                raise SAMException.new(), "Error running mpileup. Command line was '#{cmdline}'\nsamtools STDERR was:\n#{stderr}"
-              end
+      #generate simple stats with regard to the number and pairing of reads mapped to a reference
+      def flag_stats(opts={})
+        command = form_opt_string(@samtools, "flagstat", opts, [])
+        #puts command
+        @last_command = command
+        strings = []
+        yield_from_pipe(command,String) {|line| strings << line.chomp}
+        strings
+      end
 
-              #strptrs << FFI::MemoryPointer.from_string('-f')
-              #strptrs << FFI::MemoryPointer.from_string(@fasta_path)
-              #strptrs << FFI::MemoryPointer.from_string(@sam)
-              #strptrs << nil
+      alias_method :flagstat, :flag_stats
 
-              # Now load all the pointers into a native memory block
-              #argv = FFI::MemoryPointer.new(:pointer, strptrs.length)
-              #strptrs.each_with_index do |p, i|
-              #   argv[i].put_pointer(0,  p)
-              #end
+      #Retrieve and print stats in the index file. The output is TAB delimited with each line consisting of reference sequence name, sequence length, number of mapped reads and number unmapped reads.
+      def index_stats
+        stats = {}   
+        command = form_opt_string(@samtools, "idxstats #{@bam}", {}, [])
+        @last_command = command
+        yield_from_pipe(command, String, :text, true, "#") do |line|
+          info = line.chomp.split(/\t/)
+          stats[ info[0] ] = {:length => info[1].to_i, :mapped_reads => info[2].to_i, :unmapped_reads => info[3].to_i }
+        end
+        stats
+      end
 
-              #old_stdout = STDOUT.clone
-              #read_pipe, write_pipe = IO.pipe()
-              #STDOUT.reopen(write_pipe)
-                #int bam_mpileup(int argc, char *argv[])
-               # Bio::DB::SAM::Tools.bam_mpileup(strptrs.length - 1,argv)
-                #if fork
-                #  write_pipe.close
-                #  STDOUT.reopen(old_stdout) #beware .. stdout from other processes eg tests calling this method can get mixed in...
-                #  begin
-                #    while line = read_pipe.readline
-                #      yield Pileup.new(line)
-                #    end
-                #  rescue EOFError
-                #    read_pipe.close
-                #    Process.wait
-                #  end
-                #end
-            end
-            
-            #experimental method that spawns a samtools mpileup | bcftools view process and supports returning of pileup vcf
-            ##otherwise works like mpileup
-            def mpileup_plus( opts )
+      alias_method :idxstats, :index_stats
 
-                    raise SAMException.new(), "No BAMFile provided" unless @sam and @binary
-                    raise SAMException.new(), "No FastA provided" unless @fasta_path
-                    #long option form to short samtools form..
-                    long_opts = {
-                    :region => :r,
-                    :illumina_quals => :six,
-                    :count_anomalous => :A,
-                    :no_baq => :B,
-                    :adjust_mapq => :C,
-                    :max_per_bam_depth => :d,
-                    :extended_baq => :E,
-                    :exclude_reads_file => :G,
-                    :list_of_positions => :l,
-                    :mapping_quality_cap => :M,
-                    :ignore_rg => :R,
-                    :min_mapping_quality => :q,
-                    :min_base_quality => :Q,
-                    ###following options are for the -g -u option
-                    :genotype_calling => :g,
-                    :uncompressed_bcf => :u,
-                    :extension_sequencing_probability => :e,
-                    :homopolymer_error_coefficient => :h,
-                    :no_indels => :I,
-                    :skip_indel_over_average_depth => :L,
-                    :gap_open_sequencing_error_probability => :o,
-                    :platforms => :P 
-                    }
+      #Merge multiple sorted alignments
+      #* n - sort by read names
+      #* r - attach RG tag (inferred from file names)
+      #* u - uncompressed BAM output
+      #* f - overwrite the output BAM if exist
+      #* one - compress level 1
+      #* l  - [INT] compression level, from 0 to 9 [-1]
+      #* at - [INT] number of BAM compression threads [0]
+      #* R - [STRING] merge file in the specified region STR [all]
+      #* h - [FILE] copy the header in FILE to <out.bam> [in1.bam]
+      #* out - [FILE] out file name
+      #* bams - [FILES] or Bio::DB::Sam list of input bams, or Bio::DB::Sam objects
+      def merge(opts={})
+        if opts[:one]
+          opts['1'] = nil
+          opts.delete(:one)
+        end
 
-                    ##convert any long_opts to short opts 
-                    temp_opts = opts.dup
-                    opts.each_pair do |k,v|
-                      if long_opts[k]
-                        temp_opts[long_opts[k]] = v 
-                        temp_opts.delete(k)
-                      end
-                    end
-                    opts = temp_opts
-                    ##remove any calls to -g or -u for mpileup, bcf output is not yet supported
-                    ##and also associated output options
-                    #[:g, :u, :e, :h, :I, :L, :o, :p].each {|x| opts.delete(x) }
-                    opts[:u] = true if opts[:g] #so that we always get uncompressed output
-                    opts.delete(:g)
-                    
-                    sam_opts = []
-                    #strptrs << FFI::MemoryPointer.from_string("mpileup")
-                    opts.each do |k,v|
-                      next unless opts[k] ##dont bother unless the values provided are true.. 
-                      k = '6' if k == :six
-                      k = '-' + k.to_s
-                      sam_opts << k #strptrs << FFI::MemoryPointer.from_string(k)
-                      sam_opts << v.to_s  unless ["-R", "-B", "-E", "-6", "-A", "-g", "-u", "-I"].include?(k) #these are just flags so don't pass a value... strptrs << FFI::MemoryPointer.from_string(v.to_s)
-                    end
-                    sam_opts = sam_opts + ['-f', @fasta_path, @sam]
-                    
-                    command = "#{File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools')} mpileup #{sam_opts.join(' ')} 2> /dev/null"
-                    if opts[:u]
-                      command = command + " | #{File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','bcftools')} view -cg -"
-                    end
-                    pipe = IO.popen(command)
-                    $stderr.puts command
-                    if opts[:u]
-                      while line = pipe.gets
-                        next if line[0,1] == '#' #skip any header or meta-lines, we dont do anything with those 
-                        yield Bio::DB::Vcf.new(line) 
-                      end
-                    else
-                      while line = pipe.gets
-                        yield Bio::DB::Pileup.new(line)
-                      end
-                    end
-                    pipe.close
-                    #strptrs << FFI::MemoryPointer.from_string('-f')
-                    #strptrs << FFI::MemoryPointer.from_string(@fasta_path)
-                    #strptrs << FFI::MemoryPointer.from_string(@sam)
-                    #strptrs << nil
+        if opts[:at]
+          opts['@'] = opts[:at]
+          opts.delete(:at)
+        end
 
-                    # Now load all the pointers into a native memory block
-                    #argv = FFI::MemoryPointer.new(:pointer, strptrs.length)
-                    #strptrs.each_with_index do |p, i|
-                    #   argv[i].put_pointer(0,  p)
-                    #end
+        out = opts[:out]
+        opts.delete(:out)
 
-                    #old_stdout = STDOUT.clone
-                    #read_pipe, write_pipe = IO.pipe()
-                    #STDOUT.reopen(write_pipe)
-                      #int bam_mpileup(int argc, char *argv[])
-                     # Bio::DB::SAM::Tools.bam_mpileup(strptrs.length - 1,argv)
-                      #if fork
-                      #  write_pipe.close
-                      #  STDOUT.reopen(old_stdout) #beware .. stdout from other processes eg tests calling this method can get mixed in...
-                      #  begin
-                      #    while line = read_pipe.readline
-                      #      yield Pileup.new(line)
-                      #    end
-                      #  rescue EOFError
-                      #    read_pipe.close
-                      #    Process.wait
-                      #  end
-                      #end
-                  end
+        bam_list = opts[:bams].collect do |b|
+          b.bam rescue b
+        end.join(' ')
 
+        opts.delete(:bams)
+        options = commandify(opts, [:n, :r, :u, :f, '1'] )
+        #command = "#{form_opt_string(@samtools, "merge", opts, [:n, :r, :u, :f, '1'] )} #{out} #{bam_list}"
+        command = "#{@samtools} merge #{options} #{out} #{bam_list}"
+
+        @last_command = command
+        puts command
+        system(command)
+
+      end
+
+      #Concatenate BAMs. The sequence dictionary of each input BAM must be identical.
+      #* h - header.sam
+      #* out -[FILE] out file name
+      #* bams -[FILES] or Bio::DB::Sam list of input bams, or Bio::DB::Sam objects
+      def cat(opts={})
+        out = opts[:out]
+        opts.delete(:out)
+
+        bam_list = opts[:bams].collect do |b|
+          b.bam rescue b
+        end.join(' ')
+        opts.delete(:bams)
+        options = commandify(opts, [:h] )
+        command = "#{@samtools} cat #{options} -o #{out} #{bam_list}"
+        puts command
+        @last_command = command
+        system(command)
+
+      end
+
+      #* program  - one of 'samtools' 'bcftools'
+      #* command - one of the commands relevant to the program
+      def self.docs(program, command)
+        return "program must be 'samtools' or 'bcftools'" if not ['samtools', 'bcftools'].include? program
+        command = "#{program} #{command}"
+        `#{command}`
+      end
+
+      #Remove potential PCR duplicates: if multiple read pairs have identical external coordinates, only retain the pair with highest mapping quality.
+      #* s - rmdup for SE reads
+      #* S - treat PE reads as SE in rmdup (force -s)
+      #* out - [FILE] output bam
+      def remove_duplicates(opts={})
+        out = opts[:out]
+        opts.delete(:out)
+        command = "#{form_opt_string(@samtools, "rmdup", opts, [:s, :S])} #{out} #{@bam}"
+        @last_command = command
+        system(command)
+      end
+
+      alias_method :rmdup, :remove_duplicates
       
-      # utility method that does not use the samtools API, it calls samtools directly as if on the command line and catches the output,
-      # to use this method you must have a version of samtools that supports the pileup command (< 0.1.17)
-      # otherwise the command will fail.
-      # mpileup is the preferred method for getting pileups. 
-      # With this method the sam object should be created as usual, but you need to pass this method a string of options for samtools
-      # you don't need to provide the call to samtools pileup itself or -f <fasta file> or the bam file itself, these are taken from the sam object
-      def deprecated_pileup( cmd )
-        
-        system('samtools pileup > /dev/null 2>&1')
-        ##assumes samtools is in the path...
-        if $?.exitstatus > 1
-          raise RuntimeError, "samtools is required on the path. A version of samtools with the pileup function is required"
+      #Sort alignments by leftmost coordinates
+      #* n - sort by read name
+      #* f - use <out.prefix> as full file name instead of prefix
+      #* o - final output to stdout returns bio::db::alignment
+      #* l - [INT]  compression level, from 0 to 9 [-1]
+      #* at - [INT] number of sorting and compression threads [1]
+      #* m - [INT] max memory per thread; suffix K/M/G recognized [768M]
+      #* prefix - [STRING] prefix for output bamfile
+      def sort(opts={})
+        if !opts.has_key?(:prefix)
+          opts.merge!({:prefix => "sorted"})
+        end
+        prefix = opts[:prefix]
+        opts.delete(:prefix)
+        command = form_opt_string(@samtools, "sort", opts, [:n, :f, :o])
+        command = command + " " + prefix
+        @last_command = command
+        #puts command
+        if opts[:o]
+          yield_from_pipe(command, Bio::DB::Alignment)
+        else
+          system(command)
+        end
+      end
+      
+      #used to generate a text alignment viewer
+      #* d - display, output as (H)tml or (C)urses or (T)ext 
+      #* p - [chr:pos] go directly to this position
+      #* s - [STR] display only reads from this sample or group
+      def tview(opts={})
+        if opts[:d]
+          opts['d'] = opts[:d]
+          opts.delete(:d)
+        end
+        if opts[:p]
+          opts['p'] = opts[:p]
+          opts.delete(:p)
+        end
+        if opts[:s]
+          opts['s'] = opts[:s]
+          opts.delete(:s)
+        end
+        command = "#{form_opt_string(@samtools, "tview", opts)}"
+        @last_command = command
+        system(command)
+      end
+      
+      #Replace the header of the current bam file with the header in header_sam
+      #* header_sam - the sam file from which the new header will be taken
+      #* out - [FILE] output bam file
+      def reheader(header_sam, opts={})
+        if opts.has_key?(:out)
+          out=opts[:out]
+          command = "#{@samtools} reheader #{header_sam} #{@bam} > #{out}"
+        else
+          command = "#{@samtools} reheader #{header_sam} #{@bam}"
+        end
+        puts command
+        @last_command = command
+        system(command)
+      end
+      
+      #Generate the MD tag. If the MD tag is already present, this command will give a warning if the MD tag generated is different from the existing tag. Output SAM by default.
+      #* A - When used jointly with -r this option overwrites the original base quality.
+      #* e - Convert a the read base to = if it is identical to the aligned reference base. Indel caller does not support the = bases at the moment.
+      #* u - Output uncompressed BAM
+      #* b - Output compressed BAM
+      #* S - The input is SAM with header lines
+      #* C - [INT] Coefficient to cap mapping quality of poorly mapped reads. See the pileup command for details. [0]
+      #* r - Compute the BQ tag (without -A) or cap base quality by BAQ (with -A).
+      #* E - Extended BAQ calculation. This option trades specificity for sensitivity, though the effect is minor. 
+      def calmd(opts={}, &block)
+        command = form_opt_string(@samtools, "calmd",  opts, [:E, :e, :u, :b, :S, :r] )+ " " + @fasta
+        @last_command = command
+        type = :text 
+        klass = Bio::DB::Alignment
+        yield_from_pipe(command, klass, type, true, "@",&block)
+      end
+
+      #Identifies target regions by examining the continuity of read depth, computes haploid consensus sequences of targets and outputs a SAM with each sequence corresponding to a target. When option -f is in use, BAQ will be applied. 
+      #* Q - [INT] Minimum base quality for a base to be considered [13] 
+      #* i - in penalty
+      #* 0 - em0
+      #* 1 - em1
+      #* 2 - em2
+      #* f - reference
+      def targetcut(opts={})
+        if opts[:f]
+          opts['f'] = @fasta
+          opts.delete(:s)
         end
         
-        raise SAMException.new(), "No BAMFile provided" unless @sam and @binary
-        raise SAMException.new(), "No FastA provided" unless @fasta_path
-        
-        command = 'samtools pileup ' + cmd + " -f #{@fasta_path}" + " #{@sam}" 
-        
+        command = "#{form_opt_string(@samtools, "targetcut", opts, [] )}"
+        @last_command = command
+        system(command)
+      end
+      
+      #Call and phase heterozygous SNPs
+      #* A - Drop reads with ambiguous phase.
+      #* b - [STR] Prefix of BAM output. When this option is in use, phase-0 reads will be saved in file STR.0.bam and phase-1 reads in STR.1.bam. Phase unknown reads will be randomly allocated to one of the two files. Chimeric reads with switch errors will be saved in STR.chimeric.bam. [null]
+      #* F - Do not attempt to fix chimeric reads.
+      #* k - [INT] Maximum length for local phasing. [13]
+      #* q - [INT] Minimum Phred-scaled LOD to call a heterozygote. [40]
+      #* Q - [INT] Minimum base quality to be used in het calling. [13] 
+      def phase(opts={})
+        command = "#{form_opt_string(@samtools, "phase", opts, [:A, :F] )}"
+        @last_command = command
+        system(command)
+      end
+
+
+      #returns an array for each position with [sequence_name, position, depth]
+      #* b - list of positions or regions in BED format
+      #* l - [INT] minQLen
+      #* q - [INT] base quality threshold
+      #* Q - [INT] mapping quality threshold
+      #* r - [chr:from-to] region
+      def depth(opts={})
+        command = form_opt_string(@samtools, "depth", opts)
+        @last_command = command
+        #puts command
+        yield_from_pipe(command, String) do |line|
+          yield line.split(/\t/)
+        end
+
+      end
+
+      private
+      
+      # returns a command string from a program
+      # @param program [Symbol] either `:samtools` or `:bcftools`
+      # @param opts [Hash] the options hash
+      # @param singles `flag` options [Array] the options in `opts` that are single options 
+      def form_opt_string(prog, command, opts, singles=[])
+        opts_string = commandify(opts, singles)
+        "#{prog} #{command} #{opts_string} #{@bam}"
+      end
+      
+      # turns an opts hash into a s
+      def commandify(opts, singles)
+        list = []
+        opts.each_pair do |tag,value|
+          value = "" if singles.include?(tag)
+          list << "-#{tag.to_s} #{value}" 
+        end
+        list.join(" ")
+      end
+      
+      # checks existence of files in instance
+      def files_ok?
+        [@fasta, @sam, @bam].flatten.compact.each {|f| return false unless File.exists? f }
+        true
+      end
+      
+      def yield_from_pipe(command, klass, type=:text, skip_comments=true, comment_char="#", &block)
         pipe = IO.popen(command)
-        while line = pipe.gets
-          yield Pileup.new(line)
+        if type == :text
+          while (line = pipe.gets)
+            next if skip_comments and line[0] == comment_char
+            yield klass.new(line.chomp)
+          end
+        elsif type == :binary
+          while (c = pipe.gets(nil))
+            yield c
+          end
         end
         pipe.close
       end
       
-      
-      def index_stats 
-        raise SAMException.new(), "No BAMFile provided" unless @sam and @binary
-        raise SAMException.new(), "No FastA provided" unless @fasta_path
-        strptrs = []
-        strptrs << FFI::MemoryPointer.from_string("idxstats")
-        strptrs << FFI::MemoryPointer.from_string(@sam)
-        strptrs << nil
-
-        # Now load all the pointers into a native memory block
-        argv = FFI::MemoryPointer.new(:pointer, strptrs.length)
-        strptrs.each_with_index do |p, i|
-           argv[i].put_pointer(0,  p)
-        end
-        
-        index_stats = {}
-        
-        old_stdout = STDOUT.clone
-        read_pipe, write_pipe = IO.pipe()
-        STDOUT.reopen(write_pipe)
-        
-        #int bam_idxstats(int argc, char *argv[])
-        Bio::DB::SAM::Tools.bam_idxstats(strptrs.length - 1,argv)
-        if fork
-          write_pipe.close
-          STDOUT.reopen(old_stdout) #beware .. stdout from other processes eg tests calling this method can get mixed in...
-          begin
-            
-            while line = read_pipe.readline #TAB delimited with each line consisting of reference sequence name, sequence length, # mapped reads and # unmapped reads.
-                info = line.split(/\t/)
-                next unless info.length == 4
-                index_stats[ info[0] ] = {:length => info[1].to_i, :mapped_reads => info[2].to_i, :unmapped_reads => info[3].to_i } 
-            end
-            rescue EOFError
-              read_pipe.close
-              Process.wait
-            end
-        end #fork
-        index_stats
-      end
-      
-      ##yields each reference name and its length
-      def each_reference
-        refs = index_stats
-        refs.each_pair do |k, v|
-          yield k, v[:length]
-        end
-      end
-
-    end
-
-    class Tag
-      attr_accessor :tag, :type, :value
-      def set(str)
-        @tag   = str[0..1]
-        @type  = str[3]
-        @value = str[5..-1]
-      end
-    end
-
-    class Alignment
-
-      def initialize
-        ObjectSpace.define_finalizer(self,
-        self.class.method(:finalize).to_proc)
-      end
-      def Alignment.finalize(object_id)
-
-        #           puts "Object #{object_id} dying at #{Time.new}"
-        #             p  "?" . object_id.al
-        #            p object_id.al
-        LibC.free object_id.al
-        LibC.free object_id.sam
-        LibC.free object_id.calend
-        LibC.free object_id.qlen
-
-        LibC.free object_id.samstr
-      end
-
-      #Attributes from the format
-      attr_accessor :qname, :flag, :rname,:pos,:mapq,:cigar, :mrnm, :mpos, :isize, :seq, :qual, :tags, :al, :samstr
-      #Attributes pulled with the C library
-      attr_accessor  :calend, :qlen
-      #Attrobites frp, the flag field (see chapter 2.2.2 of the sam file documentation)
-      #query_strand and mate_strand are true if they are forward. It is the opposite to the definition in the BAM format for clarity.
-      #primary is the negation of is_negative from the BAM format
-      attr_accessor :is_paired, :is_mapped, :query_unmapped, :mate_unmapped, :query_strand, :mate_strand, :first_in_pair,:second_in_pair, :primary, :failed_quality, :is_duplicate
-
-      def set(bam_alignment, header)
-        #Create the FFI object
-        @al = Bio::DB::SAM::Tools::Bam1T.new(bam_alignment) 
-
-        #set the raw data
-        tmp_str =  Bio::DB::SAM::Tools.bam_format1(header,al)
-        #self.sam =  tmp_str
-        #ObjectSpace.define_finalizer(self, proc {|id| puts "Finalizer one on #{id}" })
-        self.sam = String.new(tmp_str)
-        #LibC.free tmp_str
-        #Set values calculated by libbam
-        core = al[:core]
-        cigar = al[:data][core[:l_qname]]#define bam1_cigar(b) ((uint32_t*)((b)->data + (b)->core.l_qname)) 
-        @calend = Bio::DB::SAM::Tools.bam_calend(core,cigar)
-        @qlen = Bio::DB::SAM::Tools.bam_cigar2qlen(core,cigar)
-
-        #process the flags
-        @is_paired             = @flag & 0x0001 > 0
-        @is_mapped             = @flag & 0x0002 > 0
-        @query_unmapped        = @flag & 0x0004 > 0
-        @mate_unmapped         = @flag & 0x0008 > 0
-        @query_strand          = !(@flag & 0x0010 > 0)
-        @mate_strand           = !(@flag & 0x0020 > 0)
-        @first_in_pair         = @flag & 0x0040 > 0
-        @second_in_pair        = @flag & 0x0080 > 0
-        @primary               = !(@flag & 0x0100 > 0)
-        @failed_quality        = @flag & 0x0200 > 0
-        @is_duplicate          = @flag & 0x0400 > 0
-
-      end
-
-
-      def sam=(sam)
-        #p sam
-        s = sam.split("\t")
-        self.qname = s[0]
-        self.flag  = s[1].to_i
-        self.rname = s[2]
-        self.pos   = s[3].to_i
-        self.mapq  = s[4].to_i
-        self.cigar = s[5]
-        self.mrnm  = s[6]
-        self.mpos  = s[7].to_i
-        self.isize = s[8].to_i
-        self.seq   = s[9]
-        self.qual =  s[10]
-        self.tags = {} 
-        11.upto(s.size-1) {|n| 
-          t = Tag.new 
-          t.set(s[n])
-          tags[t.tag] = t
-        }
-
-
-        #<QNAME> <FLAG> <RNAME> <POS> <MAPQ> <CIGAR> <MRNM> <MPOS> <ISIZE> <SEQ> <QUAL> \
-        #[<TAG>:<VTYPE>:<VALUE> [...]] 
-
-      end
-
-    end
-
-    class SAMException < RuntimeError
-      #we can add further variables to give information of the excpetion
-      def initialize()
-
-      end
     end
   end
 end
-
-

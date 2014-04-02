@@ -2,159 +2,109 @@
 
 <html>
 <head>
-<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+<meta charset="UTF-8">
 
 <title>class Bio::DB::Pileup - Pileup</title>
 
-<link type="text/css" media="screen" href="../../rdoc.css" rel="stylesheet">
+<link href="../../fonts.css" rel="stylesheet">
+<link href="../../rdoc.css" rel="stylesheet">
 
 <script type="text/javascript">
   var rdoc_rel_prefix = "../../";
 </script>
 
-<script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
-<script type="text/javascript" charset="utf-8" src="../../js/navigation.js"></script>
-<script type="text/javascript" charset="utf-8" src="../../js/search_index.js"></script>
-<script type="text/javascript" charset="utf-8" src="../../js/search.js"></script>
-<script type="text/javascript" charset="utf-8" src="../../js/searcher.js"></script>
-<script type="text/javascript" charset="utf-8" src="../../js/darkfish.js"></script>
+<script src="../../js/jquery.js"></script>
+<script src="../../js/navigation.js"></script>
+<script src="../../js/search_index.js"></script>
+<script src="../../js/search.js"></script>
+<script src="../../js/searcher.js"></script>
+<script src="../../js/darkfish.js"></script>
 
 
-<body id="top" class="class">
-<nav id="metadata">
-  <nav id="home-section" class="section">
-  <h3 class="section-header">
-    <a href="../../index.html">Home</a>
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../table_of_contents.html#pages">Pages</a>
     <a href="../../table_of_contents.html#classes">Classes</a>
     <a href="../../table_of_contents.html#methods">Methods</a>
-  </h3>
-</nav>
-
-
-  <nav id="search-section" class="section project-section" class="initially-hidden">
-  <form action="#" method="get" accept-charset="utf-8">
-    <h3 class="section-header">
-      <input type="text" name="search" placeholder="Search" id="search-field"
-             title="Type to search, Up and Down to navigate, Enter to load">
-    </h3>
-  </form>
-
-  <ul id="search-results" class="initially-hidden"></ul>
-</nav>
-
-
-  <div id="file-metadata">
-    <nav id="file-list-section" class="section">
-  <h3 class="section-header">Defined In</h3>
-  <ul>
-    <li>lib/bio/db/pileup.rb
-  </ul>
-</nav>
-
-    
   </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
 
   <div id="class-metadata">
     
-    <nav id="parent-class-section" class="section">
-  <h3 class="section-header">Parent</h3>
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
   
   <p class="link">Object
   
-</nav>
+</div>
 
+    
     
     <!-- Method Quickref -->
-<nav id="method-list-section" class="section">
-  <h3 class="section-header">Methods</h3>
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
 
-  <ul class="link-list">
+  <ul class="link-list" role="directory">
     
-    <li><a href="#method-c-iupac_to_base">::iupac_to_base</a>
+    <li ><a href="#method-c-iupac_to_base">::iupac_to_base</a>
     
-    <li><a href="#method-c-new">::new</a>
+    <li ><a href="#method-c-new">::new</a>
     
-    <li><a href="#method-i-genotype_list">#genotype_list</a>
+    <li ><a href="#method-i-genotype_list">#genotype_list</a>
     
-    <li><a href="#method-i-non_ref_count">#non_ref_count</a>
+    <li ><a href="#method-i-non_ref_count">#non_ref_count</a>
     
-    <li><a href="#method-i-non_refs">#non_refs</a>
+    <li ><a href="#method-i-non_refs">#non_refs</a>
     
-    <li><a href="#method-i-ref_count">#ref_count</a>
+    <li ><a href="#method-i-parse_indel">#parse_indel</a>
     
-    <li><a href="#method-i-to_s">#to_s</a>
+    <li ><a href="#method-i-ref_count">#ref_count</a>
     
-    <li><a href="#method-i-to_vcf">#to_vcf</a>
+    <li ><a href="#method-i-to_s">#to_s</a>
+    
+    <li ><a href="#method-i-to_vcf">#to_vcf</a>
     
   </ul>
-</nav>
-
-  </div>
-
-  <div id="project-metadata">
-    <nav id="fileindex-section" class="section project-section">
-  <h3 class="section-header">Pages</h3>
-
-  <ul>
-  
-    <li class="file"><a href="../../LICENSE_txt.html">LICENSE</a>
-  
-  </ul>
-</nav>
-
-    <nav id="classindex-section" class="section project-section">
-  <h3 class="section-header">Class and Module Index</h3>
-
-  <ul class="link-list">
-  
-    <li><a href="../../Bio.html">Bio</a>
-  
-    <li><a href="../../Bio/DB.html">Bio::DB</a>
-  
-    <li><a href="../../Bio/DB/Alignment.html">Bio::DB::Alignment</a>
-  
-    <li><a href="../../Bio/DB/Pileup.html">Bio::DB::Pileup</a>
-  
-    <li><a href="../../Bio/DB/SAM.html">Bio::DB::SAM</a>
-  
-    <li><a href="../../Bio/DB/SAM/Library.html">Bio::DB::SAM::Library</a>
-  
-    <li><a href="../../Bio/DB/SAM/Tools.html">Bio::DB::SAM::Tools</a>
-  
-    <li><a href="../../Bio/DB/SAM/Tools/Bam1CoreT.html">Bio::DB::SAM::Tools::Bam1CoreT</a>
-  
-    <li><a href="../../Bio/DB/SAM/Tools/Bam1T.html">Bio::DB::SAM::Tools::Bam1T</a>
-  
-    <li><a href="../../Bio/DB/SAM/Tools/BamHeaderT.html">Bio::DB::SAM::Tools::BamHeaderT</a>
-  
-    <li><a href="../../Bio/DB/SAM/Tools/BamPileup1T.html">Bio::DB::SAM::Tools::BamPileup1T</a>
-  
-    <li><a href="../../Bio/DB/SAM/Tools/SamfileT.html">Bio::DB::SAM::Tools::SamfileT</a>
-  
-    <li><a href="../../Bio/DB/SAM/Tools/SamfileTX.html">Bio::DB::SAM::Tools::SamfileTX</a>
-  
-    <li><a href="../../Bio/DB/SAMException.html">Bio::DB::SAMException</a>
-  
-    <li><a href="../../Bio/DB/Sam.html">Bio::DB::Sam</a>
-  
-    <li><a href="../../Bio/DB/Tag.html">Bio::DB::Tag</a>
-  
-    <li><a href="../../Bio/DB/Vcf.html">Bio::DB::Vcf</a>
-  
-    <li><a href="../../LibC.html">LibC</a>
-  
-  </ul>
-</nav>
+</div>
 
   </div>
 </nav>
 
-<div id="documentation">
-  <h1 class="class">class Bio::DB::Pileup</h1>
+<main role="main" aria-labelledby="class-Bio::DB::Pileup">
+  <h1 id="class-Bio::DB::Pileup" class="class">
+    class Bio::DB::Pileup
+  </h1>
 
-  <div id="description" class="description">
+  <section class="description">
     
-  </div><!-- description -->
+  </section>
 
   
   
@@ -167,9 +117,10 @@
     
 
     
-    <!-- Attributes -->
-    <section id="attribute-method-details" class="method-section section">
-      <h3 class="section-header">Attributes</h3>
+    <section class="attribute-method-details" class="method-section">
+      <header>
+        <h3>Attributes</h3>
+      </header>
 
       
       <div id="attribute-i-ar1" class="method-detail">
@@ -367,13 +318,14 @@
         </div>
       </div>
       
-    </section><!-- attribute-method-details -->
+    </section>
     
 
-    <!-- Methods -->
     
-     <section id="public-class-5Buntitled-5D-method-details" class="method-section section">
-      <h3 class="section-header">Public Class Methods</h3>
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
 
     
       <div id="method-c-iupac_to_base" class="method-detail ">
@@ -381,37 +333,40 @@
         <div class="method-heading">
           <span class="method-name">iupac_to_base</span><span
             class="method-args">(alt_base)</span>
+          
           <span class="method-click-advice">click to toggle source</span>
+          
         </div>
         
 
         <div class="method-description">
           
-          <p>returns</p>
+          <p>returns the two bases for the corresponding iupac code</p>
+          
           
 
           
           <div class="method-source-code" id="iupac_to_base-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/pileup.rb, line 184</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/pileup.rb, line 177</span>
 <span class="ruby-keyword">def</span> <span class="ruby-constant">Pileup</span>.<span class="ruby-identifier">iupac_to_base</span>(<span class="ruby-identifier">alt_base</span>)
     <span class="ruby-keyword">case</span> <span class="ruby-identifier">alt_base</span>
-          <span class="ruby-keyword">when</span> <span class="ruby-string">'K'</span> <span class="ruby-keyword">then</span> [<span class="ruby-string">'G'</span>,<span class="ruby-string">'T'</span>]
-          <span class="ruby-keyword">when</span> <span class="ruby-string">'M'</span> <span class="ruby-keyword">then</span> [<span class="ruby-string">'A'</span>,<span class="ruby-string">'C'</span>]
-          <span class="ruby-keyword">when</span> <span class="ruby-string">'S'</span> <span class="ruby-keyword">then</span> [<span class="ruby-string">'C'</span>,<span class="ruby-string">'G'</span>]
-          <span class="ruby-keyword">when</span> <span class="ruby-string">'R'</span> <span class="ruby-keyword">then</span> [<span class="ruby-string">'A'</span>,<span class="ruby-string">'G'</span>]
-          <span class="ruby-keyword">when</span> <span class="ruby-string">'W'</span> <span class="ruby-keyword">then</span> [<span class="ruby-string">'A'</span>,<span class="ruby-string">'T'</span>]
-          <span class="ruby-keyword">when</span> <span class="ruby-string">'Y'</span> <span class="ruby-keyword">then</span> [<span class="ruby-string">'C'</span>,<span class="ruby-string">'T'</span>]
-          <span class="ruby-keyword">else</span> <span class="ruby-identifier">alt_base</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp">%r/</span>)
+          <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;K&#39;</span> <span class="ruby-keyword">then</span> [<span class="ruby-string">&#39;G&#39;</span>,<span class="ruby-string">&#39;T&#39;</span>]
+          <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;M&#39;</span> <span class="ruby-keyword">then</span> [<span class="ruby-string">&#39;A&#39;</span>,<span class="ruby-string">&#39;C&#39;</span>]
+          <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;S&#39;</span> <span class="ruby-keyword">then</span> [<span class="ruby-string">&#39;C&#39;</span>,<span class="ruby-string">&#39;G&#39;</span>]
+          <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;R&#39;</span> <span class="ruby-keyword">then</span> [<span class="ruby-string">&#39;A&#39;</span>,<span class="ruby-string">&#39;G&#39;</span>]
+          <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;W&#39;</span> <span class="ruby-keyword">then</span> [<span class="ruby-string">&#39;A&#39;</span>,<span class="ruby-string">&#39;T&#39;</span>]
+          <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;Y&#39;</span> <span class="ruby-keyword">then</span> [<span class="ruby-string">&#39;C&#39;</span>,<span class="ruby-string">&#39;T&#39;</span>]
+          <span class="ruby-keyword">else</span> <span class="ruby-identifier">alt_base</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp">//</span>)
     <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-          </div><!-- iupac_to_base-source -->
+          </div>
           
         </div>
 
         
 
         
-      </div><!-- iupac_to_base-method -->
+      </div>
 
     
       <div id="method-c-new" class="method-detail ">
@@ -419,7 +374,9 @@
         <div class="method-heading">
           <span class="method-name">new</span><span
             class="method-args">(pile_up_line)</span>
+          
           <span class="method-click-advice">click to toggle source</span>
+          
         </div>
         
 
@@ -430,16 +387,17 @@
 <pre>pile_up_line = &quot;seq2\t151\tG\tG\t36\t0\t99\t12\t...........A\t:9&lt;;;7=&lt;&lt;&lt;&lt;&lt;&quot;
 pile = Bio::DB::Pileup.new(pile_up_line)</pre>
           
+          
 
           
           <div class="method-source-code" id="new-source">
             <pre><span class="ruby-comment"># File lib/bio/db/pileup.rb, line 35</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">pile_up_line</span>)
-  <span class="ruby-identifier">cols</span> = <span class="ruby-identifier">pile_up_line</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp">%r\t/</span>)
+  <span class="ruby-identifier">cols</span> = <span class="ruby-identifier">pile_up_line</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp">/\t/</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">cols</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">6</span> <span class="ruby-comment">##should only be able to get 6 lines from mpileup</span>
     <span class="ruby-ivar">@ref_name</span>, <span class="ruby-ivar">@pos</span>, <span class="ruby-ivar">@ref_base</span>, <span class="ruby-ivar">@coverage</span>, <span class="ruby-ivar">@read_bases</span>, <span class="ruby-ivar">@read_quals</span> = <span class="ruby-identifier">cols</span>
   <span class="ruby-keyword">elsif</span> (<span class="ruby-value">10</span><span class="ruby-operator">..</span><span class="ruby-value">13</span>).<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">cols</span>.<span class="ruby-identifier">length</span>) <span class="ruby-comment">##incase anyone tries to use deprecated pileup with -c flag we get upto 13 cols...</span>
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">cols</span>[<span class="ruby-value">2</span>] <span class="ruby-operator">==</span> <span class="ruby-string">'*'</span> <span class="ruby-comment">#indel</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">cols</span>[<span class="ruby-value">2</span>] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;*&#39;</span> <span class="ruby-comment">#indel</span>
       <span class="ruby-ivar">@ref_name</span>, <span class="ruby-ivar">@pos</span>, <span class="ruby-ivar">@ref_base</span>, <span class="ruby-ivar">@consensus</span>, <span class="ruby-ivar">@consensus_quality</span>, <span class="ruby-ivar">@snp_quality</span>, <span class="ruby-ivar">@rms_mapq</span>, <span class="ruby-ivar">@coverage</span>, <span class="ruby-ivar">@indel_1</span>, <span class="ruby-ivar">@indel_2</span>, <span class="ruby-ivar">@ar1</span>, <span class="ruby-ivar">@ar2</span>, <span class="ruby-ivar">@ar3</span> = <span class="ruby-identifier">cols</span>
     <span class="ruby-keyword">else</span> <span class="ruby-comment">#snp / identity</span>
       <span class="ruby-ivar">@ref_name</span>, <span class="ruby-ivar">@pos</span>, <span class="ruby-ivar">@ref_base</span>, <span class="ruby-ivar">@consensus</span>, <span class="ruby-ivar">@consensus_quality</span>, <span class="ruby-ivar">@snp_quality</span>, <span class="ruby-ivar">@rms_mapq</span>, <span class="ruby-ivar">@coverage</span>, <span class="ruby-ivar">@read_bases</span>, <span class="ruby-ivar">@read_quals</span> = <span class="ruby-identifier">cols</span>
@@ -448,7 +406,7 @@ pile = Bio::DB::Pileup.new(pile_up_line)</pre>
     <span class="ruby-ivar">@snp_quality</span> = <span class="ruby-ivar">@snp_quality</span>.<span class="ruby-identifier">to_f</span>
     <span class="ruby-ivar">@rms_mapq</span> = <span class="ruby-ivar">@rms_mapq</span>.<span class="ruby-identifier">to_f</span>
   <span class="ruby-keyword">else</span>
-    <span class="ruby-comment">#raise RuntimeError, &quot;parsing line '#{pile_up_line.chomp}' failed&quot;</span>
+    <span class="ruby-comment">#raise RuntimeError, &quot;parsing line &#39;#{pile_up_line.chomp}&#39; failed&quot;</span>
   <span class="ruby-keyword">end</span>
     
   <span class="ruby-ivar">@pos</span> = <span class="ruby-ivar">@pos</span>.<span class="ruby-identifier">to_i</span>
@@ -457,20 +415,22 @@ pile = Bio::DB::Pileup.new(pile_up_line)</pre>
   <span class="ruby-ivar">@non_ref_count_hash</span> = <span class="ruby-keyword">nil</span> 
   <span class="ruby-ivar">@non_ref_count</span> = <span class="ruby-keyword">nil</span>
 <span class="ruby-keyword">end</span></pre>
-          </div><!-- new-source -->
+          </div>
           
         </div>
 
         
 
         
-      </div><!-- new-method -->
+      </div>
 
     
-    </section><!-- public-class-method-details -->
+    </section>
   
-     <section id="public-instance-5Buntitled-5D-method-details" class="method-section section">
-      <h3 class="section-header">Public Instance Methods</h3>
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
 
     
       <div id="method-i-genotype_list" class="method-detail ">
@@ -478,33 +438,37 @@ pile = Bio::DB::Pileup.new(pile_up_line)</pre>
         <div class="method-heading">
           <span class="method-name">genotype_list</span><span
             class="method-args">()</span>
+          
           <span class="method-click-advice">click to toggle source</span>
+          
         </div>
         
 
         <div class="method-description">
           
+          <p>identifies the reference base and returns the indel or snp genotype as
+applicable</p>
           
           
 
           
           <div class="method-source-code" id="genotype_list-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/pileup.rb, line 174</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/pileup.rb, line 167</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">genotype_list</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ref_base</span> <span class="ruby-operator">==</span> <span class="ruby-string">'*'</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ref_base</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;*&#39;</span>
     <span class="ruby-keyword">return</span> <span class="ruby-identifier">indel_gt</span>
   <span class="ruby-keyword">else</span>
    <span class="ruby-keyword">return</span> <span class="ruby-identifier">snp_gt</span>
- <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-          </div><!-- genotype_list-source -->
+          </div>
           
         </div>
 
         
 
         
-      </div><!-- genotype_list-method -->
+      </div>
 
     
       <div id="method-i-non_ref_count" class="method-detail ">
@@ -512,13 +476,16 @@ pile = Bio::DB::Pileup.new(pile_up_line)</pre>
         <div class="method-heading">
           <span class="method-name">non_ref_count</span><span
             class="method-args">()</span>
+          
           <span class="method-click-advice">click to toggle source</span>
+          
         </div>
         
 
         <div class="method-description">
           
           <p>returns the total non-reference bases in the reads at this position</p>
+          
           
 
           
@@ -530,14 +497,14 @@ pile = Bio::DB::Pileup.new(pile_up_line)</pre>
   <span class="ruby-keyword">end</span>
   <span class="ruby-ivar">@non_ref_count</span>
 <span class="ruby-keyword">end</span></pre>
-          </div><!-- non_ref_count-source -->
+          </div>
           
         </div>
 
         
 
         
-      </div><!-- non_ref_count-method -->
+      </div>
 
     
       <div id="method-i-non_refs" class="method-detail ">
@@ -545,17 +512,18 @@ pile = Bio::DB::Pileup.new(pile_up_line)</pre>
         <div class="method-heading">
           <span class="method-name">non_refs</span><span
             class="method-args">()</span>
+          
           <span class="method-click-advice">click to toggle source</span>
+          
         </div>
         
 
         <div class="method-description">
           
           <p>Calculate the total count of each non-reference nucleotide and return a
-hash of all 4 nt counts, returns a hash</p>
-
-<pre class="ruby"><span class="ruby-identifier">pile</span>.<span class="ruby-identifier">non_refs</span> <span class="ruby-comment">#{:A =&gt; 1, :C =&gt; 0, :T =&gt; 0, :G =&gt; 0}</span>
-</pre>
+hash of all 4 nt counts returns a hash pile.non_refs #{:A =&gt; 1, :C =&gt;
+0, :T =&gt; 0, :G =&gt; 0}</p>
+          
           
 
           
@@ -567,14 +535,52 @@ hash of all 4 nt counts, returns a hash</p>
   <span class="ruby-keyword">end</span>
     <span class="ruby-ivar">@non_ref_count_hash</span>
 <span class="ruby-keyword">end</span></pre>
-          </div><!-- non_refs-source -->
+          </div>
           
         </div>
 
         
 
         
-      </div><!-- non_refs-method -->
+      </div>
+
+    
+      <div id="method-i-parse_indel" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">parse_indel</span><span
+            class="method-args">(alt)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>identifies if the indel is an insertion or a deletion</p>
+          
+          
+
+          
+          <div class="method-source-code" id="parse_indel-source">
+            <pre><span class="ruby-comment"># File lib/bio/db/pileup.rb, line 190</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">parse_indel</span>(<span class="ruby-identifier">alt</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-node">&quot;D#{$&#39;.length}&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">alt</span> <span class="ruby-operator">=~</span><span class="ruby-regexp">/^-/</span> 
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">alt</span><span class="ruby-operator">=~</span><span class="ruby-regexp">/^\+/</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-node">&quot;I#{$&#39;}&quot;</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">alt</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;*&#39;</span> 
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
 
     
       <div id="method-i-ref_count" class="method-detail ">
@@ -582,13 +588,16 @@ hash of all 4 nt counts, returns a hash</p>
         <div class="method-heading">
           <span class="method-name">ref_count</span><span
             class="method-args">()</span>
+          
           <span class="method-click-advice">click to toggle source</span>
+          
         </div>
         
 
         <div class="method-description">
           
           <p>returns the count of reference-bases in the reads at this position</p>
+          
           
 
           
@@ -600,14 +609,14 @@ hash of all 4 nt counts, returns a hash</p>
   <span class="ruby-keyword">end</span>
   <span class="ruby-ivar">@ref_count</span>
 <span class="ruby-keyword">end</span></pre>
-          </div><!-- ref_count-source -->
+          </div>
           
         </div>
 
         
 
         
-      </div><!-- ref_count-method -->
+      </div>
 
     
       <div id="method-i-to_s" class="method-detail ">
@@ -615,18 +624,21 @@ hash of all 4 nt counts, returns a hash</p>
         <div class="method-heading">
           <span class="method-name">to_s</span><span
             class="method-args">()</span>
+          
           <span class="method-click-advice">click to toggle source</span>
+          
         </div>
         
 
         <div class="method-description">
           
-          <p>returns pileup format line as</p>
+          <p>returns pileup format line</p>
+          
           
 
           
           <div class="method-source-code" id="to_s-source">
-            <pre><span class="ruby-comment"># File lib/bio/db/pileup.rb, line 197</span>
+            <pre><span class="ruby-comment"># File lib/bio/db/pileup.rb, line 201</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">to_s</span>
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@read_quals</span> <span class="ruby-keyword">and</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@consensus_quality</span> <span class="ruby-comment">#6col</span>
     [<span class="ruby-ivar">@ref_name</span>, <span class="ruby-ivar">@pos</span>, <span class="ruby-ivar">@ref_base</span>, <span class="ruby-ivar">@coverage</span>.<span class="ruby-identifier">to_i</span>, <span class="ruby-ivar">@read_bases</span>, <span class="ruby-ivar">@read_quals</span>].<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;\t&quot;</span>)    
@@ -637,14 +649,14 @@ hash of all 4 nt counts, returns a hash</p>
   <span class="ruby-keyword">end</span>
     
 <span class="ruby-keyword">end</span></pre>
-          </div><!-- to_s-source -->
+          </div>
           
         </div>
 
         
 
         
-      </div><!-- to_s-method -->
+      </div>
 
     
       <div id="method-i-to_vcf" class="method-detail ">
@@ -652,47 +664,48 @@ hash of all 4 nt counts, returns a hash</p>
         <div class="method-heading">
           <span class="method-name">to_vcf</span><span
             class="method-args">()</span>
+          
           <span class="method-click-advice">click to toggle source</span>
+          
         </div>
         
 
         <div class="method-description">
           
           <p>returns basic VCF string as per samtools/misc sam2vcf.pl except that it
-scrimps on the ref for indels, returning a ‘*’ instead of the reference
-allele</p>
+scrimps on the ref for indels, returning a &#39;*&#39; instead of the
+reference allele</p>
+          
           
 
           
           <div class="method-source-code" id="to_vcf-source">
             <pre><span class="ruby-comment"># File lib/bio/db/pileup.rb, line 103</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">to_vcf</span>
-
   <span class="ruby-identifier">alt</span>,<span class="ruby-identifier">g</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">genotype_list</span> 
-  <span class="ruby-identifier">alt</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">consensus</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp">%r/</span>).<span class="ruby-identifier">join</span>(<span class="ruby-string">','</span>) <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ref_base</span> <span class="ruby-operator">==</span> <span class="ruby-string">'*'</span>
-  <span class="ruby-identifier">alt</span> = <span class="ruby-string">'.'</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">alt</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ref_base</span>
-  [<span class="ruby-keyword">self</span>.<span class="ruby-identifier">ref_name</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">pos</span>, <span class="ruby-string">'.'</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ref_base</span>, <span class="ruby-identifier">alt</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">snp_quality</span>.<span class="ruby-identifier">to_i</span>, <span class="ruby-string">&quot;0&quot;</span>, <span class="ruby-node">&quot;DP=#{self.coverage.to_i}&quot;</span>, <span class="ruby-string">&quot;GT:GQ:DP&quot;</span>, <span class="ruby-node">&quot;#{g}:#{self.consensus_quality.to_i}:#{self.coverage.to_i}&quot;</span> ].<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;\t&quot;</span>)
+  <span class="ruby-identifier">alt</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">consensus</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp">//</span>).<span class="ruby-identifier">join</span>(<span class="ruby-string">&#39;,&#39;</span>) <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ref_base</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;*&#39;</span>
+  <span class="ruby-identifier">alt</span> = <span class="ruby-string">&#39;.&#39;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">alt</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ref_base</span>
+  [<span class="ruby-keyword">self</span>.<span class="ruby-identifier">ref_name</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">pos</span>, <span class="ruby-string">&#39;.&#39;</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ref_base</span>, <span class="ruby-identifier">alt</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">snp_quality</span>.<span class="ruby-identifier">to_i</span>, <span class="ruby-string">&quot;0&quot;</span>, <span class="ruby-node">&quot;DP=#{self.coverage.to_i}&quot;</span>, <span class="ruby-string">&quot;GT:GQ:DP&quot;</span>, <span class="ruby-node">&quot;#{g}:#{self.consensus_quality.to_i}:#{self.coverage.to_i}&quot;</span> ].<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;\t&quot;</span>)
 <span class="ruby-keyword">end</span></pre>
-          </div><!-- to_vcf-source -->
+          </div>
           
         </div>
 
         
 
         
-      </div><!-- to_vcf-method -->
+      </div>
 
     
-    </section><!-- public-instance-method-details -->
+    </section>
   
-  </section><!-- 5Buntitled-5D -->
+  </section>
+</main>
 
-</div><!-- documentation -->
 
-
-<footer id="validator-badges">
-  <p><a href="http://validator.w3.org/check/referer">[Validate]</a>
-  <p>Generated by <a href="https://github.com/rdoc/rdoc">RDoc</a> 3.12.
-  <p>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish Rdoc Generator</a> 3.
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="http://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.1.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
 </footer>
 
