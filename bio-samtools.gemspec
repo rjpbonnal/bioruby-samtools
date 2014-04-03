@@ -143,7 +143,7 @@ Gem::Specification.new do |s|
   ]
   s.homepage = "http://github.com/helios/bioruby-samtools"
   s.licenses = ["MIT"]
-  s.rubygems_version = "2.2.2"
+  s.rubygems_version = "2.2.1"
   s.summary = "Binder of samtools for ruby, on the top of FFI."
 
   if s.respond_to? :specification_version then

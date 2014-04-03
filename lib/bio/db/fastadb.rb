@@ -66,7 +66,7 @@ module Bio::DB::Fasta
   class Region
     BASE_COUNT_ZERO =  {:A => 0, :C => 0, :G => 0,  :T => 0}
     attr_accessor :entry, :start, :end, :orientation
-    attr_accessor :pileup, :average_coverage, :snps, :reference, :base_ratios, :consensus, :coverages, :bases, :total_cov
+    attr_accessor :pileup, :average_coverage, :snps, :reference, :base_ratios, :consensus, :coverages, :bases, :total_cov, :called
 
     #TODO: Debug, as it hasnt been tested in the actual code. 
     def base_ratios_for_base(base)
@@ -83,7 +83,7 @@ module Bio::DB::Fasta
     
     def calculate_stats_from_pile(opts={})
       min_cov = opts[:min_cov] ? opts[:min_cov] : 0
-
+      self.called = 0
       reference = self.reference.downcase
       
        self.base_ratios = Array.new(self.size, BASE_COUNT_ZERO) 
@@ -98,6 +98,7 @@ module Bio::DB::Fasta
            reference[pile.pos - self.start   ] = pile.consensus_iuap(0.20).upcase
            self.coverages[pile.pos - self.start   ]  = pile.coverage.to_i
            self.bases[pile.pos - self.start       ]  = pile.bases
+           self.called += 1 
         end
         #puts "#{pile.pos}\t#{bef}\t#{reference[pile.pos - region.start  - 1 ]} "
          self.total_cov += pile.coverage

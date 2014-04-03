@@ -203,9 +203,11 @@ class TestBioDbSam < Test::Unit::TestCase
     puts "AVG COV: #{region.average_coverage}"
     puts "Reference: #{region.reference}"
     puts "Consensus: #{region.consensus}"
+    puts "called: #{region.called}"
     #, :snps, :reference, :base_ratios, :consensus, :coverages
     snps_tot = Bio::Sequence.snps_between(region.reference, region.consensus)
     assert_equal(snps_tot, 5)
+    assert_equal(region.called, 213)
   end
   
 
