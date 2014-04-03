@@ -15,8 +15,7 @@ group :development do
   gem "jeweler"
   gem "rcov", ">=0", :platforms => :ruby_18
   gem "simplecov", ">= 0",   :platforms => :ruby_19
-  gem "bio", ">= 1.4.2"
-  gem "bio-svgenes", ">= 0.4.1"
+
   gem 'rdoc'
   gem 'test-unit'
 end

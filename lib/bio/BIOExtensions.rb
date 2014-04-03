@@ -1,4 +1,4 @@
-
+#puts "Loading BIOEXTENSIONSSSS!!!!!!!!!!!!!!!"
 module Bio::NucleicAcid::Data
   IUPAC_CODES = {
 

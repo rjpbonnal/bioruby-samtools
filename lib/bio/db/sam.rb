@@ -2,7 +2,11 @@ module Bio
   class DB
     class Sam
       attr_accessor :bam, :fasta, :samtools, :bcftools, :last_command
-      
+      attr_accessor :minumum_ratio_for_iup_consensus
+      attr_reader :cached_regions
+      #attr_accessor :pileup_cache
+      @minumum_ratio_for_iup_consensus = 0.20
+      BASE_COUNT_ZERO =  {:A => 0, :C => 0, :G => 0,  :T => 0}
       
       #Creates a new Bio::DB::Sam object
       #* fasta [String] - the path to the Fasta reference sequence
@@ -20,7 +24,7 @@ module Bio
 
         @last_command = nil
         raise ArgumentError, "Need Fasta and at least one BAM or SAM" if not @fasta or not @bam
-        raise IOError, "File not found" if not files_ok?
+        raise IOError, "File not found #{files}" if not files_ok?
         @bams = [@bams] if @bams.instance_of? String
         
       end
@@ -233,13 +237,18 @@ module Bio
         
         opts[:f] = @fasta
         
+        
+        query = opts[:r].to_s
+        query = opts[:r].to_region.to_s if opts[:r].respond_to?(:to_region)
+        opts[:r] = query
+        
         if opts[:six]
           opts["6"] = nil
           opts.delete(:six)
         end
         
         command = form_opt_string(@samtools, "mpileup", opts, [:R, :B, :E, "6", :A, :g, :u, :I] )
-
+        puts command
         if opts[:u]
           command = command + " | #{@bcftools} view -cg -"
         end
@@ -545,31 +554,168 @@ module Bio
 
       end
 
-      private
-      
-      # returns a command string from a program
-      # @param program [Symbol] either `:samtools` or `:bcftools`
-      # @param opts [Hash] the options hash
-      # @param singles `flag` options [Array] the options in `opts` that are single options 
-      def form_opt_string(prog, command, opts, singles=[])
-        opts_string = commandify(opts, singles)
-        "#{prog} #{command} #{opts_string} #{@bam}"
-      end
-      
-      # turns an opts hash into a s
-      def commandify(opts, singles)
-        list = []
-        opts.each_pair do |tag,value|
-          value = "" if singles.include?(tag)
-          list << "-#{tag.to_s} #{value}" 
+     
+
+      #Same as mpilup, but it caches the pileup, so if you want several operations on the same set of regions
+      #the pile for different operations, it won't execute the mpilup command several times
+      #Whenever you finish using a region, call mpileup_clear_cache to free the cache
+      #The argument Region is required, as it will be the key for the underlying hash. 
+      #We asume that the options are constant. If they are not, the cache mechanism may not be consistent. 
+      #
+      #TODO: It may be good to load partially the pileup
+      def mpileup_cached (opts={})      
+        raise SAMException.new(), "A region must be provided" unless opts[:r] or opts[:region]
+        @pileup_cache = Hash.new unless @pileup_cache
+        @cached_regions = Hash.new unless @cached_regions
+
+        region = opts[:r] ? opts[:r] : opts[:region]
+       # puts "Region: #{region}"
+        opts[:r] = region
+        opts[:region] = region
+        opts[:A] = true
+        #reg = region.class == Bio::DB::Fasta::Region ? region : Bio::DB::Fasta::Region.parse_region(region.to_s)
+
+        unless @cached_regions[region.to_s]
+          @cached_regions[region.to_s] =  Bio::DB::Fasta::Region.parse_region(region.to_s)
+          tmp = Array.new
+          @cached_regions[region.to_s].pileup =  tmp
+          #puts "Loading #{region.to_s}"
+          mpileup(opts) do | pile | 
+          #  puts pile
+            tmp << pile 
+            yield pile
+          end
+        else   
+             puts "Loaded, reruning #{region.to_s}"
+          @cached_regions.pileup[region.to_s] .each do | pile |
+            yield pile
+          end
         end
-        list.join(" ")
       end
-      
-      # checks existence of files in instance
-      def files_ok?
-        [@fasta, @sam, @bam].flatten.compact.each {|f| return false unless File.exists? f }
-        true
+
+      #Clears the pileup cache. If a region is passed as argument, just the specified region is removed
+      #If no region is passed, the hash is emptied
+      def mpileup_clear_cache (region)
+        return unless @cached_regions
+        if region
+          @cached_regions[region.to_s] = nil
+        else
+          @cached_regions.clear
+        end
+      end
+
+      #Gets the coverage of a region from a pileup. 
+      def average_coverage_from_pileup(opts={})
+        opts[:region] =   opts[:region].to_s if opts[:region] .class == Bio::DB::Fasta::Region 
+        region = opts[:region]
+        calculate_stats_from_pile(opts) if @cached_regions == nil or @cached_regions[region] == nil
+        @cached_regions[region].average_coverage
+      end
+
+      #
+      def coverages_from_pileup(opts={})
+        opts[:region] =   opts[:region].to_s if opts[:region] .class == Bio::DB::Fasta::Region 
+        region = opts[:region]
+        calculate_stats_from_pile(opts) if @cached_regions == nil or @cached_regions[region] == nil
+        @cached_regions[region].coverages
+      end
+
+      def consensus_with_ambiguities(opts={})
+        opts[:region] =   opts[:region].to_s if opts[:region] .class == Bio::DB::Fasta::Region 
+        region = opts[:region]
+        #   p "consensus with ambiguities for: " << opts[:region] 
+        calculate_stats_from_pile(opts) if @cached_regions == nil or @cached_regions[region] == nil
+        @cached_regions[region].consensus
+      end
+
+      def calculate_stats_from_pile(opts={})
+        min_cov = opts[:min_cov] ? opts[:min_cov] : 20  
+
+
+        opts[:region] = Bio::DB::Fasta::Region.parse_region( opts[:region] .to_s)  unless opts[:region].class == Bio::DB::Fasta::Region
+        region = opts[:region]
+
+        mark_case = true if opts[:case]
+       # puts "Marcase: #{mark_case}"
+        reference = self.fetch_reference(region.entry, region.start, region.end).downcase
+        #  p "calculationg from pile..." << region.to_s
+        base_ratios = Array.new(region.size, BASE_COUNT_ZERO) 
+        bases = Array.new(region.size, BASE_COUNT_ZERO) 
+        coverages = Array.new(region.size, 0)
+        total_cov = 0
+
+        self.mpileup_cached(:region=>"#{region.to_s}") do | pile |
+          #puts pile
+          #puts pile.coverage
+          bef=reference[pile.pos - region.start  - 1 ] 
+          if pile.coverage > min_cov
+
+
+            base_ratios[pile.pos - region.start ] = pile.base_ratios
+            reference[pile.pos - region.start   - 1] = pile.consensus_iuap(0.20).upcase
+            coverages[pile.pos - region.start   ]  = pile.coverage.to_i
+            bases[pile.pos - region.start   ]  = pile.bases
+
+
+          end
+          #puts "#{pile.pos}\t#{bef}\t#{reference[pile.pos - region.start  - 1 ]} "
+          total_cov += pile.coverage
+        end
+
+        #puts ">Ref\n#{reference}"
+        #puts ">Original\n#{r}"
+        region = @cached_regions[region.to_s]
+        region.coverages = coverages
+        region.base_ratios = base_ratios
+        region.consensus = Bio::Sequence.new(reference)
+        region.consensus.na
+        if region.orientation == :reverse
+          region.consensus.reverse_complement!()
+        end
+        region.average_coverage = total_cov.to_f/region.size.to_f
+        region.bases = bases
+        region
+      end
+
+
+
+      #BASE_COUNT_ZERO =  {:A => 0, :C => 0, :G => 0,  :T => 0}
+
+      #Gets an array with the proportions of the bases in the region. If there is no coverage, a
+      def base_ratios_in_region(opts={})
+        opts[:region] =   opts[:region].to_s if opts[:region] .class == Bio::DB::Fasta::Region 
+        region = opts[:region]
+        calculate_stats_from_pile(opts) if @cached_regions == nil or @cached_regions[region] == nil
+        @cached_regions[region].base_ratios 
+      end
+
+      #Gets an array with the bsaes count in the region. If there is no coverage, a
+      def bases_in_region(opts={})
+        opts[:region] =   opts[:region].to_s if opts[:region] .class == Bio::DB::Fasta::Region 
+        region = opts[:region]
+        calculate_stats_from_pile(opts) if @cached_regions == nil or @cached_regions[region] == nil
+        @cached_regions[region].bases 
+      end
+
+
+
+      def extract_reads(opts={})
+        opts[:region] = Bio::DB::Fasta::Region.parse_region( opts[:region] .to_s)  unless opts[:region].class == Bio::DB::Fasta::Region
+        fastq_filename = opts[:fastq]
+        fastq_file = opts[:fastq_file]
+
+        out = $stdout
+
+        print_fastq = Proc.new do |alignment|
+          out.puts "@#{alignment.qname}"
+          out.puts "#{alignment.seq}"
+          out.puts "+#{alignment.qname}"
+          out.puts "#{alignment.qual}"
+        end
+
+        fetch_with_function(chromosome, qstart, qstart+len,  print_fastq)
+
+
       end
       
       def yield_from_pipe(command, klass, type=:text, skip_comments=true, comment_char="#", &block)
@@ -586,6 +732,36 @@ module Bio
         end
         pipe.close
       end
+       private
+
+        # returns a command string from a program
+        # @param program [Symbol] either `:samtools` or `:bcftools`
+        # @param opts [Hash] the options hash
+        # @param singles `flag` options [Array] the options in `opts` that are single options 
+        def form_opt_string(prog, command, opts, singles=[])
+          opts_string = commandify(opts, singles)
+          "#{prog} #{command} #{opts_string} #{@bam}"
+        end
+
+        # turns an opts hash into a s
+        def commandify(opts, singles)
+          list = []
+          opts.each_pair do |tag,value|
+            value = "\"#{value}\""
+            value = "" if singles.include?(tag)
+
+            list << "-#{tag.to_s} #{value}" 
+          end
+          list.join(" ")
+        end
+
+        # checks existence of files in instance
+        def files_ok?
+          [@fasta, @sam, @bam].flatten.compact.each {|f| return false unless File.exists? f }
+          true
+        end
+
+      
       
     end
   end
