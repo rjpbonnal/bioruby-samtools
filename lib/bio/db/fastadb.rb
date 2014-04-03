@@ -51,7 +51,7 @@ module Bio::DB::Fasta
     def get_full_region
       reg = Region.new
       reg.entry = id
-      reg.start = 0
+      reg.start = 1
       reg.end = @length
       reg.orientation = :forward
       reg

@@ -199,11 +199,13 @@ class TestBioDbSam < Test::Unit::TestCase
     end
   
     region = @sam.cached_regions[reg.to_s]
-  #  puts "cahced_region: #{region.inspect}"
+    #puts "cahced_region: #{region.inspect}"
     puts "AVG COV: #{region.average_coverage}"
     puts "Reference: #{region.reference}"
     puts "Consensus: #{region.consensus}"
     #, :snps, :reference, :base_ratios, :consensus, :coverages
+    snps_tot = Bio::Sequence.snps_between(region.reference, region.consensus)
+    assert_equal(snps_tot, 5)
   end
   
 

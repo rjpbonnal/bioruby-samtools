@@ -7,7 +7,7 @@ module Bio
       #attr_accessor :pileup_cache
       @minumum_ratio_for_iup_consensus = 0.20
       BASE_COUNT_ZERO =  {:A => 0, :C => 0, :G => 0,  :T => 0}
-      
+
       #Creates a new Bio::DB::Sam object
       #* fasta [String] - the path to the Fasta reference sequence
       #* bam [String] - path to bam files
@@ -19,21 +19,21 @@ module Bio
         @bam = args[:bam]
         @samtools = args[:samtools] || File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools')
         @bcftools = args[:bcftools] || File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','bcftools')
-        
+
         @files = [@files] if @files.instance_of?(String)
 
         @last_command = nil
         raise ArgumentError, "Need Fasta and at least one BAM or SAM" if not @fasta or not @bam
         raise IOError, "File not found #{files}" if not files_ok?
         @bams = [@bams] if @bams.instance_of? String
-        
+
       end
 
       #backward compatibility method, returns true if file exists otherwise, complains and quits.
       def open
         files_ok?
       end
-      
+
       #runs the samtools view command   
       #* b - output BAM
       #* h - print header for the SAM output
@@ -70,19 +70,19 @@ module Bio
           opts['@'] = opts[:at]
           opts.delete(:at)
         end
-        
+
         if opts[:one]
           opts['1'] = opts[:one]
           opts.delete(:one)
         end
-                
+
         command = form_opt_string(@samtools, 'view', opts, [:b, :h, :H, :S, :u, '1', :x, :X, :c, :B]) + " " + region
         @last_command = command
         type = (opts[:u] or opts[:b]) ? :binary : :text
         klass = (type == :binary) ? String : Bio::DB::Alignment
         yield_from_pipe(command, klass, type, &block)
       end
-      
+
       #fetches a subsequence and calls code block
       #* chr - the reference name for the subsequence
       #* start - the start position for the subsequence
@@ -96,9 +96,9 @@ module Bio
         &block  
         )
       end
-      
+
       alias_method :fetch_with_function, :fetch
-      
+
       #returns an array of coverage for each location for which there are mapped reads
       #* chr - the reference name
       #* start - the start position 
@@ -111,8 +111,8 @@ module Bio
         end
         result
       end
-      
-      
+
+
       #returns an svg file or object, plotting coverage for each location for which there are mapped reads
       #* chr - the reference name
       #* start - the start position 
@@ -132,27 +132,27 @@ module Bio
           result << p.coverage
         end
         p = Bio::Graphics::Page.new(:width => 1000, 
-             :height => 200, 
-             :number_of_intervals => 10,
-             :font_size => 14
-             )
+        :height => 200, 
+        :number_of_intervals => 10,
+        :font_size => 14
+        )
         data_track = p.add_track(:glyph => :histogram, 
-                        :stroke_color => 'black',
-                        :fill_color => 'gold',
-                        :track_height => 150,
-                        :name => 'read coverage', 
-                        :label => true, 
-                        :stroke_width => '1', 
-                        :x_round => 1,
-                        :y_round => 1 )
+        :stroke_color => 'black',
+        :fill_color => 'gold',
+        :track_height => 150,
+        :name => 'read coverage', 
+        :label => true, 
+        :stroke_width => '1', 
+        :x_round => 1,
+        :y_round => 1 )
         index = 0;        
         result.each_slice(bin) {|slice| 
-        #result.each_with_index {|val, index|
-        data_feature = Bio::Graphics::MiniFeature.new(:start => start + index,
-                       :end => (start + index + bin),
-                       :segment_height => slice.inject{|sum,x| sum + x }.to_f / slice.size)
-        data_track.add(data_feature)
-        index+=bin
+          #result.each_with_index {|val, index|
+          data_feature = Bio::Graphics::MiniFeature.new(:start => start + index,
+          :end => (start + index + bin),
+          :segment_height => slice.inject{|sum,x| sum + x }.to_f / slice.size)
+          data_track.add(data_feature)
+          index+=bin
         }
         if opts[:svg]
           svg = opts[:svg].to_s
@@ -160,10 +160,10 @@ module Bio
         else
           return p.get_markup
         end
-       
-       
+
+
       end
-      
+
       #returns the average coverage over the region queried
       #* chr - the reference name
       #* start - the start position 
@@ -172,7 +172,7 @@ module Bio
         arr = self.chromosome_coverage(chr,start,length)
         arr.inject{ |sum, el| sum + el }.to_f / arr.size
       end
-      
+
       #returns a Bio::DB::Pileup or Bio::DB::VCF object
       #* region - Only generate pileup in region [chrom:start-stop] 
       #* illumina_quals - Assume the quality is in the Illumina 1.3+ encoding
@@ -199,28 +199,28 @@ module Bio
       def mpileup(opts={}, &block)
         #long option form to short samtools form..
         long_opts = {
-        :region => :r,
-        :illumina_quals => :six,
-        :count_anomalous => :A,
-        :no_baq => :B,
-        :adjust_mapq => :C,
-        :max_per_bam_depth => :d,
-        :extended_baq => :E,
-        :exclude_reads_file => :G,
-        :list_of_positions => :l,
-        :mapping_quality_cap => :M,
-        :ignore_rg => :R,
-        :min_mapping_quality => :q,
-        :min_base_quality => :Q,
-        ###following options are for the -g -u option
-        :genotype_calling => :g,
-        :uncompressed_bcf => :u,
-        :extension_sequencing_probability => :e,
-        :homopolymer_error_coefficient => :h,
-        :no_indels => :I,
-        :skip_indel_over_average_depth => :L,
-        :gap_open_sequencing_error_probability => :o,
-        :platforms => :P 
+          :region => :r,
+          :illumina_quals => :six,
+          :count_anomalous => :A,
+          :no_baq => :B,
+          :adjust_mapq => :C,
+          :max_per_bam_depth => :d,
+          :extended_baq => :E,
+          :exclude_reads_file => :G,
+          :list_of_positions => :l,
+          :mapping_quality_cap => :M,
+          :ignore_rg => :R,
+          :min_mapping_quality => :q,
+          :min_base_quality => :Q,
+          ###following options are for the -g -u option
+          :genotype_calling => :g,
+          :uncompressed_bcf => :u,
+          :extension_sequencing_probability => :e,
+          :homopolymer_error_coefficient => :h,
+          :no_indels => :I,
+          :skip_indel_over_average_depth => :L,
+          :gap_open_sequencing_error_probability => :o,
+          :platforms => :P 
         }
 
         ##convert any long_opts to short opts 
@@ -236,35 +236,35 @@ module Bio
         long_opts.each_pair do |k,v|
           opts[v] = temp_opts[v] if temp_opts.has_key?(v)
         end
-        
-#        opts = temp_opts
+
+        #        opts = temp_opts
         opts[:u] = true if opts[:g] #so that we always get uncompressed output
         opts.delete(:g)
-        
+
         opts[:f] = @fasta
-        
-        
+
+
         query = opts[:r].to_s
         query = opts[:r].to_region.to_s if opts[:r].respond_to?(:to_region)
         opts[:r] = query
-        
+
         if opts[:six]
           opts["6"] = nil
           opts.delete(:six)
         end
-        
+
         command = form_opt_string(@samtools, "mpileup", opts, [:R, :B, :E, "6", :A, :g, :u, :I] )
         puts command
         if opts[:u]
           command = command + " | #{@bcftools} view -cg -"
         end
-        
+
         klass = opts[:u] ? Bio::DB::Vcf : Bio::DB::Pileup
         @last_command = command
         yield_from_pipe(command, klass, :text, &block)
 
       end
-      
+
       #fetches a subsequence from a reference genome and option returns it as a Bio::Sequence::NA object
       #* chr -  [STRING] the reference name for the subsequence
       #* start - [INT] the start position for the subsequence
@@ -281,13 +281,13 @@ module Bio
           seq = ""
           yield_from_pipe(command, String, :text ) {|line| seq = seq + line unless line =~ /^>/}
         end
-        
+
         if opts[:as_bio]
           seq = Bio::Sequence::NA.new(seq).to_fasta("#{chr}:#{start}-#{stop}")
         end
         seq
       end
-      
+
       #Index reference sequence in the FASTA format or extract subsequence from indexed reference sequence. If no region is specified, faidx will index the file and create <ref.fasta>.fai on the disk. If regions are speficified, the subsequences will be retrieved and printed to stdout in the FASTA format.
       #Options - if a subsequence is required
       #* chr - [STRING] the reference name of the subsequence
@@ -295,15 +295,15 @@ module Bio
       #* stop - [INT] the stop position for the subsequence
       def faidx(opts={})
         if opts.has_key?(:chr) and opts.has_key?(:start) and opts.has_key?(:stop)
-        opts={:as_bio => false}
-        self.fetch_reference(:chr,:start,:stop,opts)
+          opts={:as_bio => false}
+          self.fetch_reference(:chr,:start,:stop,opts)
         else
           command = "#{@samtools} faidx #{@fasta}"
           @last_command = command
           system(command)
         end
       end
-      
+
       #Index sorted alignment for fast random access. Index file <aln.bam>.bai will be created of no out_index is provided.
       #* out_index - [STRING] name of index
       def index(opts={})
@@ -438,7 +438,7 @@ module Bio
       end
 
       alias_method :rmdup, :remove_duplicates
-      
+
       #Sort alignments by leftmost coordinates
       #* n - sort by read name
       #* f - use <out.prefix> as full file name instead of prefix
@@ -463,7 +463,7 @@ module Bio
           system(command)
         end
       end
-      
+
       #used to generate a text alignment viewer
       #* d - display, output as (H)tml or (C)urses or (T)ext 
       #* p - [chr:pos] go directly to this position
@@ -485,7 +485,7 @@ module Bio
         @last_command = command
         system(command)
       end
-      
+
       #Replace the header of the current bam file with the header in header_sam
       #* header_sam - the sam file from which the new header will be taken
       #* out - [FILE] output bam file
@@ -500,7 +500,7 @@ module Bio
         @last_command = command
         system(command)
       end
-      
+
       #Generate the MD tag. If the MD tag is already present, this command will give a warning if the MD tag generated is different from the existing tag. Output SAM by default.
       #* A - When used jointly with -r this option overwrites the original base quality.
       #* e - Convert a the read base to = if it is identical to the aligned reference base. Indel caller does not support the = bases at the moment.
@@ -530,12 +530,12 @@ module Bio
           opts['f'] = @fasta
           opts.delete(:s)
         end
-        
+
         command = "#{form_opt_string(@samtools, "targetcut", opts, [] )}"
         @last_command = command
         system(command)
       end
-      
+
       #Call and phase heterozygous SNPs
       #* A - Drop reads with ambiguous phase.
       #* b - [STR] Prefix of BAM output. When this option is in use, phase-0 reads will be saved in file STR.0.bam and phase-1 reads in STR.1.bam. Phase unknown reads will be randomly allocated to one of the two files. Chimeric reads with switch errors will be saved in STR.chimeric.bam. [null]
@@ -566,47 +566,51 @@ module Bio
 
       end
 
-     
+
+      def fetch_region(opts={})   
+        region = opts[:r] ? opts[:r] : opts[:region]
+        # puts "Region: #{region}"
+        opts[:r] = region
+        opts[:region] = region
+
+        #reg = region.class == Bio::DB::Fasta::Region ? region : Bio::DB::Fasta::Region.parse_region(region.to_s)
+
+
+        reg =  Bio::DB::Fasta::Region.parse_region(region.to_s)
+        reg.reference = self.fetch_reference(region.entry, region.start, region.end).downcase
+        tmp = Array.new
+        #@cached_regions[region.to_s].pileup =  tmp
+        #puts "Loading #{region.to_s}"
+        mpileup(opts) do | pile | 
+          #  puts pile
+          tmp << pile 
+          yield pile if block_given?
+        end
+        reg.pileup =  tmp
+        reg.calculate_stats_from_pile(opts)
+        reg
+      end
 
       #Same as mpilup, but it caches the pileup, so if you want several operations on the same set of regions
       #the pile for different operations, it won't execute the mpilup command several times
       #Whenever you finish using a region, call mpileup_clear_cache to free the cache
       #The argument Region is required, as it will be the key for the underlying hash. 
-      #We asume that the options are constant. If they are not, the cache mechanism may not be consistent. 
+      #We asume that the options (other than the region) are constant. If they are not, the cache mechanism may not be consistent. 
       #
       #TODO: It may be good to load partially the pileup
       def mpileup_cached (opts={})      
         raise SAMException.new(), "A region must be provided" unless opts[:r] or opts[:region]
-        @pileup_cache = Hash.new unless @pileup_cache
         @cached_regions = Hash.new unless @cached_regions
-        
         region = opts[:r] ? opts[:r] : opts[:region]
-       # puts "Region: #{region}"
-        opts[:r] = region
-        opts[:region] = region
-      
-        #reg = region.class == Bio::DB::Fasta::Region ? region : Bio::DB::Fasta::Region.parse_region(region.to_s)
-       
-        unless @cached_regions[region.to_s]
-          @cached_regions[region.to_s] =  Bio::DB::Fasta::Region.parse_region(region.to_s)
-          @cached_regions[region.to_s].reference = self.fetch_reference(region.entry, region.start, region.end).downcase
-          tmp = Array.new
-          #@cached_regions[region.to_s].pileup =  tmp
-          #puts "Loading #{region.to_s}"
-          mpileup(opts) do | pile | 
-          #  puts pile
-            tmp << pile 
-            yield pile
-          end
-          @cached_regions[region.to_s].pileup =  tmp
-          @cached_regions[region.to_s].calculate_stats_from_pile(opts)
-        else   
-             puts "mpileup_cached:oaded, reruning #{region.to_s}"
-             @cached_regions[region.to_s].pileup.each do | pile |
-            yield pile
-          end
+        @cached_regions[region.to_s] = fetch_region(opts) unless @cached_regions[region.to_s]
+        if block_given?
+          @cached_regions[region.to_s].pileup.each do | pile |
+            yield pile 
+          end  
         end
+        region.pileup
       end
+
 
       #Clears the pileup cache. If a region is passed as argument, just the specified region is removed
       #If no region is passed, the hash is emptied
@@ -619,46 +623,6 @@ module Bio
         end
       end
 
-      #Gets the coverage of a region from a pileup. 
-      def average_coverage_from_pileup(opts={})
-        opts[:region] =   opts[:region].to_s if opts[:region] .class == Bio::DB::Fasta::Region 
-        region = opts[:region]
-        calculate_stats_from_pile(opts) if @cached_regions == nil or @cached_regions[region] == nil
-        @cached_regions[region].average_coverage
-      end
-
-      #
-      def coverages_from_pileup(opts={})
-        opts[:region] =   opts[:region].to_s if opts[:region] .class == Bio::DB::Fasta::Region 
-        region = opts[:region]
-        calculate_stats_from_pile(opts) if @cached_regions == nil or @cached_regions[region] == nil
-        @cached_regions[region].coverages
-      end
-
-      def consensus_with_ambiguities(opts={})
-        opts[:region] =   opts[:region].to_s if opts[:region] .class == Bio::DB::Fasta::Region 
-        region = opts[:region]
-        #   p "consensus with ambiguities for: " << opts[:region] 
-        calculate_stats_from_pile(opts) if @cached_regions == nil or @cached_regions[region] == nil
-        @cached_regions[region].consensus
-      end
-      alias_method :calculate_stats_from_pile, :mpileup_cached
-    
-      #Gets an array with the proportions of the bases in the region. If there is no coverage, a
-      def base_ratios_in_region(opts={})
-        opts[:region] =   opts[:region].to_s if opts[:region] .class == Bio::DB::Fasta::Region 
-        region = opts[:region]
-        calculate_stats_from_pile(opts) if @cached_regions == nil or @cached_regions[region] == nil
-        @cached_regions[region].base_ratios 
-      end
-
-      #Gets an array with the bsaes count in the region. If there is no coverage, a
-      def bases_in_region(opts={})
-        opts[:region] =   opts[:region].to_s if opts[:region] .class == Bio::DB::Fasta::Region 
-        region = opts[:region]
-        calculate_stats_from_pile(opts) if @cached_regions == nil or @cached_regions[region] == nil
-        @cached_regions[region].bases 
-      end
 
 
 
@@ -680,7 +644,7 @@ module Bio
 
 
       end
-      
+
       def yield_from_pipe(command, klass, type=:text, skip_comments=true, comment_char="#", &block)
         pipe = IO.popen(command)
         if type == :text
@@ -695,37 +659,37 @@ module Bio
         end
         pipe.close
       end
-       private
+      private
 
-        # returns a command string from a program
-        # @param program [Symbol] either `:samtools` or `:bcftools`
-        # @param opts [Hash] the options hash
-        # @param singles `flag` options [Array] the options in `opts` that are single options 
-        def form_opt_string(prog, command, opts, singles=[])
-          opts_string = commandify(opts, singles)
-          "#{prog} #{command} #{opts_string} #{@bam}"
+      # returns a command string from a program
+      # @param program [Symbol] either `:samtools` or `:bcftools`
+      # @param opts [Hash] the options hash
+      # @param singles `flag` options [Array] the options in `opts` that are single options 
+      def form_opt_string(prog, command, opts, singles=[])
+        opts_string = commandify(opts, singles)
+        "#{prog} #{command} #{opts_string} #{@bam}"
+      end
+
+      # turns an opts hash into a s
+      def commandify(opts, singles)
+        list = []
+        opts.each_pair do |tag,value|
+          value = "\"#{value}\""
+          value = "" if singles.include?(tag)
+
+          list << "-#{tag.to_s} #{value}" 
         end
+        list.join(" ")
+      end
 
-        # turns an opts hash into a s
-        def commandify(opts, singles)
-          list = []
-          opts.each_pair do |tag,value|
-            value = "\"#{value}\""
-            value = "" if singles.include?(tag)
+      # checks existence of files in instance
+      def files_ok?
+        [@fasta, @sam, @bam].flatten.compact.each {|f| return false unless File.exists? f }
+        true
+      end
 
-            list << "-#{tag.to_s} #{value}" 
-          end
-          list.join(" ")
-        end
 
-        # checks existence of files in instance
-        def files_ok?
-          [@fasta, @sam, @bam].flatten.compact.each {|f| return false unless File.exists? f }
-          true
-        end
 
-      
-      
     end
   end
 end
