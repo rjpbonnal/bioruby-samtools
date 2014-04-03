@@ -231,7 +231,13 @@ module Bio
             temp_opts.delete(k)
           end
         end
-        opts = temp_opts
+        opts = Hash.new
+        #To remove any unwanted options. 
+        long_opts.each_pair do |k,v|
+          opts[v] = temp_opts[v] if temp_opts.has_key?(v)
+        end
+        
+#        opts = temp_opts
         opts[:u] = true if opts[:g] #so that we always get uncompressed output
         opts.delete(:g)
         
@@ -265,11 +271,17 @@ module Bio
       #* stop - [INT] the stop position for the subsequence
       #* as_bio - boolean stating if the returned object should be a Bio::Sequence::NA object
       def fetch_reference(chr,start,stop, opts={:as_bio => false})
-        command = "#{@samtools} faidx #{@fasta} #{chr}:#{start}-#{stop}"
-        #puts command
-        @last_command = command
         seq = ""
-        yield_from_pipe(command, String, :text ) {|line| seq = seq + line unless line =~ /^>/}
+        unless @fasta #We return a string of Ns if we don't know the reference. 
+          seq = "n" * (stop-start) 
+        else
+          command = "#{@samtools} faidx #{@fasta} '#{chr}:#{start}-#{stop}'"
+          #puts command
+          @last_command = command
+          seq = ""
+          yield_from_pipe(command, String, :text ) {|line| seq = seq + line unless line =~ /^>/}
+        end
+        
         if opts[:as_bio]
           seq = Bio::Sequence::NA.new(seq).to_fasta("#{chr}:#{start}-#{stop}")
         end
@@ -567,27 +579,30 @@ module Bio
         raise SAMException.new(), "A region must be provided" unless opts[:r] or opts[:region]
         @pileup_cache = Hash.new unless @pileup_cache
         @cached_regions = Hash.new unless @cached_regions
-
+        
         region = opts[:r] ? opts[:r] : opts[:region]
        # puts "Region: #{region}"
         opts[:r] = region
         opts[:region] = region
-        opts[:A] = true
+      
         #reg = region.class == Bio::DB::Fasta::Region ? region : Bio::DB::Fasta::Region.parse_region(region.to_s)
-
+       
         unless @cached_regions[region.to_s]
           @cached_regions[region.to_s] =  Bio::DB::Fasta::Region.parse_region(region.to_s)
+          @cached_regions[region.to_s].reference = self.fetch_reference(region.entry, region.start, region.end).downcase
           tmp = Array.new
-          @cached_regions[region.to_s].pileup =  tmp
+          #@cached_regions[region.to_s].pileup =  tmp
           #puts "Loading #{region.to_s}"
           mpileup(opts) do | pile | 
           #  puts pile
             tmp << pile 
             yield pile
           end
+          @cached_regions[region.to_s].pileup =  tmp
+          @cached_regions[region.to_s].calculate_stats_from_pile(opts)
         else   
-             puts "Loaded, reruning #{region.to_s}"
-          @cached_regions.pileup[region.to_s] .each do | pile |
+             puts "mpileup_cached:oaded, reruning #{region.to_s}"
+             @cached_regions[region.to_s].pileup.each do | pile |
             yield pile
           end
         end
@@ -627,60 +642,8 @@ module Bio
         calculate_stats_from_pile(opts) if @cached_regions == nil or @cached_regions[region] == nil
         @cached_regions[region].consensus
       end
-
-      def calculate_stats_from_pile(opts={})
-        min_cov = opts[:min_cov] ? opts[:min_cov] : 20  
-
-
-        opts[:region] = Bio::DB::Fasta::Region.parse_region( opts[:region] .to_s)  unless opts[:region].class == Bio::DB::Fasta::Region
-        region = opts[:region]
-
-        mark_case = true if opts[:case]
-       # puts "Marcase: #{mark_case}"
-        reference = self.fetch_reference(region.entry, region.start, region.end).downcase
-        #  p "calculationg from pile..." << region.to_s
-        base_ratios = Array.new(region.size, BASE_COUNT_ZERO) 
-        bases = Array.new(region.size, BASE_COUNT_ZERO) 
-        coverages = Array.new(region.size, 0)
-        total_cov = 0
-
-        self.mpileup_cached(:region=>"#{region.to_s}") do | pile |
-          #puts pile
-          #puts pile.coverage
-          bef=reference[pile.pos - region.start  - 1 ] 
-          if pile.coverage > min_cov
-
-
-            base_ratios[pile.pos - region.start ] = pile.base_ratios
-            reference[pile.pos - region.start   - 1] = pile.consensus_iuap(0.20).upcase
-            coverages[pile.pos - region.start   ]  = pile.coverage.to_i
-            bases[pile.pos - region.start   ]  = pile.bases
-
-
-          end
-          #puts "#{pile.pos}\t#{bef}\t#{reference[pile.pos - region.start  - 1 ]} "
-          total_cov += pile.coverage
-        end
-
-        #puts ">Ref\n#{reference}"
-        #puts ">Original\n#{r}"
-        region = @cached_regions[region.to_s]
-        region.coverages = coverages
-        region.base_ratios = base_ratios
-        region.consensus = Bio::Sequence.new(reference)
-        region.consensus.na
-        if region.orientation == :reverse
-          region.consensus.reverse_complement!()
-        end
-        region.average_coverage = total_cov.to_f/region.size.to_f
-        region.bases = bases
-        region
-      end
-
-
-
-      #BASE_COUNT_ZERO =  {:A => 0, :C => 0, :G => 0,  :T => 0}
-
+      alias_method :calculate_stats_from_pile, :mpileup_cached
+    
       #Gets an array with the proportions of the bases in the region. If there is no coverage, a
       def base_ratios_in_region(opts={})
         opts[:region] =   opts[:region].to_s if opts[:region] .class == Bio::DB::Fasta::Region 

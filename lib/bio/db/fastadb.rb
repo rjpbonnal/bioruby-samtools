@@ -64,8 +64,9 @@ module Bio::DB::Fasta
   
   #Class to wrap a region of a chromosome
   class Region
+    BASE_COUNT_ZERO =  {:A => 0, :C => 0, :G => 0,  :T => 0}
     attr_accessor :entry, :start, :end, :orientation
-    attr_accessor :pileup, :average_coverage, :snps, :reference, :base_ratios, :consensus, :coverages, :bases
+    attr_accessor :pileup, :average_coverage, :snps, :reference, :base_ratios, :consensus, :coverages, :bases, :total_cov
 
     #TODO: Debug, as it hasnt been tested in the actual code. 
     def base_ratios_for_base(base)
@@ -78,6 +79,37 @@ module Bio::DB::Fasta
         @all_ratios[base] = ratios
       end
       @all_ratios[base]
+    end
+    
+    def calculate_stats_from_pile(opts={})
+      min_cov = opts[:min_cov] ? opts[:min_cov] : 0
+
+      reference = self.reference.downcase
+      
+       self.base_ratios = Array.new(self.size, BASE_COUNT_ZERO) 
+       self.bases = Array.new(self.size, BASE_COUNT_ZERO) 
+       self.coverages = Array.new(self.size, 0)
+       self.total_cov = 0
+
+      self.pileup.each do | pile |
+        
+        if pile.coverage > min_cov
+           self.base_ratios[pile.pos - self.start ] = pile.base_ratios
+           reference[pile.pos - self.start   ] = pile.consensus_iuap(0.20).upcase
+           self.coverages[pile.pos - self.start   ]  = pile.coverage.to_i
+           self.bases[pile.pos - self.start       ]  = pile.bases
+        end
+        #puts "#{pile.pos}\t#{bef}\t#{reference[pile.pos - region.start  - 1 ]} "
+         self.total_cov += pile.coverage
+      end
+
+      self.consensus = Bio::Sequence.new(reference)
+      self.consensus.na
+      if self.orientation == :reverse
+        self.consensus.reverse_complement!()
+      end
+      self.average_coverage = self.total_cov.to_f/self.size.to_f
+      self
     end
     
     def to_s
