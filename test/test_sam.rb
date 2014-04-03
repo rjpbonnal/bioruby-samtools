@@ -190,7 +190,7 @@ class TestBioDbSam < Test::Unit::TestCase
     reg.start = 1
     reg.end = 334
     
-    @sam.mpileup_cached(:r=>reg,:g => false, :min_cov => 1) do |pileup|
+    @sam.mpileup_cached(:r=>reg,:g => false, :min_cov => 1, :min_per =>0.2) do |pileup|
       #test that all the objects are Bio::DB::Pileup objects
       assert_kind_of(Bio::DB::Pileup, pileup)
       #test that the reference name is 'chr_1' for all objects
@@ -210,6 +210,28 @@ class TestBioDbSam < Test::Unit::TestCase
     assert_equal(region.called, 213)
   end
   
+  def test_mpileup_reg_05
+    #create an mpileup
+    reg = Bio::DB::Fasta::Region.new
+    reg.entry = "chr_1"
+    reg.start = 1
+    reg.end = 334
+    @sam.mpileup_cached(:r=>reg,:g => false, :min_cov => 1, :min_per =>0.4) do |pileup|
+      #test that all the objects are Bio::DB::Pileup objects
+      assert_kind_of(Bio::DB::Pileup, pileup)
+      #test that the reference name is 'chr_1' for all objects
+      #puts pileup
+      assert_equal(pileup.ref_name, 'chr_1')
+  
+    end
+  
+    region = @sam.cached_regions[reg.to_s]
+    
+    #, :snps, :reference, :base_ratios, :consensus, :coverages
+    snps_tot = Bio::Sequence.snps_between(region.reference, region.consensus)
+    assert_equal(snps_tot, 1)
+    assert_equal(region.called, 213)
+  end
 
   def test_depth
     #the depth of coverage should be '1' at all given positions

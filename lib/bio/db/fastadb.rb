@@ -83,6 +83,7 @@ module Bio::DB::Fasta
     
     def calculate_stats_from_pile(opts={})
       min_cov = opts[:min_cov] ? opts[:min_cov] : 0
+      min_per =  opts[:min_per] ? opts[:min_per] : 0.20
       self.called = 0
       reference = self.reference.downcase
       
@@ -95,7 +96,7 @@ module Bio::DB::Fasta
         
         if pile.coverage > min_cov
            self.base_ratios[pile.pos - self.start ] = pile.base_ratios
-           reference[pile.pos - self.start   ] = pile.consensus_iuap(0.20).upcase
+           reference[pile.pos - self.start   ] = pile.consensus_iuap(min_per).upcase
            self.coverages[pile.pos - self.start   ]  = pile.coverage.to_i
            self.bases[pile.pos - self.start       ]  = pile.bases
            self.called += 1 

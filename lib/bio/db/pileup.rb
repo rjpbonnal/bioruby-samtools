@@ -238,13 +238,13 @@ module Bio
 
        # returns the consensus (most frequent) base from the pileup, if there are equally represented bases returns a string of all equally represented bases in alphabetical order   
        def consensus_iuap(minumum_ratio_for_iup_consensus)
-         minumum_ratio_for_iup_consensus
+         
          if @consensus_iuap.nil?
            @consensus_iuap = self.ref_base.downcase
            bases = self.bases
            tmp = String.new
            bases.each do |k,v|
-             tmp << k[0].to_s if v/self.coverage > minumum_ratio_for_iup_consensus
+             tmp << k[0].to_s if v/self.coverage.to_f > minumum_ratio_for_iup_consensus
            end
            if tmp.length > 0
              @consensus_iuap = Bio::NucleicAcid.to_IUAPC(tmp)
