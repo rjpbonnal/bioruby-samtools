@@ -639,14 +639,14 @@ module Bio
           out.puts "+#{alignment.qname}"
           out.puts "#{alignment.qual}"
         end
-       
+
         if fastq_filename
           out = File.open(fastq_filename, "w")
         end
         fetch_with_function(chromosome, qstart, qstart+len,  print_fastq)
         out.close if fastq_filename
       end
-
+      private
       #Returns Process::Status with the execution status. If run in a $VERBOSE environment, stderr of the process
       #is forwarded to the default stdout
       def yield_from_pipe(command, klass, type=:text, skip_comments=true, comment_char="#", &block)
@@ -669,7 +669,7 @@ module Bio
         stderr.close
         return exit_status
       end
-      private
+
 
       # returns a command string from a program
       # @param program [Symbol] either `:samtools` or `:bcftools`
