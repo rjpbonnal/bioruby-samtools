@@ -3,6 +3,7 @@ $: << File.expand_path('.')
 require 'rubygems'
 require 'bio/db/vcf'
 require "test/unit"
+gem 'test-unit'
 
 
 class TestVcf < Test::Unit::TestCase
@@ -64,5 +65,15 @@ class TestVcf < Test::Unit::TestCase
                    "2"=>{"DP"=>"8", "GT"=>"1|0", "HQ"=>"51,51", "GQ"=>"48"},
                    "3"=>{"DP"=>"5", "GT"=>"1/1", "HQ"=>".,", "GQ"=>"43"}}, @vcf4.samples)
   end
+  
+  def test_int_or_raw
+    assert_nothing_raised do
+      @vcf1.int_or_raw(1)
+    end
+    assert_raise do
+      @vcf1.int_or_raw(A)
+    end
+  end
+  
   
 end

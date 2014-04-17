@@ -55,17 +55,14 @@ Alignments can be obtained one at a time by looping over a specified region usin
 See more detail on doc/tutorial.html or doc/tutorial.pdf for a walkthrough tutorial. 
 
 ## Dependencies
-* FFI [http://github.com/ffi/ffi](http://github.com/ffi/ffi)
-* BioRuby >= 1.4.1 [https://github.com/bioruby/bioruby](https://github.com/bioruby/bioruby)
 
+* BioRuby >= 1.4.3 [https://github.com/bioruby/bioruby](https://github.com/bioruby/bioruby)
+* Ruby 1.9 and above. 
 	
 ## FAQ
 * I´m getting a **segmentation Fault**, what did I do wrong?
 
-	[Answer] There are two known segmentation faults at the moment
-
-	* When you try to load a text file as binary file
-	* When you try to lad a binary file as a text file
+	[Answer] You are using an old version of bio-samtools, the current version doesn't link directly to the library. 
 
 * I keep seeing this **Invalid gemspec in [some ruby gem path…]**, what is wrong?
 	
@@ -85,7 +82,7 @@ See more detail on doc/tutorial.html or doc/tutorial.pdf for a walkthrough tutor
 1. Filter to the fetching algorithm (give a condition that has to be satisfied to add the alignment to the list)
 
 ### To whom do I complain?
-Try Ricardo dot Ramirez-Gonzalez at tgac dot ac dot uk
+Try [Ricardo.Ramirez-Gonzalez@tgac.ac.uk](Ricardo.Ramirez-Gonzalez@tgac.ac.uk)
  and [dan.maclean@tsl.ac.uk](dan.maclean@tsl.ac.uk)
 
 ### Important Notes
