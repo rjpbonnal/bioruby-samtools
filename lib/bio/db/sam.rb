@@ -570,21 +570,15 @@ module Bio
 
       end
 
-
+      #Returns the pipelup of a region, encapsulated as a Bio::DB::Fasta::Region object.  
+      #The opts are the same as for mpileup
       def fetch_region(opts={})   
         region = opts[:r] ? opts[:r] : opts[:region]
-        # puts "Region: #{region}"
         opts[:r] = region
         opts[:region] = region
-
-        #reg = region.class == Bio::DB::Fasta::Region ? region : Bio::DB::Fasta::Region.parse_region(region.to_s)
-
-
         reg =  Bio::DB::Fasta::Region.parse_region(region.to_s)
         reg.reference = self.fetch_reference(region.entry, region.start, region.end).downcase
         tmp = Array.new
-        #@cached_regions[region.to_s].pileup =  tmp
-        #puts "Loading #{region.to_s}"
         mpileup(opts) do | pile | 
           #  puts pile
           tmp << pile 
@@ -629,24 +623,28 @@ module Bio
 
 
 
-
+      #Extract the reads that align to a region
+      #* region [String] - Region to extract (chromosome:start-end)
+      #* fastq - [INT] fastq file where to print. If empty, prints to stdout
+      #* q - [INT] base quality threshold
+      # Not tested yet
       def extract_reads(opts={})
         opts[:region] = Bio::DB::Fasta::Region.parse_region( opts[:region] .to_s)  unless opts[:region].class == Bio::DB::Fasta::Region
         fastq_filename = opts[:fastq]
-        fastq_file = opts[:fastq_file]
 
-        out = $stdout
-
+        out = $stdout 
         print_fastq = Proc.new do |alignment|
           out.puts "@#{alignment.qname}"
           out.puts "#{alignment.seq}"
           out.puts "+#{alignment.qname}"
           out.puts "#{alignment.qual}"
         end
-
+       
+        if fastq_filename
+          out = File.open(fastq_filename, "w")
+        end
         fetch_with_function(chromosome, qstart, qstart+len,  print_fastq)
-
-
+        out.close if fastq_filename
       end
 
       #Returns Process::Status with the execution status. If run in a $VERBOSE environment, stderr of the process

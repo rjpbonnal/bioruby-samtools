@@ -1,45 +1,3 @@
-#puts "Loading BIOEXTENSIONSSSS!!!!!!!!!!!!!!!"
-module Bio::NucleicAcid::Data
-  IUPAC_CODES = {
-
-    'y'	=> 'ct',
-    'r'	=> 'ag',
-    'w'	=> 'at',
-    's'	=> 'cg',
-    'k'	=> 'gt',
-    'm'	=> 'ac',
-
-    'b'	=> 'cgt',
-    'd'	=> 'agt',
-    'h'	=> 'act',
-    'v'	=> 'acg',
-
-    'n'	=> 'acgt',
-
-    'a'	=> 'a',
-    't'	=> 't',
-    'g'	=> 'g',
-    'c'	=> 'c',
-    'u'	=> 'u',
-
-    'ct' => 'y',
-    'ag' => 'r',
-    'at' => 'w',
-    'cg' => 's',
-    'gt' => 'k',
-    'ac' => 'm',
-
-    'cgt' => 'b',
-    'agt' => 'd',
-    'act' => 'h',
-    'acg' => 'v',
-
-    'acgt' => 'n'
-  }
-
-
-end
-
 class Bio::NucleicAcid
 
   IUPAC_CODES = {
@@ -99,6 +57,9 @@ class Bio::NucleicAcid
 
 end
 
+#Monkey patching to Bio::Sequence to find snps between sequences. It assumes the
+#sequences are already aligned and doesn't check if a base on the first sequence is
+#valid on the second. 
 class Bio::Sequence
   def self.snps_between(seq1, seq2)
     snps=0
@@ -110,6 +71,7 @@ class Bio::Sequence
 end
 
 class  String
+  #Monkey patching to count how many ambiguity codes are present in the string, for Nucleic Acids
   def count_ambiguities
     snps=0
 
@@ -120,6 +82,7 @@ class  String
     snps
   end
   
+  #Counts how many bases are uppercase
   def upper_case_count
     match(/[^A-Z]*/).to_s.size
   end
