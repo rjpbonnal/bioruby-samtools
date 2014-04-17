@@ -254,7 +254,7 @@ module Bio
         end
 
         command = form_opt_string(@samtools, "mpileup", opts, [:R, :B, :E, "6", :A, :g, :u, :I] )
-        puts command
+        puts command if $VERBOSE
         if opts[:u]
           command = command + " | #{@bcftools} view -cg -"
         end
@@ -276,7 +276,7 @@ module Bio
           seq = "n" * (stop-start) 
         else
           command = "#{@samtools} faidx #{@fasta} '#{chr}:#{start}-#{stop}'"
-          #puts command
+          puts command if $VERBOSE
           @last_command = command
           seq = ""
           yield_from_pipe(command, String, :text ) {|line| seq = seq + line unless line =~ /^>/}
@@ -308,7 +308,7 @@ module Bio
       #* out_index - [STRING] name of index
       def index(opts={})
         command = "#{@samtools} index #{@bam} #{opts[:out_index]}"
-        #puts command
+        puts command if $VERBOSE
         @last_command = command
         system(command)
       end
@@ -323,7 +323,7 @@ module Bio
           remove_reads = "-r"
         end
         command = "#{@samtools} fixmate #{remove_reads} #{@bam} #{opts[:out_bam]}"
-        #puts command
+        puts command if $VERBOSE
         @last_command = command
         system(command)
       end
@@ -333,7 +333,7 @@ module Bio
       #generate simple stats with regard to the number and pairing of reads mapped to a reference
       def flag_stats(opts={})
         command = form_opt_string(@samtools, "flagstat", opts, [])
-        #puts command
+        puts command if $VERBOSE
         @last_command = command
         strings = []
         yield_from_pipe(command,String) {|line| strings << line.chomp}
@@ -347,6 +347,7 @@ module Bio
         stats = {}   
         command = form_opt_string(@samtools, "idxstats #{@bam}", {}, [])
         @last_command = command
+        puts command if $VERBOSE
         yield_from_pipe(command, String, :text, true, "#") do |line|
           info = line.chomp.split(/\t/)
           stats[ info[0] ] = {:length => info[1].to_i, :mapped_reads => info[2].to_i, :unmapped_reads => info[3].to_i }
@@ -388,11 +389,10 @@ module Bio
 
         opts.delete(:bams)
         options = commandify(opts, [:n, :r, :u, :f, '1'] )
-        #command = "#{form_opt_string(@samtools, "merge", opts, [:n, :r, :u, :f, '1'] )} #{out} #{bam_list}"
         command = "#{@samtools} merge #{options} #{out} #{bam_list}"
 
         @last_command = command
-        puts command
+        puts command puts command if $VERBOSE
         system(command)
 
       end
@@ -456,7 +456,7 @@ module Bio
         command = form_opt_string(@samtools, "sort", opts, [:n, :f, :o])
         command = command + " " + prefix
         @last_command = command
-        #puts command
+        puts command if $VERBOSE
         if opts[:o]
           yield_from_pipe(command, Bio::DB::Alignment)
         else
@@ -482,6 +482,7 @@ module Bio
           opts.delete(:s)
         end
         command = "#{form_opt_string(@samtools, "tview", opts)}"
+        puts command if $VERBOSE
         @last_command = command
         system(command)
       end
@@ -496,7 +497,7 @@ module Bio
         else
           command = "#{@samtools} reheader #{header_sam} #{@bam}"
         end
-        puts command
+        puts command if $VERBOSE
         @last_command = command
         system(command)
       end
@@ -512,6 +513,7 @@ module Bio
       #* E - Extended BAQ calculation. This option trades specificity for sensitivity, though the effect is minor. 
       def calmd(opts={}, &block)
         command = form_opt_string(@samtools, "calmd",  opts, [:E, :e, :u, :b, :S, :r] )+ " " + @fasta
+        puts command if $VERBOSE
         @last_command = command
         type = :text 
         klass = Bio::DB::Alignment
@@ -532,6 +534,7 @@ module Bio
         end
 
         command = "#{form_opt_string(@samtools, "targetcut", opts, [] )}"
+        puts command if $VERBOSE
         @last_command = command
         system(command)
       end
@@ -545,6 +548,7 @@ module Bio
       #* Q - [INT] Minimum base quality to be used in het calling. [13] 
       def phase(opts={})
         command = "#{form_opt_string(@samtools, "phase", opts, [:A, :F] )}"
+        puts command if $VERBOSE
         @last_command = command
         system(command)
       end
@@ -559,7 +563,7 @@ module Bio
       def depth(opts={})
         command = form_opt_string(@samtools, "depth", opts)
         @last_command = command
-        #puts command
+        puts command if $VERBOSE
         yield_from_pipe(command, String) do |line|
           yield line.split(/\t/)
         end
@@ -645,8 +649,11 @@ module Bio
 
       end
 
+      #Returns Process::Status with the execution status. If run in a $VERBOSE environment, stderr of the process
+      #is forwarded to the default stdout
       def yield_from_pipe(command, klass, type=:text, skip_comments=true, comment_char="#", &block)
-        pipe = IO.popen(command)
+        stdin, pipe, stderr, wait_thr = Open3.popen3(command)
+        pid = wait_thr[:pid]  # pid of the started process.       
         if type == :text
           while (line = pipe.gets)
             next if skip_comments and line[0] == comment_char
@@ -657,7 +664,12 @@ module Bio
             yield c
           end
         end
+        exit_status = wait_thr.value  # Process::Status object returned.
+        puts stderr.read if $VERBOSE 
+        stdin.close
         pipe.close
+        stderr.close
+        return exit_status
       end
       private
 
