@@ -356,6 +356,26 @@ module Bio
       end
 
       alias_method :idxstats, :index_stats
+      
+      #Retrive a hash with all the regions, with the region id as index or runs the function on each region
+      def each_region
+        stats=index_stats unless @stats
+        if @regions 
+          return @regionss unless block_given? 
+        else
+          @regions = Hash.new
+        end
+        stats.each do |k,v|
+          reg = Bio::DB::Fasta::Region
+          reg.entry = k
+          reg.start = 1
+          reg.end = v[:length]
+          reg.orientation = :forward
+          
+          yield reg if block_given?
+        end
+        @regions
+      end
 
       #Merge multiple sorted alignments
       #* n - sort by read names
