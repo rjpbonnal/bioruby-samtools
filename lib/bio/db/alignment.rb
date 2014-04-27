@@ -18,11 +18,12 @@ module Bio
     class Alignment
       attr_accessor :qname, :flag, :rname,:pos,:mapq,:cigar, :mrnm, :mpos, :isize, :seq, :qual, :tags, :al, :samstr, :calend, :qlen
 
-      attr_accessor :is_paired, :is_mapped, :query_unmapped, :mate_unmapped, :query_strand, :mate_strand, :first_in_pair,:second_in_pair, :primary, :failed_quality, :is_duplicate
+      attr_accessor :sam_string, :is_paired, :is_mapped, :query_unmapped, :mate_unmapped, :query_strand, :mate_strand, :first_in_pair,:second_in_pair, :primary, :failed_quality, :is_duplicate
       
       #parses the SAM string into its constituents and set its attributes
       def initialize(sam_string)
         s = sam_string.chomp.split("\t")
+        @sam_string = sam_string
         @qname = s[0]
         @flag  = s[1].to_i
         @rname = s[2]

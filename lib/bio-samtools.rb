@@ -1,3 +1,4 @@
+require 'open3'
 require 'bio-svgenes'
 require 'bio'
 require 'bio/db/sam'
