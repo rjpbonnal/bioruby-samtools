@@ -214,7 +214,7 @@ module Bio::DB::Fasta
       query = region.to_s
       query = region.to_region.to_s if region.respond_to?(:to_region) 
       command = "#{@samtools} faidx #{@fasta_path} '#{query}'"
-      puts command
+      puts command  if $VERBOSE
       @last_command = command
       seq = ""
       yield_from_pipe(command, String, :text ) {|line| seq = seq + line unless line =~ /^>/}
