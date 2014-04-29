@@ -48,7 +48,7 @@ class TestBioDbSam < Test::Unit::TestCase
     begin
       bam                        = Bio::DB::Sam.new({})
       assert(false, "Should fail while opening without parameters")
-    rescue Bio::DB::SAMException => e
+    rescue Bio::DB::Exception => e
       #puts e.message
       assert(true, e.message)
     end
@@ -60,7 +60,7 @@ class TestBioDbSam < Test::Unit::TestCase
       sam.open
       sam.close
       assert(false, "Should fail with an invalid path")
-    rescue Bio::DB::SAMException => e
+    rescue Bio::DB::Exception => e
       #puts e.message
       assert(true, e.message)
     end
@@ -120,7 +120,7 @@ class TestBioDbSam < Test::Unit::TestCase
 #      sam.open
 #      sam.close
 #      assert(false, "Should raise an exception for reading a BAM as TAM") 
-#    rescue Bio::DB::SAMException => e
+#    rescue Bio::DB::Exception => e
 #      assert(true, "Properly handled")
 #    end 
 #  end
@@ -131,7 +131,7 @@ class TestBioDbSam < Test::Unit::TestCase
 #      sam.open
 #      sam.close
 #      assert(false, "Should raise an exception for reading a BAM as TAM") 
-#    rescue Bio::DB::SAMException => e
+#    rescue Bio::DB::Exception => e
 #      assert(true, "Properly handled")
 #    end 
 #  end
@@ -154,7 +154,7 @@ class TestBioDbSam < Test::Unit::TestCase
       sam.load_index
       sam.close
       assert(false, "TAM index loaded")
-    rescue Bio::DB::SAMException => e
+    rescue Bio::DB::Exception => e
       assert(true, "Unable to load an index for a TAM file")
     end
   end
@@ -178,7 +178,7 @@ class TestBioDbSam < Test::Unit::TestCase
       #p als 
       sam.close
       assert(false, "Seems it ran the query")
-    rescue Bio::DB::SAMException => e
+    rescue Bio::DB::Exception => e
       #p e
       assert(true, "Exception generated and catched")
     end
@@ -192,7 +192,7 @@ class TestBioDbSam < Test::Unit::TestCase
       #p als 
       sam.close
       assert(false, "Seems it ran the query")
-    rescue Bio::DB::SAMException => e
+    rescue Bio::DB::Exception => e
       #p e
       assert(true, "Exception generated and catched")
     end
@@ -206,7 +206,7 @@ class TestBioDbSam < Test::Unit::TestCase
       #p als 
       sam.close
       assert(false, "Seems it ran the query")
-    rescue  Bio::DB::SAMException => e
+    rescue  Bio::DB::Exception => e
       #p e
       assert(true, "Exception generated and catched")
     end
@@ -220,7 +220,7 @@ class TestBioDbSam < Test::Unit::TestCase
       #p als 
       sam.close
       assert(false, "Seems it ran the query")
-    rescue  Bio::DB::SAMException => e
+    rescue  Bio::DB::Exception => e
       #p e
       assert(true, "Exception generated and catched")
     end
@@ -243,7 +243,7 @@ class TestBioDbSam < Test::Unit::TestCase
       #p "Error seq:"+ seq 
       sam.close
       assert(false, "The reference was loaded")
-    rescue Bio::DB::SAMException => e
+    rescue Bio::DB::Exception => e
       #p e
       assert(true,  "The references was not loaded")
     end
@@ -337,7 +337,7 @@ class TestBioDbSam < Test::Unit::TestCase
       :fasta => File.join(test_dir,'does_not_exist.fasta'),
       :bam => File.join(test_dir, 'test.bam')
     )
-    assert_raise Bio::DB::SAMException do
+    assert_raise Bio::DB::Exception do
       pileup_list = []
       sam.mpileup(:region => "gi|123|chr_1:100-109") do |pile|
         pileup_list << pile

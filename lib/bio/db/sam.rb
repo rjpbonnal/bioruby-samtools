@@ -63,6 +63,8 @@ module Bio
       def view(opts={},&block)
         region = String.new
         if opts[:chr] and opts[:start] and opts[:stop]
+          has_e = self.has_entry? opts[:chr]
+          raise Exception.new(), "[view] The sequence #{opts[:chr]} is not in the bam file" unless self.has_entry? opts[:chr] 
           region = "#{opts[:chr]}:#{opts[:start]}-#{opts[:stop]}"
           [:chr, :start, :stop].each {|o| opts.delete(o)}
         end
@@ -89,6 +91,7 @@ module Bio
       #* stop - the stop position for the subsequence
       #* &block - the the block of code to execute
       def fetch(chr, start,stop, &block)
+       
         view(
         :chr => chr,
         :start => start,
@@ -243,11 +246,14 @@ module Bio
 
         opts[:f] = @fasta
 
-
+        #TOODO: reduce the string handling
         query = opts[:r].to_s
         query = opts[:r].to_region.to_s if opts[:r].respond_to?(:to_region)
+        if not query.nil? and query.size > 0
+          raise Exception.new(), "The sequence #{query} is not in the bam file"  unless has_region? query 
+        end
         opts[:r] = query
-
+        
         if opts[:six]
           opts["6"] = nil
           opts.delete(:six)
@@ -271,6 +277,7 @@ module Bio
       #* stop - [INT] the stop position for the subsequence
       #* as_bio - boolean stating if the returned object should be a Bio::Sequence::NA object
       def fetch_reference(chr,start,stop, opts={:as_bio => false})
+        raise Exception.new(), "The sequence #{chr} is not in the bam file" unless has_entry? chr
         seq = ""
         unless @fasta #We return a string of Ns if we don't know the reference. 
           seq = "n" * (stop-start) 
@@ -344,37 +351,56 @@ module Bio
 
       #Retrieve and print stats in the index file. The output is TAB delimited with each line consisting of reference sequence name, sequence length, number of mapped reads and number unmapped reads.
       def index_stats
+       return @stats if @stats
         stats = {}   
-        command = form_opt_string(@samtools, "idxstats #{@bam}", {}, [])
+        command = form_opt_string(@samtools, "idxstats", {}, [])
         @last_command = command
-        puts command if $VERBOSE
+        puts command  if $VERBOSE
         yield_from_pipe(command, String, :text, true, "#") do |line|
           info = line.chomp.split(/\t/)
+          puts line
           stats[ info[0] ] = {:length => info[1].to_i, :mapped_reads => info[2].to_i, :unmapped_reads => info[3].to_i }
         end
-        stats
+        puts "[index_stats] #{stats.inspect} \n [index_stats] #{self.inspect}"
+        @stats = stats
+        return @stats
       end
 
       alias_method :idxstats, :index_stats
       
       #Retrive a hash with all the regions, with the region id as index or runs the function on each region
       def each_region
-        stats=index_stats unless @stats
+        index_stats 
         if @regions 
-          return @regionss unless block_given? 
+          return @regions unless block_given? 
         else
           @regions = Hash.new
         end
-        stats.each do |k,v|
-          reg = Bio::DB::Fasta::Region
+        index_stats.each do |k,v|
+          reg = Bio::DB::Fasta::Region.new
           reg.entry = k
           reg.start = 1
           reg.end = v[:length]
           reg.orientation = :forward
-          
+          @regions << reg unless @regions[k]
           yield reg if block_given?
         end
         @regions
+      end
+      
+      #Tells if the bam file contains the entry. It has to be indexed.
+      def has_entry?(entry)
+         index_stats.has_key?(entry)
+    #    puts "#{entry} #{@stats.inspect}"
+      #  index_stats
+      end
+      
+      def has_region?(region)
+        index_stats
+        reg=Bio::DB::Fasta::Region::parse_region(region)
+        return 0 unless has_entry? (reg.entry) 
+         len = @stats[reg.entry][:length]
+         reg.start > 0 and reg.end <= len
       end
 
       #Merge multiple sorted alignments
@@ -617,7 +643,7 @@ module Bio
       #
       #TODO: It may be good to load partially the pileup
       def mpileup_cached (opts={})      
-        raise SAMException.new(), "A region must be provided" unless opts[:r] or opts[:region]
+        raise Exception.new(), "A region must be provided" unless opts[:r] or opts[:region]
         @cached_regions = Hash.new unless @cached_regions
         region = opts[:r] ? opts[:r] : opts[:region]
         @cached_regions[region.to_s] = fetch_region(opts) unless @cached_regions[region.to_s]
@@ -670,6 +696,7 @@ module Bio
       #Returns Process::Status with the execution status. If run in a $VERBOSE environment, stderr of the process
       #is forwarded to the default stdout
       def yield_from_pipe(command, klass, type=:text, skip_comments=true, comment_char="#", &block)
+        puts "[yield_from_pipe] #{command}"
         stdin, pipe, stderr, wait_thr = Open3.popen3(command)
         pid = wait_thr[:pid]  # pid of the started process.       
         if type == :text

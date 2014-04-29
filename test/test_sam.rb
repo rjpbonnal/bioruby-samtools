@@ -73,11 +73,18 @@ class TestBioDbSam < Test::Unit::TestCase
   end
   
   def test_fetch
+#puts    @sam.inspect
+    i = 0
+    @sam.index
     @sam.fetch("chr_1", 10,1000) do |sam|
       #test that all the objects are Bio::DB::Alignment objects
       assert_equal(sam.class, Bio::DB::Alignment)
       assert_equal(sam.rname, "chr_1")
+      i += 1
     end
+    assert(i>0)
+    assert_equal(i,9)
+    
   end
   
   def test_fetch_with_function
@@ -170,6 +177,7 @@ class TestBioDbSam < Test::Unit::TestCase
   
   def test_mpileup
     #create an mpileup
+  #  @sam.index
     @sam.mpileup(:g => false) do |pileup|
       #test that all the objects are Bio::DB::Pileup objects
       assert_kind_of(Bio::DB::Pileup, pileup)
