@@ -355,13 +355,10 @@ module Bio
         stats = {}   
         command = form_opt_string(@samtools, "idxstats", {}, [])
         @last_command = command
-        puts command  if $VERBOSE
         yield_from_pipe(command, String, :text, true, "#") do |line|
           info = line.chomp.split(/\t/)
-          puts line
           stats[ info[0] ] = {:length => info[1].to_i, :mapped_reads => info[2].to_i, :unmapped_reads => info[3].to_i }
         end
-        puts "[index_stats] #{stats.inspect} \n [index_stats] #{self.inspect}"
         @stats = stats
         return @stats
       end
@@ -692,11 +689,22 @@ module Bio
         fetch_with_function(chromosome, qstart, qstart+len,  print_fastq)
         out.close if fastq_filename
       end
+      
+       # checks existence of files in instance
+      def files_ok?
+        [@fasta, @sam, @bam].flatten.compact.each {|f| return false unless File.exists? f }
+        true
+      end
+      
+      def indexed?
+        File.exists? @bam and File.exists? "#{@bam}.bai"
+      end
+        
       private
       #Returns Process::Status with the execution status. If run in a $VERBOSE environment, stderr of the process
       #is forwarded to the default stdout
       def yield_from_pipe(command, klass, type=:text, skip_comments=true, comment_char="#", &block)
-        puts "[yield_from_pipe] #{command}"
+        puts "[yield_from_pipe] #{command}" if $VERBOSE
         stdin, pipe, stderr, wait_thr = Open3.popen3(command)
         pid = wait_thr[:pid]  # pid of the started process.       
         if type == :text
@@ -738,15 +746,6 @@ module Bio
         end
         list.join(" ")
       end
-
-      # checks existence of files in instance
-      def files_ok?
-        [@fasta, @sam, @bam].flatten.compact.each {|f| return false unless File.exists? f }
-        true
-      end
-
-
-
     end
   end
 end
