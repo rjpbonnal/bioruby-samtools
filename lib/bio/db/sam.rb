@@ -454,7 +454,7 @@ module Bio
         opts.delete(:bams)
         options = commandify(opts, [:h] )
         command = "#{@samtools} cat #{options} -o #{out} #{bam_list}"
-        puts command
+        puts command if $VERBOSE
         @last_command = command
         system(command)
 
@@ -696,6 +696,7 @@ module Bio
         true
       end
       
+      #Returns true if the .bai exists. It doesn't validate if it is valid. 
       def indexed?
         File.exists? @bam and File.exists? "#{@bam}.bai"
       end

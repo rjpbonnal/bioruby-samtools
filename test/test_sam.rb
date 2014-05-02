@@ -3,12 +3,16 @@ $: << File.expand_path('.')
 require 'rubygems'
 require 'bio/db/sam'
 require "test/unit"
+#gem 'ruby-prof'
 gem 'test-unit'
+#require "ruby-prof"
 
 
 class TestBioDbSam < Test::Unit::TestCase
+#  include RubyProf::Test
   
   class << self
+
     def shutdown
       File.delete("test/samples/small/different_index.bam.bai")
       File.delete("test/samples/small/dupes_rmdup.bam")

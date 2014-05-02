@@ -69,7 +69,7 @@ module Bio::DB::Fasta
   class Region
     BASE_COUNT_ZERO =  {:A => 0, :C => 0, :G => 0,  :T => 0}
     attr_accessor :entry, :start, :end, :orientation
-    attr_accessor :pileup, :average_coverage, :snps, :reference, :base_ratios, :consensus, :coverages, :bases, :total_cov, :called
+    attr_accessor :pileup, :average_coverage, :reference, :base_ratios, :consensus, :coverages, :bases, :total_cov, :called
 
     #TODO: Debug, as it hasnt been tested in the actual code. 
     def base_ratios_for_base(base)
