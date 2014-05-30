@@ -262,7 +262,7 @@ module Bio
         if opts[:u]
           command = command + " | #{@bcftools} view -cg -"
         end
-
+        
         klass = opts[:u] ? Bio::DB::Vcf : Bio::DB::Pileup
         @last_command = command
         yield_from_pipe(command, klass, :text, &block)
