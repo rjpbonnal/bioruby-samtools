@@ -12,7 +12,11 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Ricardo Ramirez-Gonzalez", "Dan MacLean", "Raoul J.P. Bonnal"]
+<<<<<<< HEAD
   s.date = "2014-04-29"
+=======
+  s.date = "2014-04-28"
+>>>>>>> helios/master
   s.description = "Binder of samtools for ruby, on the top of FFI. \n\n  This project was born from the need to add support of BAM files to \n  the gee_fu genome browser (http://github.com/danmaclean/gee_fu)."
   s.email = "ilpuccio.febo@gmail.com"
   s.extensions = ["ext/mkrf_conf.rb"]
@@ -111,6 +115,7 @@ Gem::Specification.new do |s|
     "test/samples/small/map_to_merge2.bam.bai",
     "test/samples/small/map_to_merge2.sam",
     "test/samples/small/no_md.sam",
+    "test/samples/small/reheader.bam",
     "test/samples/small/sorted.bam",
     "test/samples/small/sorted.bam.bai",
     "test/samples/small/test.sai",

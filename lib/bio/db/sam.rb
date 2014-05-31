@@ -1,3 +1,4 @@
+require 'open3'
 module Bio
   class DB
     class Sam
@@ -139,7 +140,7 @@ module Bio
         :number_of_intervals => 10,
         :font_size => 14
         )
-        data_track = p.add_track(:glyph => :histogram, 
+        default_options = {:glyph => :histogram, 
         :stroke_color => 'black',
         :fill_color => 'gold',
         :track_height => 150,
@@ -147,7 +148,10 @@ module Bio
         :label => true, 
         :stroke_width => '1', 
         :x_round => 1,
-        :y_round => 1 )
+        :y_round => 1 }
+        opts = default_options.merge(opts)
+        
+        data_track = p.add_track(opts)
         index = 0;        
         result.each_slice(bin) {|slice| 
           #result.each_with_index {|val, index|
@@ -264,7 +268,7 @@ module Bio
         if opts[:u]
           command = command + " | #{@bcftools} view -cg -"
         end
-
+        
         klass = opts[:u] ? Bio::DB::Vcf : Bio::DB::Pileup
         @last_command = command
         yield_from_pipe(command, klass, :text, &block)
