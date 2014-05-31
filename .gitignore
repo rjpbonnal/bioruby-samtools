@@ -1,5 +1,7 @@
 # rcov generated
 coverage
+test/methods_test.rb
+test/samples/small2
 
 # rdoc generated
 rdoc
