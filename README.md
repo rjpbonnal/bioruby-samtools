@@ -68,6 +68,7 @@ See more detail on doc/tutorial.html or doc/tutorial.pdf for a walkthrough tutor
 	
 	[Answer] This appears to be a bug in RubyGems that doesn't affect the running of the tools. It will keep happening until someone updates RubyGems. If it really bugs you, downgrade RubyGems.
 
+
 ## Contributing to bio-samtools
  
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
@@ -86,16 +87,16 @@ Try [Ricardo.Ramirez-Gonzalez@tgac.ac.uk](Ricardo.Ramirez-Gonzalez@tgac.ac.uk)
  and [dan.maclean@tsl.ac.uk](dan.maclean@tsl.ac.uk)
 
 ### Important Notes
-* Libraries (libbam) are downloaded, compiled and installed inside the gem at install time on the host system
+* samtools is downloaded, compiled and installed inside the gem at install time on the host system
 
-    `openssl dgst libbam.so.1` MD5 is c45cfccfb41ffeb2730ee4b227d244c4
+* If you use this tool for publication, please cite http://dx.doi.org/10.1186/1751-0473-7-6
 
 ### Important Notes for developers
 
-Remember that you must compile and install the right libbam library for you host system. In order to do that there are three possible solutions:
+Remember that you must compile and install samtools for you host system. In order to do that there are two possible solutions:
 
-* download, compile and install the library in bioruby-samtools-your_clone/lib/bio/db/sam/external/libbam.xxxxx by yourself
-* install the gem and then grab the compiled library `cp 'locate libbam.1.dylib' bioruby-samtools-your_clone/lib/bio/db/sam/external` (library name is an example)
+* download, compile and install the library in bioruby-samtools-your_clone/lib/bio/db/sam/external/samtools and
+ bioruby-samtools-your_clone/lib/bio/db/sam/external/bcftools by yourself
 * in your bioruby-samtools-your_clone create the Rakefile typing `cd ext; ruby mkrf_conf.rb; rake -f Rakefile`
 
 The latest I think is the easiest way, cause you are replicating the automatic process.
