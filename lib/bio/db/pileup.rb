@@ -216,7 +216,7 @@ module Bio
          #puts self.ref_count
          @bases[self.ref_base.upcase.to_sym] = self.ref_count 
          @bases
-       end
+      end
 
        def base_coverage
          total = 0
@@ -252,8 +252,6 @@ module Bio
          end 
          @consensus_iuap
        end
-       
-       
     end
   end
 end
