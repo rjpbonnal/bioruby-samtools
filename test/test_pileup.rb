@@ -14,6 +14,8 @@ class TestPileup < Test::Unit::TestCase
     @pu2 = Bio::DB::Pileup.new("seq1	279	C	23	ATTT,,.,.TTTT,,,.,TTTTT	;75&<<<<<<<<<=<<<9<<:<<")
     #an indel..
     @pu3 = Bio::DB::Pileup.new("seq2	156	*	+AG/+AG	71	252	99	11	+AG	*	3	8	0")
+    #two heterozygous alt snps
+    @pu4 = Bio::DB::Pileup.new("seq1	279	C	24	AAAAAAAAATTTTTTTTTAATTAA	;75&<<<<<<<<<=<<<9<<:<<<")
   end
   
   def test_non_ref_count
@@ -81,4 +83,8 @@ class TestPileup < Test::Unit::TestCase
     assert_equal(5, @pu.to_s.count("\t"))
   end
   
+  def test_consensus_iuap
+    assert_equal('w', @pu4.consensus_iuap(0.1))
+  end
+    
 end
