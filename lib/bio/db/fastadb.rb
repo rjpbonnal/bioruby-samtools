@@ -31,7 +31,7 @@ module Bio::DB::Fasta
     #The return object is of type Index. 
     def [](args)
       tmp = @entries[args]
-      new_index = Index.new
+      @new_index = Index.new
       tmp.each do | entry |
         @new_index << entry
       end       
