@@ -365,7 +365,7 @@ module Bio
       def each_region
         stats=index_stats unless @stats
         if @regions 
-          return @regionss unless block_given? 
+          return @regions unless block_given? 
         else
           @regions = Hash.new
         end
