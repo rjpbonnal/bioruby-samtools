@@ -429,17 +429,20 @@ The following lines of code...
 	bam.plot_coverage("chr_1", 201, 2000, :bin=>50, :svg => "out.svg", :fill_color => '#99CCFF')
 	bam.plot_coverage("chr01", 201, 1000, :bin=>250, :svg => "out3.svg", :fill_color => '#33AD5C') 
 	
-		
-..create these plots:
-![coverage plot](images/out2.svg?raw=true =700x "coverage plot 1")  
-![coverage plot](images/out.svg?raw=true =700x "coverage plot 2")  
-![coverage plot](images/out3.svg?raw=true =700x "coverage plot 3")
 
-![Alt text](http://ethering.github.io/bio-samtools/images/out.svg)
+![Coverage plot 1](http://ethering.github.io/bio-samtools/images/out2.svg =700x)
+![Coverage plot 2](http://ethering.github.io/bio-samtools/images/out.svg =700x)
+![Coverage plot 2](http://ethering.github.io/bio-samtools/images/out3.svg =700x)
 
-#Regions
-In order to simplify the detailed analysis of pileups we abstracted the concept of regions. The Region can contain the reference sequence and the pileup from the BAM file. A list of available regions is built from the index of the BAM file and it is used to validate that queried regions are valid and exist in the BAM file. The pileup is used to calculate the base ratios at each position and to call a consensus which provides ambiguity codes when a minimum proportion of the bases are present. 
+#VCF methods
+For enhanced snp calling, we've included a VCF class which reflects each non-metadata line of a VCF file.
+The VCF class returns the eight fixed fields present in VCF files, namely chromosome, position, ID, reference base, alt bases, alt quality score, filter and info along with the genotype fields, format and samples. This information allows the comparison of variants and their genotypes across any number of samples.
 
+	@vcf1 = Bio::DB::Vcf.new("19	111	.	A	C	9.6	.	.	GT:HQ	0|0:10,10	0|0:10,10	0/1:3,3",["a","b","c"])	
+    @vcf2 = Bio::DB::Vcf.new("20	14370	rs6054257	G	A	29	0	NS=3;DP=14;AF=0.5;DB;H2	GT:GQ:DP:HQ	0|0:48:1:51,51	1|0:48:8:51,51	1/1:43:5:-1,-1") 
+    @vcf3 = Bio::DB::Vcf.new("19	111	.	A	C	9.6	.	.	GT:HQ	0|0:10,10	0|0:10,10	0/1:3,3") 
+    @vcf4 = Bio::DB::Vcf.new("20	14370	rs6054257	G	A	29	PASS	NS=3;DP=14;AF=0.5;DB;H2	GT:GQ:DP:HQ	0|0:48:1:51,51	1|0:48:8:51,51	1/1:43:5:.,") 
+  
 
 Tests
 -----
