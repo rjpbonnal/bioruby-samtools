@@ -1,38 +1,38 @@
 
-bio-samtools Basic Tutorial
+bio-SAMtools Basic Tutorial
 ===========================
 
 Introduction
 ------------
 
-bio-samtools is a Ruby binding to the popular [SAMtools](http://samtools.sourceforge.net/) library, and provides access to individual read alignments as well as BAM files, reference sequence and pileup information.
+bio-SAMtools is a Ruby binding to the popular [SAMtools](http://SAMtools.sourceforge.net/) library, and provides access to individual read alignments as well as BAM files, reference sequence and pileup information.
 
 Installation
 ------------
 
-Installation of bio-samtools is very straightforward, and is
+Installation of bio-SAMtools is very straightforward, and is
 accomplished with the Ruby gems command. All you need is an internet
 connection.
 
 ### Prerequisites
 
-bio-samtools relies on the following other rubygems:
+bio-SAMtools relies on the following other rubygems:
 
 -   [bio \>= 1.4.2](http://rubygems.org/gems/bio)
 -   [bio-svgenes >= 0.4.1](https://rubygems.org/gems/bio-svgenes)
 
-Once these are installed, bio-samtools can be installed with
+Once these are installed, bio-SAMtools can be installed with
 
-    sudo gem install bio-samtools
+    sudo gem install bio-SAMtools
                      
 
 It should then be easy to test whether installation went well. Start
 interactive Ruby (IRB) in the terminal, and type
-`require 'bio-samtools'` if the terminal returns `true` then all is
+`require 'bio-SAMtools'` if the terminal returns `true` then all is
 well.
 
     $ irb
-    >> require 'bio-samtools'
+    >> require 'bio-SAMtools'
     => true
 
 Working with BAM files
@@ -69,7 +69,7 @@ The output from this would be a Bio::Sequence::NA object, which provides a fasta
 	>chr_1:1-100
 	ctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaacccta
 
-#### Alignment Objects
+### Alignment Objects
 
 The individual alignments represent a single read and are returned as
 Bio::DB::Alignment objects. These have numerous methods of their own,
@@ -129,13 +129,13 @@ Alignments can be obtained one at a time by looping over a specified region usin
 	end
 
 A separate method `fetch_with_function()` allows you to pass a block (or
-a Proc object) to the function for efficient calculation. This example
+a Proc object) to the function for efficient calculation. This example takes
 an alignment object and returns an array of sequences which exactly match the reference.
 
     #an array to hold the matching sequences
     exact_matches = []
 
-	fetchAlignments = Proc.new do |a|
+	matches = Proc.new do |a|
 		#get the length of each read
 		len = a.seq.length
 		#get the cigar string
@@ -148,13 +148,13 @@ an alignment object and returns an array of sequences which exactly match the re
 		end
 	end
 
-	bam.fetch_with_function("chr_1", 100, 500, &fetchAlignments) #now run the fetch
+	bam.fetch_with_function("chr_1", 100, 500, &matches) 
 
 	puts exact_matches
 
 ###Alignment stats
 
-The SAMtools flagstat method is implemented in bio-samtools to quickly examine the number of reads mapped to the reference. This includes the number of paired and singleton reads mapped and also the number of paired-reads that map to different chromosomes/contigs.
+The SAMtools flagstat method is implemented in bio-SAMtools to quickly examine the number of reads mapped to the reference. This includes the number of paired and singleton reads mapped and also the number of paired-reads that map to different chromosomes/contigs.
 
 	bam.flag_stats()
 	
@@ -196,11 +196,11 @@ with start and length parameters
 
     coverages = bam.average_coverage("Chr1", 3000, 1000)  #=> 20.287
 
-### Getting Pileup Information
+## Getting Pileup Information
 
 Pileup format represents the coverage of reads over a single base in the
 reference. Getting a Pileup over a region is very easy. Note that this
-is done with `mpileup` and NOT the now deprecated SAMTools `pileup`
+is done with `mpileup` and NOT the now deprecated SAMtools `pileup`
 function. Calling the `mpileup` method creates an iterator that yields a
 Pileup object for each base.
 
@@ -218,12 +218,15 @@ A pileup can be cached, so if you want to execute several operations on the same
     reg.end = 334
     
     bam.mpileup_cached(:r=>reg,:g => false, :min_cov => 1, :min_per =>0.2) do |pileup|
+    	puts pileup.consensus
+	end
+	bam.mpileup_clear_cache(reg)
     	
 
 
 #### Pileup options
 
-The `mpileup` function takes a range of parameters to allow SAMTools
+The `mpileup` function takes a range of parameters to allow SAMtools
 level filtering of reads and alignments. They are specified as key =\>
 value pairs eg
 
@@ -233,193 +236,28 @@ value pairs eg
         ...
     end 
 
-Not all the options SAMTools allows you to pass to mpileup will return a
+Not all the options SAMtools allows you to pass to mpileup will return a
 Pileup object, those that cause mpileup to return BCF/VCF will be
 ignored. Specifically these are g,u,e,h,I,L,o,p. The table below lists
-the SAMTools flags supported and the symbols you can use to call them in
+the SAMtools flags supported and the symbols you can use to call them in
 the mpileup command.
 
-SAMTools option
+<table><tr><th>SAMtools options</th><th>description</th><th>short symbol</th><th>long symbol</th><th>default</th><th>example</th></tr>
+<tr><td>r</td><td>limit retrieval to a region</td><td>:r</td><td>:region</td><td>all positions</td><td>:r => "Chr1:1000-2000"</td></tr>
+<tr><td>6</td><td>assume Illumina scaled quality scores</td><td>:six</td><td>:illumina_quals</td><td>false</td><td>:six => true</td></tr>
+<tr><td>A</td><td>count anomalous read pairs scores</td><td>:A</td><td>:count_anomalous</td><td>false</td><td>:A => true</td></tr>
+<tr><td>B</td><td>disable BAQ computation</td><td>:B</td><td>:no_baq</td><td>false</td><td>:no_baq => true</td></tr>
+<tr><td>C</td><td>parameter for adjusting mapQ</td><td>:C</td><td>:adjust_mapq</td><td>0</td><td>:C => 25</td></tr>
+<tr><td>d</td><td>max per-BAM depth to avoid excessive memory usage</td><td>:d</td><td>:max_per_bam_depth</td><td>250</td><td>:d => 123</td></tr>
+<tr><td>E</td><td>extended BAQ for higher sensitivity but lower specificity</td><td>:E</td><td>:extended_baq</td><td>false</td><td>:E => true</td></tr>
+<tr><td>G</td><td>exclude read groups listed in FILE</td><td>:G</td><td>:exclude_reads_file</td><td>false</td><td>:G => my_file.txt</td></tr>
+<tr><td>l</td><td>list of positions (chr pos) or regions (BED)</td><td>:l</td><td>:list_of_positions</td><td>false</td><td>:l => my_posns.bed</td></tr>
+<tr><td>M</td><td>cap mapping quality at value</td><td>:M</td><td>:mapping_quality_cap</td><td>60</td><td>:M => 40 </td></tr>
+<tr><td>R</td><td>ignore RG tags</td><td>:R</td><td>:ignore_rg</td><td>false</td><td>:R => true </td></tr>
+<tr><td>q</td><td>skip alignments with mapping quality smaller than value</td><td>:q</td><td>:min_mapping_quality</td><td>0</td><td>:q => 30 </td></tr>
+<tr><td>Q</td><td>skip bases with base quality smaller than value</td><td>:Q</td><td>:imin_base_quality</td><td>13</td><td>:Q => 30</td></tr>
+</table>
 
-description
-
-short symbol
-
-long symbol
-
-default
-
-example
-
-`r`
-
-limit retrieval to a region
-
-`:r`
-
-`:region`
-
-all positions
-
-`:r => "Chr1:1000-2000"`
-
-`6`
-
-assume Illumina scaled quality scores
-
-`:six`
-
-`:illumina_quals`
-
-false
-
-`:six => true`
-
-`A`
-
-count anomalous read pairs scores
-
-`:A`
-
-`:count_anomalous`
-
-false
-
-`:A => true`
-
-`B`
-
-disable BAQ computation
-
-`:B`
-
-`:no_baq`
-
-false
-
-`:no_baq => true`
-
-`C`
-
-parameter for adjusting mapQ
-
-`:C`
-
-`:adjust_mapq`
-
-0
-
-`:C => 25`
-
-`d`
-
-max per-BAM depth to avoid excessive memory usage
-
-`:d`
-
-`:max_per_bam_depth`
-
-250
-
-`:d => 123`
-
-`E`
-
-extended BAQ for higher sensitivity but lower specificity
-
-`:E`
-
-`:extended_baq`
-
-false
-
-`:E => true`
-
-`G`
-
-exclude read groups listed in FILE
-
-`:G`
-
-`:exclude_reads_file`
-
-false
-
-`:G => 'my_file.txt'`
-
-`l`
-
-list of positions (chr pos) or regions (BED)
-
-`:l`
-
-`:list_of_positions`
-
-false
-
-`:l => 'my_posns.bed'`
-
-`M`
-
-cap mapping quality at value
-
-`:M`
-
-`:mapping_quality_cap`
-
-60
-
-`:M => 40 `
-
-`R`
-
-ignore RG tags
-
-`:R`
-
-`:ignore_rg`
-
-false
-
-`:R => true `
-
-`q`
-
-skip alignments with mapping quality smaller than value
-
-`:q`
-
-`:min_mapping_quality`
-
-0
-
-`:q => 30 `
-
-`Q`
-
-skip bases with base quality smaller than value
-
-`:Q`
-
-`:imin_base_quality`
-
-13
-
-`:Q => 30 `
-
-
-There is an 'experimental' function, `mpileup_plus`, that can return a
-Bio::DB::Vcf object when g,u,e,h,I,L,o,p options are passed. The list
-below shows the symbols you can use to invoke this behaviour:
-
--   `:genotype_calling, :g`
--   `:uncompressed_bcf , :u`
--   `:extension_sequencing_probability, :e`
--   `:homopolymer_error_coefficient, :h`
--   `:no_indels, :I`
--   `:skip_indel_over_average_depth, :L`
--   `:gap_open_sequencing_error_probability,:o`
--   `:platforms, :P`
 
 ##Coverage Plots
 You can create images that represent read coverage over binned regions of the reference sequence. The output format is svg. A number of parameters can be changed to alter the style of the plot. In the examples below the bin size and fill_color have been used to create plots with different colours and bar widths.   
@@ -432,9 +270,9 @@ The following lines of code...
 	
 
 
-![Coverage plot 1](http://ethering.github.io/bio-samtools/images/out2.svg)
-![Coverage plot 2](http://ethering.github.io/bio-samtools/images/out.svg)
-![Coverage plot 2](http://ethering.github.io/bio-samtools/images/out3.svg)
+![Coverage plot 1](http://ethering.github.io/bio-SAMtools/images/out2.svg)
+![Coverage plot 2](http://ethering.github.io/bio-SAMtools/images/out.svg)
+![Coverage plot 2](http://ethering.github.io/bio-SAMtools/images/out3.svg)
 
 #VCF methods
 For enhanced snp calling, we've included a VCF class which reflects each non-metadata line of a VCF file.
@@ -463,6 +301,6 @@ Tests
 -----
 
 The easiest way to run the built-in unit tests is to change to the
-bio-samtools source directory and running 'rake test'
+bio-SAMtools source directory and running 'rake test'
     
 Each test file tests different aspects of the code.
