@@ -425,9 +425,9 @@ You can create images that represent read coverage over binned regions of the re
 
 The following lines of code...
 	
-	bam.plot_coverage("chr01", 201, 2000, :bin=>20, :svg => "out2.svg", :fill_color => '#F1A1B1')
+	bam.plot_coverage("chr_1", 201, 2000, :bin=>20, :svg => "out2.svg", :fill_color => '#F1A1B1')
 	bam.plot_coverage("chr_1", 201, 2000, :bin=>50, :svg => "out.svg", :fill_color => '#99CCFF')
-	bam.plot_coverage("chr01", 201, 1000, :bin=>250, :svg => "out3.svg", :fill_color => '#33AD5C') 
+	bam.plot_coverage("chr_1", 201, 1000, :bin=>250, :svg => "out3.svg", :fill_color => '#33AD5C') 
 	
 
 
@@ -438,11 +438,24 @@ The following lines of code...
 #VCF methods
 For enhanced snp calling, we've included a VCF class which reflects each non-metadata line of a VCF file.
 The VCF class returns the eight fixed fields present in VCF files, namely chromosome, position, ID, reference base, alt bases, alt quality score, filter and info along with the genotype fields, format and samples. This information allows the comparison of variants and their genotypes across any number of samples.
+The following code takes a number of VCF objects and examines them for homozygous alt (1/1) SNPs
 
-	@vcf1 = Bio::DB::Vcf.new("19	111	.	A	C	9.6	.	.	GT:HQ	0|0:10,10	0|0:10,10	0/1:3,3",["a","b","c"])	
-    @vcf2 = Bio::DB::Vcf.new("20	14370	rs6054257	G	A	29	0	NS=3;DP=14;AF=0.5;DB;H2	GT:GQ:DP:HQ	0|0:48:1:51,51	1|0:48:8:51,51	1/1:43:5:-1,-1") 
-    @vcf3 = Bio::DB::Vcf.new("19	111	.	A	C	9.6	.	.	GT:HQ	0|0:10,10	0|0:10,10	0/1:3,3") 
-    @vcf4 = Bio::DB::Vcf.new("20	14370	rs6054257	G	A	29	PASS	NS=3;DP=14;AF=0.5;DB;H2	GT:GQ:DP:HQ	0|0:48:1:51,51	1|0:48:8:51,51	1/1:43:5:.,") 
+	vcfs = []
+	vcfs << @vcf1 = Bio::DB::Vcf.new("20	14370	rs6054257	G	A	29	0	NS=3;DP=14;AF=0.5;DB;H2	GT:GQ:DP:HQ	0|0:48:1:51,51	1|0:48:8:51,51	1/1:43:5:-1,-1") #from a 3.3 vcf file
+	vcfs << @vcf2 = Bio::DB::Vcf.new("19	111	.	A	C	9.6	.	.	GT:HQ	0|0:10,10	0/0:10,10	0/1:3,3") #from a 4.0 vcf file
+	vcfs << @vcf3 = Bio::DB::Vcf.new("20	14380	rs6054257	G	A	29	PASS	NS=3;DP=14;AF=0.5;DB;H2	GT:GQ:DP:HQ	0|0:48:1:51,51	1|0:48:8:51,51	1/1:43:5:.,") #from a 4.0 vcf file
+
+	vcfs.each do |vcf|
+    	vcf.samples.each do |sample|
+        	if "#{sample[1]['GT']}" == '1/1'
+            	print vcf.chrom, " "
+            	puts vcf.pos
+        	end
+    	end
+	end
+	
+	=> 20 14370
+	=> 20 14380
   
 
 Tests

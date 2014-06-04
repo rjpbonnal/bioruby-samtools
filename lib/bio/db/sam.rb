@@ -138,7 +138,7 @@ module Bio
         :font_size => 14
         )
         default_options = {:glyph => :histogram, 
-        :stroke_color => 'black',
+        :stroke => 'black',
         :fill_color => 'gold',
         :track_height => 150,
         :name => 'read coverage', 
