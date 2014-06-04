@@ -430,9 +430,10 @@ The following lines of code...
 	bam.plot_coverage("chr01", 201, 1000, :bin=>250, :svg => "out3.svg", :fill_color => '#33AD5C') 
 	
 
-![Coverage plot 1](http://ethering.github.io/bio-samtools/images/out2.svg "Coverage plot 1" {width=700px})   
-![Coverage plot 2](http://ethering.github.io/bio-samtools/images/out.svg "Coverage plot 2" {width=700px})    
-![Coverage plot 2](http://ethering.github.io/bio-samtools/images/out3.svg "Coverage plot 3" {width=700px})   
+
+![Coverage plot 1](http://ethering.github.io/bio-samtools/images/out2.svg)
+![Coverage plot 2](http://ethering.github.io/bio-samtools/images/out.svg)
+![Coverage plot 2](http://ethering.github.io/bio-samtools/images/out3.svg)
 
 #VCF methods
 For enhanced snp calling, we've included a VCF class which reflects each non-metadata line of a VCF file.
