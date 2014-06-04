@@ -66,7 +66,8 @@ A reference sequence can be returned as a Bio::Sequence::NA object buy the use o
 
 The output from this would be a Bio::Sequence::NA object, which provides a fasta-formatted string when printed
 
-	>chr_1:1-100	cctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaacccta
+	>chr_1:1-100
+	ctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaacccta
 
 #### Alignment Objects
 
