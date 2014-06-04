@@ -441,9 +441,9 @@ The VCF class returns the eight fixed fields present in VCF files, namely chromo
 The following code takes a number of VCF objects and examines them for homozygous alt (1/1) SNPs
 
 	vcfs = []
-	vcfs << @vcf1 = Bio::DB::Vcf.new("20	14370	rs6054257	G	A	29	0	NS=3;DP=14;AF=0.5;DB;H2	GT:GQ:DP:HQ	0|0:48:1:51,51	1|0:48:8:51,51	1/1:43:5:-1,-1") #from a 3.3 vcf file
-	vcfs << @vcf2 = Bio::DB::Vcf.new("19	111	.	A	C	9.6	.	.	GT:HQ	0|0:10,10	0/0:10,10	0/1:3,3") #from a 4.0 vcf file
-	vcfs << @vcf3 = Bio::DB::Vcf.new("20	14380	rs6054257	G	A	29	PASS	NS=3;DP=14;AF=0.5;DB;H2	GT:GQ:DP:HQ	0|0:48:1:51,51	1|0:48:8:51,51	1/1:43:5:.,") #from a 4.0 vcf file
+	vcfs << vcf1 = Bio::DB::Vcf.new("20	14370	rs6054257	G	A	29	0	NS=3;DP=14;AF=0.5;DB;H2	GT:GQ:DP:HQ	0|0:48:1:51,51	1|0:48:8:51,51	1/1:43:5:-1,-1") #from a 3.3 vcf file
+	vcfs << vcf2 = Bio::DB::Vcf.new("19	111	.	A	C	9.6	.	.	GT:HQ	0|0:10,10	0/0:10,10	0/1:3,3") #from a 4.0 vcf file
+	vcfs << vcf3 = Bio::DB::Vcf.new("20	14380	rs6054257	G	A	29	PASS	NS=3;DP=14;AF=0.5;DB;H2	GT:GQ:DP:HQ	0|0:48:1:51,51	1|0:48:8:51,51	1/1:43:5:.,") #from a 4.0 vcf file
 
 	vcfs.each do |vcf|
     	vcf.samples.each do |sample|
