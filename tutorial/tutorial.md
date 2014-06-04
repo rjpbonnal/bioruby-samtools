@@ -66,7 +66,7 @@ A reference sequence can be returned as a Bio::Sequence::NA object buy the use o
 
 The output from this would be a Bio::Sequence::NA object, which provides a fasta-formatted string when printed
 
-	>chr_1:1-100
+	>Chr1:1-100
 	ctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaacccta
 
 ### Alignment Objects
@@ -124,7 +124,7 @@ method. Thus the `@is_mapped` attribute of an object `a` is accessed
 
 Alignments can be obtained one at a time by looping over a specified region using the `fetch()` function.
 
-	bam.fetch("chr_1",3000,4000).each do |alignment|
+	bam.fetch("Chr1",3000,4000).each do |alignment|
 		#do something with the alignment...
 	end
 
@@ -148,7 +148,7 @@ an alignment object and returns an array of sequences which exactly match the re
 		end
 	end
 
-	bam.fetch_with_function("chr_1", 100, 500, &matches) 
+	bam.fetch_with_function("Chr1", 100, 500, &matches) 
 
 	puts exact_matches
 
@@ -213,7 +213,7 @@ A pileup can be cached, so if you want to execute several operations on the same
 
 	#create an mpileup
     reg = Bio::DB::Fasta::Region.new
-    reg.entry = "chr_1"
+    reg.entry = "Chr1"
     reg.start = 1
     reg.end = 334
     
@@ -264,9 +264,9 @@ You can create images that represent read coverage over binned regions of the re
 
 The following lines of code...
 	
-	bam.plot_coverage("chr_1", 201, 2000, :bin=>20, :svg => "out2.svg", :fill_color => '#F1A1B1')
-	bam.plot_coverage("chr_1", 201, 2000, :bin=>50, :svg => "out.svg", :fill_color => '#99CCFF')
-	bam.plot_coverage("chr_1", 201, 1000, :bin=>250, :svg => "out3.svg", :fill_color => '#33AD5C') 
+	bam.plot_coverage("Chr1", 201, 2000, :bin=>20, :svg => "out2.svg", :fill_color => '#F1A1B1')
+	bam.plot_coverage("Chr1", 201, 2000, :bin=>50, :svg => "out.svg", :fill_color => '#99CCFF')
+	bam.plot_coverage("Chr1", 201, 1000, :bin=>250, :svg => "out3.svg", :fill_color => '#33AD5C') 
 	
 
 
