@@ -67,7 +67,7 @@ A reference sequence can be returned as a Bio::Sequence::NA object buy the use o
 The output from this would be a Bio::Sequence::NA object, which provides a fasta-formatted string when printed
 
 	>Chr1:1-100
-	ctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaacccta
+	cctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaacccta
 
 ### Alignment Objects
 
@@ -191,12 +191,11 @@ of coverage at the given start position plus the length given
 
 ### Average Coverage In A Region
 
-Similarly, average (arithmetic mean) of coverage can be retrieved, also
-with start and length parameters
+Similarly, average (arithmetic mean) of coverage can be retrieved with the `average_coverage` method.
 
     coverages = bam.average_coverage("Chr1", 3000, 1000)  #=> 20.287
 
-## Getting Pileup Information
+##Getting Pileup Information
 
 Pileup format represents the coverage of reads over a single base in the
 reference. Getting a Pileup over a region is very easy. Note that this
@@ -266,13 +265,13 @@ The following lines of code...
 	
 	bam.plot_coverage("Chr1", 201, 2000, :bin=>20, :svg => "out2.svg", :fill_color => '#F1A1B1')
 	bam.plot_coverage("Chr1", 201, 2000, :bin=>50, :svg => "out.svg", :fill_color => '#99CCFF')
-	bam.plot_coverage("Chr1", 201, 1000, :bin=>250, :svg => "out3.svg", :fill_color => '#33AD5C') 
+	bam.plot_coverage("Chr1", 201, 1000, :bin=>250, :svg => "out3.svg", :fill_color => '#33AD5C', :stroke => '#33AD5C')
 	
 
 
-![Coverage plot 1](http://ethering.github.io/bio-SAMtools/images/out2.svg)
-![Coverage plot 2](http://ethering.github.io/bio-SAMtools/images/out.svg)
-![Coverage plot 2](http://ethering.github.io/bio-SAMtools/images/out3.svg)
+![Coverage plot 1](http://ethering.github.io/bio-samtools/images/out2.svg)
+![Coverage plot 2](http://ethering.github.io/bio-samtools/images/out.svg)
+![Coverage plot 2](http://ethering.github.io/bio-samtools/images/out3.svg)
 
 #VCF methods
 For enhanced snp calling, we've included a VCF class which reflects each non-metadata line of a VCF file.
@@ -286,7 +285,8 @@ The following code takes a number of VCF objects and examines them for homozygou
 
 	vcfs.each do |vcf|
     	vcf.samples.each do |sample|
-        	if "#{sample[1]['GT']}" == '1/1'
+        	genotype = "#{sample[1]['GT']}"
+        	if genotype == '1/1' or genotype == '1|1'
             	print vcf.chrom, " "
             	puts vcf.pos
         	end
