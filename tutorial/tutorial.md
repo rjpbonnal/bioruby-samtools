@@ -430,10 +430,14 @@ The following lines of code...
 	bam.plot_coverage("chr01", 201, 1000, :bin=>250, :svg => "out3.svg", :fill_color => '#33AD5C') 
 	
 		
-..create these plots:
-![coverage plot](images/out2.svg =700x "coverage plot") 
-![coverage plot](images/out.svg =700x "coverage plot")
-![coverage plot](images/out3.svg =700x "coverage plot")
+..create these plots:   
+![coverage plot](images/out2.svg =700x "coverage plot")   
+![coverage plot](images/out.svg =700x "coverage plot")   
+![coverage plot](images/out3.svg =700x "coverage plot")   
+
+#Regions
+In order to simplify the detailed analysis of pileups we abstracted the concept of regions. The Region can contain the reference sequence and the pileup from the BAM file. A list of available regions is built from the index of the BAM file and it is used to validate that queried regions are valid and exist in the BAM file. The pileup is used to calculate the base ratios at each position and to call a consensus which provides ambiguity codes when a minimum proportion of the bases are present. 
+
 
 Tests
 -----
