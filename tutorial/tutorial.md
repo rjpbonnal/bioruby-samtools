@@ -1,38 +1,38 @@
 
-bio-SAMtools Basic Tutorial
+bio-samtools Basic Tutorial
 ===========================
 
 Introduction
 ------------
 
-bio-SAMtools is a Ruby binding to the popular [SAMtools](http://SAMtools.sourceforge.net/) library, and provides access to individual read alignments as well as BAM files, reference sequence and pileup information.
+bio-samtools is a Ruby binding to the popular [samtools](http://samtools.sourceforge.net/) library, and provides access to individual read alignments as well as BAM files, reference sequence and pileup information.
 
 Installation
 ------------
 
-Installation of bio-SAMtools is very straightforward, and is
+Installation of bio-samtools is very straightforward, and is
 accomplished with the Ruby gems command. All you need is an internet
 connection.
 
 ### Prerequisites
 
-bio-SAMtools relies on the following other rubygems:
+bio-samtools relies on the following other rubygems:
 
 -   [bio \>= 1.4.2](http://rubygems.org/gems/bio)
 -   [bio-svgenes >= 0.4.1](https://rubygems.org/gems/bio-svgenes)
 
-Once these are installed, bio-SAMtools can be installed with
+Once these are installed, bio-samtools can be installed with
 
-    sudo gem install bio-SAMtools
+    sudo gem install bio-samtools
                      
 
 It should then be easy to test whether installation went well. Start
 interactive Ruby (IRB) in the terminal, and type
-`require 'bio-SAMtools'` if the terminal returns `true` then all is
+`require 'bio-samtools'` if the terminal returns `true` then all is
 well.
 
     $ irb
-    >> require 'bio-SAMtools'
+    >> require 'bio-samtools'
     => true
 
 Working with BAM files
@@ -155,7 +155,7 @@ an alignment object and returns an array of sequences which exactly match the re
 
 ###Alignment stats
 
-The SAMtools flagstat method is implemented in bio-SAMtools to quickly examine the number of reads mapped to the reference. This includes the number of paired and singleton reads mapped and also the number of paired-reads that map to different chromosomes/contigs.
+The SAMtools flagstat method is implemented in bio-samtools to quickly examine the number of reads mapped to the reference. This includes the number of paired and singleton reads mapped and also the number of paired-reads that map to different chromosomes/contigs.
 
 	bam.flag_stats()
 	
@@ -302,6 +302,6 @@ Tests
 -----
 
 The easiest way to run the built-in unit tests is to change to the
-bio-SAMtools source directory and running 'rake test'
+bio-samtools source directory and running 'rake test'
     
 Each test file tests different aspects of the code.
