@@ -70,7 +70,14 @@ module Bio::DB::Fasta
     BASE_COUNT_ZERO =  {:A => 0, :C => 0, :G => 0,  :T => 0}
     attr_accessor :entry, :start, :end, :orientation
     attr_accessor :pileup, :average_coverage, :snps, :reference, :base_ratios, :consensus, :coverages, :bases, :total_cov, :called
-
+  
+    def initialize(args)
+      @entry = args[:entry]
+      @start = args[:start]
+      @end = args[:end]
+      @orientation = args[:orientation]
+    end
+  
     #TODO: Debug, as it hasnt been tested in the actual code. 
     def base_ratios_for_base(base)
       @all_ratios = Hash.new unless @all_ratios
