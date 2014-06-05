@@ -43,7 +43,9 @@ Working with BAM files
 
 A SAM object represents the alignments in the BAM file. BAM files (and hence SAM objects here) are what most of SAMtools methods operate on and are very straightforward to create. You will need a sorted BAM file, to access the alignments and a reference sequence in FASTA format to use the reference sequence. The object can be created and opened as follows:
 
+```{ruby}    
     bam = Bio::DB::Sam.new(:bam=>"my_sorted.bam", :fasta=>'ref.fasta')
+``` 
 
 Opening the file needs only to be done once for multiple operations on
 it, access to the alignments is random so you don't need to loop over
@@ -55,10 +57,9 @@ The reference is accessed using reference
 name, start, end in 1-based co-ordinates. A standard Ruby String object is returned.
 
     sequence_fragment = bam.fetch_reference("Chr1", 1, 100)
-    
-The output from this would be the raw sequence as a string, e.g. 
+    puts sequece_fragment
+    =>cctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaacccta
 
-	cctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaacccta
 
 A reference sequence can be returned as a Bio::Sequence::NA object buy the use of :as_bio => true
 
