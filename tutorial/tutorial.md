@@ -48,10 +48,6 @@ Often, the output from a next-generation sequence alignment tool will be a file 
 Typically, we'd create a compressed, indexed binary version of the SAM file, which would allow us to operate on it  in a quicker and more effecient manner, being able to randomly access various parts of the alignment. We'd use the `view` method to do this. This step would involve takine our sam file, sorting it and indexing it.
 
 ```ruby
-testSamFile = @test_folder + "/testBam.sam"
-testBamFile = @test_folder + "/testBam.bam"
-prefix = @test_folder + "/sortedTestBam"
-
 #create the sam object
 sam = Bio::DB::Sam.new(:bam => 'my.sam', :fasta => 'ref.fasta')
 
