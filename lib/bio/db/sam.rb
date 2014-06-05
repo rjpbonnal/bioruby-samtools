@@ -89,7 +89,7 @@ module Bio
       #* start - the start position for the subsequence
       #* stop - the stop position for the subsequence
       #* &block - the the block of code to execute
-      def fetch(opts={})
+      def fetch(opts={}, &block)
         chr = opts[:chr]
         start = opts[:start]
         stop = opts[:stop]
@@ -182,7 +182,7 @@ module Bio
       #* start - the start position 
       #* length - the length of the region queried
       def average_coverage(opts={})
-        arr = self.chromosome_coverage(opts[:chr],opts[:start],opts[:length])
+        arr = self.chromosome_coverage(:chr=> opts[:chr],:start => opts[:start],:length => opts[:length])
         arr.inject{ |sum, el| sum + el }.to_f / arr.size
       end
 
@@ -311,8 +311,11 @@ module Bio
       #* stop - [INT] the stop position for the subsequence
       def faidx(opts={})
         if opts.has_key?(:chr) and opts.has_key?(:start) and opts.has_key?(:stop)
+          chr = opts[:chr]
+          start = opts[:start]
+          stop = opts[:stop]
           opts={:as_bio => false}
-          self.fetch_reference(:chr,:start,:stop,opts)
+          self.fetch_reference(:chr=>chr,:start=>start,:stop=>stop)
         else
           command = "#{@samtools} faidx #{@fasta}"
           @last_command = command
@@ -613,7 +616,7 @@ module Bio
         opts[:r] = region
         opts[:region] = region
         reg =  Bio::DB::Fasta::Region.parse_region(region.to_s)
-        reg.reference = self.fetch_reference(region.entry, region.start, region.end).downcase
+        reg.reference = self.fetch_reference(:chr=> region.entry, :start=> region.start, :stop=>region.end).downcase
         tmp = Array.new
         mpileup(opts) do | pile | 
           #  puts pile

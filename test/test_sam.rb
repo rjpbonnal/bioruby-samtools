@@ -73,7 +73,7 @@ class TestBioDbSam < Test::Unit::TestCase
   end
   
   def test_fetch
-    @sam.fetch("chr_1", 10,1000) do |sam|
+    @sam.fetch(:chr=>"chr_1", :start=>10, :stop=>1000) do |sam|
       #test that all the objects are Bio::DB::Alignment objects
       assert_equal(sam.class, Bio::DB::Alignment)
       assert_equal(sam.rname, "chr_1")
@@ -83,14 +83,14 @@ class TestBioDbSam < Test::Unit::TestCase
   def test_fetch_with_function
     #pass the assert to method
     block = Proc.new {|a| assert_equal(a.class, Bio::DB::Alignment)}
-    @sam.fetch_with_function("chr_1", 10,1000, &block)
+    @sam.fetch_with_function(:chr=>"chr_1", :start=>10, :stop=>1000, &block)
   end
   
   def test_chromosome_coverage
     #the coverage should only be 1.0 or 2.0
-    cov = @sam.chromosome_coverage("chr_1", 33, 19)
+    cov = @sam.chromosome_coverage(:chr=>"chr_1", :start=>10, :length=>1000)
     cov.each do |pu|
-      assert_send([[1.0 , 2.0], :member?, pu])
+      assert_send([[1.0 , 2.0, 3.0], :member?, pu])
     end
   end
   
@@ -100,7 +100,7 @@ class TestBioDbSam < Test::Unit::TestCase
     if File.exist?(test_bai_file) == false
       @sam.index()
     end
-    avcov = @sam.average_coverage("chr_1", 33, 19)
+    avcov = @sam.average_coverage(:chr=>"chr_1", :start=>33, :length=>19)
     assert_equal(avcov, 1.5)
     File.delete(test_bai_file)
   end
@@ -126,7 +126,7 @@ class TestBioDbSam < Test::Unit::TestCase
     #this is the first 70 nucleotides of the test seqeunce
     seq_expected = "CCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTA"
     #fetch the first 70 nuclotides
-    seq_fetched = @sam.fetch_reference("chr_1", 1, 70, :as_bio => false)
+    seq_fetched = @sam.fetch_reference(:chr=>"chr_1", :start=>1, :stop=>70, :as_bio => false)
     #test they're the same
     assert_equal(seq_fetched, seq_expected)
   end
