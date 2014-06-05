@@ -65,7 +65,7 @@ unsortedBam = Bio::DB::Sam.new(:bam => 'bam.bam', :fasta => 'ref.fasta')
 unsortedBam.sort(:prefix=>'sortedtBam')
 
 #create a new sam object
-bam = Bio::DB::Sam.new(:bam => sortedBam.bam", :fasta => 'ref.fasta')
+bam = Bio::DB::Sam.new(:bam => 'sortedBam.bam', :fasta => 'ref.fasta')
 #create a new index
 bam.index()
 
@@ -82,13 +82,9 @@ Working with BAM files
 A SAM object represents the alignments in the BAM file. BAM files (and hence SAM objects here) are what most of SAMtools methods operate on and are very straightforward to create. You will need a sorted and indexed BAM file, to access the alignments and a reference sequence in FASTA format to use the reference sequence. Let's revisit the last few lines of code from the code above.
 
 ```ruby
-<<<<<<< HEAD
-bam = Bio::DB::Sam.new(:bam => "sortedBam.bam", :fasta => 'ref.fasta')
+bam = Bio::DB::Sam.new(:bam => 'sortedBam.bam', :fasta => 'ref.fasta')
 bam.index()
-=======
-bam = Bio::DB::Sam.new(:bam=>"my_sorted.bam", :fasta=>'ref.fasta')
->>>>>>> FETCH_HEAD
-``` 
+```
 
 Creating the new Bio::DB::Sam (named 'bam' in this case) only to be done once for multiple operations on it, access to the alignments is random so you don't need to loop over the entries in the file.
 
