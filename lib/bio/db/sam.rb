@@ -660,6 +660,20 @@ module Bio
         end
       end
 
+      def bedcov(opts={})
+        bed = opts[:bed]
+        bam = opts[:bam]
+        if opts.has_key?(:out)
+          out=opts[:out]
+        command = "#{@samtools} bedcov #{bed} #{bam} > #{out}"
+        else
+          command = "#{@samtools} bedcov #{bed} #{bam}"
+        end
+        #puts command
+        #puts stderr.read if $VERBOSE
+        @last_command = command
+        system(command)
+      end
 
 
       #Extract the reads that align to a region
