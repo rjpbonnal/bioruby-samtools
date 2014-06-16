@@ -441,15 +441,15 @@ module Bio
       #* out -[FILE] out file name
       #* bams -[FILES] or Bio::DB::Sam list of input bams, or Bio::DB::Sam objects
       def cat(opts={})
-        out = opts[:out]
-        opts.delete(:out)
+        #out = opts[:out]
+        #opts.delete(:out)
 
         bam_list = opts[:bams].collect do |b|
           b.bam rescue b
         end.join(' ')
         opts.delete(:bams)
         options = commandify(opts, [:h] )
-        command = "#{@samtools} cat #{options} -o #{out} #{bam_list}"
+        command = "#{@samtools} cat #{options}  #{bam_list}"
         puts command
         @last_command = command
         system(command)
@@ -602,11 +602,7 @@ module Bio
       def depth(opts={})
         command = form_opt_string(@samtools, "depth", opts)
         @last_command = command
-        puts stderr.read if $VERBOSE
-        yield_from_pipe(command, String) do |line|
-          yield line.split(/\t/)
-        end
-
+        system(command)
       end
 
       #Returns the pipelup of a region, encapsulated as a Bio::DB::Fasta::Region object.  
@@ -662,15 +658,15 @@ module Bio
 
       def bedcov(opts={})
         bed = opts[:bed]
-        bam = opts[:bam]
+        #bam = opts[:bam]
         if opts.has_key?(:out)
           out=opts[:out]
-        command = "#{@samtools} bedcov #{bed} #{bam} > #{out}"
+          command = "#{@samtools} bedcov #{bed} #{@bam} > #{out}"
         else
-          command = "#{@samtools} bedcov #{bed} #{bam}"
+          command = "#{@samtools} bedcov #{bed} #{@bam}"
         end
-        #puts command
         #puts stderr.read if $VERBOSE
+        #puts command
         @last_command = command
         system(command)
       end
@@ -733,7 +729,7 @@ module Bio
         "#{prog} #{command} #{opts_string} #{@bam}"
       end
 
-      # turns an opts hash into a s
+      # turns an opts hash into a string
       def commandify(opts, singles)
         list = []
         opts.each_pair do |tag,value|

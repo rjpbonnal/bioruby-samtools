@@ -18,6 +18,7 @@ class TestBioDbSam < Test::Unit::TestCase
       File.delete("test/samples/small/test_sorted.bam")
       File.delete("test/samples/small/maps_merged.bam")
       File.delete("test/samples/small/maps_cated.bam")
+      File.delete("test/samples/small/testu.out")
     end
   end
   
@@ -27,6 +28,7 @@ class TestBioDbSam < Test::Unit::TestCase
     @testTAMFile                = @test_folder + "/test.tam"
     @testBAMFile                = @test_folder + "/testu.bam"
     @testReference              = @test_folder + "/test_chr.fasta"
+    @bed_file                   = @test_folder + "/testu.bed"
     @sam = Bio::DB::Sam.new(
         :fasta => @testReference, 
         :bam => @testBAMFile
@@ -185,10 +187,7 @@ class TestBioDbSam < Test::Unit::TestCase
   
   def test_mpileup_reg
     #create an mpileup
-    reg = Bio::DB::Fasta::Region.new
-    reg.entry = "chr_1"
-    reg.start = 1
-    reg.end = 334
+    reg = Bio::DB::Fasta::Region.new(:entry=>"chr_1", :start=>1, :end=>334)
     
     @sam.mpileup_cached(:r=>reg,:g => false, :min_cov => 1, :min_per =>0.2) do |pileup|
       #test that all the objects are Bio::DB::Pileup objects
@@ -212,10 +211,7 @@ class TestBioDbSam < Test::Unit::TestCase
   
   def test_mpileup_reg_05
     #create an mpileup
-    reg = Bio::DB::Fasta::Region.new
-    reg.entry = "chr_1"
-    reg.start = 1
-    reg.end = 334
+    reg = Bio::DB::Fasta::Region.new(:entry=>"chr_1", :start=>1, :end=>334)
     @sam.mpileup_cached(:r=>reg,:g => false, :min_cov => 1, :min_per =>0.4) do |pileup|
       #test that all the objects are Bio::DB::Pileup objects
       assert_kind_of(Bio::DB::Pileup, pileup)
@@ -327,5 +323,17 @@ class TestBioDbSam < Test::Unit::TestCase
     #force an error (use 'samtool' instead of 'samtools')
     output = Bio::DB::Sam.docs('samtool', 'tview')
     assert_equal(output, "program must be 'samtools' or 'bcftools'")
-  end   
+  end
+  
+  def test_bedcov
+    out_file =  @test_folder + "/testu.out"
+    @sam.bedcov(:bed=>@bed_file, :out=>out_file)
+    f = File.open(out_file, "r")
+    f.each_line do |line|
+      f_array= line.split(/\t/)
+      assert_equal(f_array[3], 630)
+    end
+    f.close
+  end
+  
 end

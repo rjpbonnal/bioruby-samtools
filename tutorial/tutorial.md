@@ -5,7 +5,7 @@ bio-samtools Basic Tutorial
 Introduction
 ------------
 
-bio-samtools is a Ruby binding to the popular [samtools](http://samtools.sourceforge.net/) library, and provides access to individual read alignments as well as BAM files, reference sequence and pileup information.
+bio-samtools is a Ruby binding to the popular [SAMtools](http://samtools.sourceforge.net/) library, and provides access to individual read alignments as well as BAM files, reference sequence and pileup information. Users should refer to the [bio-samtools documentation](http://rubydoc.info/gems/bio-samtools/index) and the [SAMtools manual](http://samtools.sourceforge.net/samtools.shtml) for further details of the methods.
 
 Installation
 ------------
@@ -45,7 +45,7 @@ $ irb
 ##Creating a BAM file
 Often, the output from a next-generation sequence alignment tool will be a file in the [SAM format](http://samtools.github.io/hts-specs/SAMv1.pdf).
 
-Typically, we'd create a compressed, indexed binary version of the SAM file, which would allow us to operate on it  in a quicker and more effecient manner, being able to randomly access various parts of the alignment. We'd use the `view` method to do this. This step would involve takine our sam file, sorting it and indexing it.
+Typically, we'd create a compressed, indexed binary version of the SAM file, which would allow us to operate on it in a quicker and more efficient manner, being able to randomly access various parts of the alignment. We'd use the `view` to do this. This step would involve takeing our sam file, sorting it and indexing it.
 
 ```ruby
 #create the sam object
@@ -57,8 +57,8 @@ sam.view(:b=>true, :S=>true, :o=>'bam.bam')
 #create a new sam object from the bam file
 unsortedBam = Bio::DB::Sam.new(:bam => 'bam.bam', :fasta => 'ref.fasta')
 
-#the bam file might not be sorted (neccessary for samtools), so sort it
-unsortedBam.sort(:prefix=>'sortedtBam')
+#the bam file might not be sorted (necessary for samtools), so sort it
+unsortedBam.sort(:prefix=>'sortedBam')
 
 #create a new sam object
 bam = Bio::DB::Sam.new(:bam => 'sortedBam.bam', :fasta => 'ref.fasta')
@@ -105,6 +105,32 @@ puts sequence_fragment
 
 => >Chr1:1-100
 => cctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccctaacccta
+```
+
+### Concatenating BAM files
+BAM files may be concatenated using the `cat` command. The sequence dictionary of each input BAM must be identical, although the `cat` method does not check this.
+
+```ruby
+#create an array of BAM files to cat
+bam_files = [bam1, bam2]
+cat_file = "maps_cated.bam" #the outfile
+#cat the files
+@sam.cat(:out=>cat_file, :bams=>bam_files)
+#create a new Bio::DB::Sam object from the new cat file
+cat_bam = Bio::DB::Sam.new(:fasta => "ref.fasta", :bam => cat_file)
+
+```
+
+### Removing duplicate reads
+The `remove_duplicates` method removes potential PCR duplicates: if multiple read pairs have identical external coordinates it only retain the pair with highest mapping quality. It does not work for unpaired reads (e.g. two ends mapped to different chromosomes or orphan reads).
+```ruby
+
+unduped = "dupes_rmdup.bam" #an outfile for the removed duplicates bam
+#remove single-end duplicates
+bam.remove_duplicates(:s=>true, :out=>unduped)
+#create new Bio::DB::Sam object
+unduped_bam = Bio::DB::Sam.new(:fasta => "ref.fasta", :bam => unduped)
+
 ```
 
 ### Alignment Objects
@@ -244,6 +270,34 @@ Similarly, average (arithmetic mean) of coverage can be retrieved with the `aver
 coverages = bam.average_coverage("Chr1", 3000, 1000)  #=> 20.287
 ```
 
+### Coverage from a BED file
+It is possible to count the number of nucleotides mapped to a given region of a BAM file by providing a [BED formatted](http://genome.ucsc.edu/FAQ/FAQformat.html#format1) file and using the `bedcov` method. The output is the BED file with an extra column providing the number of nucleotides mapped to that region.
+
+```ruby
+bed_file =  "test.bed"
+bam.bedcov(:bed=>bed_file)
+
+=> chr_1	1	30	6
+=> chr_1	40	45	8
+
+```
+Alternatively, the `depth` method can be used to get per-position depth information (any unmapped positions will be ignored).
+```ruby
+bed_file =  "test.bed"
+@sam.depth(:b=>bed_file)
+
+=> chr_1	25	1
+=> chr_1	26	1
+=> chr_1	27	1
+=> chr_1	28	1
+=> chr_1	29	1
+=> chr_1	30	1
+=> chr_1	41	1
+=> chr_1	42	1
+=> chr_1	43	2
+=> chr_1	44	2
+=> chr_1	45	2
+```
 ##Getting Pileup Information
 
 Pileup format represents the coverage of reads over a single base in the
@@ -254,12 +308,12 @@ Pileup object for each base.
 
 ```ruby
 bam.mpileup do |pileup|
-    puts pileup.consensus #gives the consensus base from the reads for that postion
+    puts pileup.consensus #gives the consensus base from the reads for that position
 end 
 ```
 
 ###Caching pileups
-A pileup can be cached, so if you want to execute several operations on the same set of regions, mpilup won't be executed several times. Whenever you finish using a region, call mpileup_clear_cache to free the cache. The argument 'Region' is required, as it will be the key for the underlying hash. We asume that the options (other than the region) are constant. If they are not, the cache mechanism may not be consistent. 
+A pileup can be cached, so if you want to execute several operations on the same set of regions, mpilup won't be executed several times. Whenever you finish using a region, call mpileup_clear_cache to free the cache. The argument 'Region' is required, as it will be the key for the underlying hash. We assume that the options (other than the region) are constant. If they are not, the cache mechanism may not be consistent. 
 
 ```ruby
 #create an mpileup
@@ -325,7 +379,7 @@ bam.plot_coverage("Chr1", 201, 1000, :bin=>250, :svg => "out3.svg", :fill_color 
 ![Coverage plot 2](http://ethering.github.io/bio-samtools/images/out.svg)
 ![Coverage plot 2](http://ethering.github.io/bio-samtools/images/out3.svg)
 
-The `plot_coverage` method will also return the raw svg code, for further use. Simply leave out a file name and asign the method to a variable.
+The `plot_coverage` method will also return the raw svg code, for further use. Simply leave out a file name and assign the method to a variable.
 
 ```ruby
 svg = bam.plot_coverage("Chr1", 201, 2000, :bin=>50, :fill_color => '#99CCFF')
@@ -357,6 +411,9 @@ end
 => 20 14370
 => 20 14380
 ```
+
+##Other methods not covered
+The SAMtools methods faidx, fixmate, tview, reheader, calmd, targetcut and phase are all included in the current bio-samtools release.
 
 Tests
 -----

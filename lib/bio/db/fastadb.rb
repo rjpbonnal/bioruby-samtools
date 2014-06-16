@@ -140,10 +140,7 @@ module Bio::DB::Fasta
       fields_2 = fields_1[1].split("-")
       raise FastaDBException.new(), "Invalid region. #{string}" if fields_1.length != 2 || fields_2.length != 2
 
-      reg = Region.new
-      reg.entry = fields_1[0]
-      reg.start = fields_2[0].to_i
-      reg.end = fields_2[1].to_i
+      reg = Region.new(:entry=> fields_1[0], :start=>fields_2[0].to_i, :end=>fields_2[1].to_i)
 
       if reg.end < reg.start 
         reg.orientation = :reverse
