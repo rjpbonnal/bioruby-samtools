@@ -383,7 +383,7 @@ module Bio
           reg.start = 1
           reg.end = v[:length]
           reg.orientation = :forward
-          @regions << reg unless @regions[k]
+          @regions[k] = reg unless @regions[k]
           yield reg if block_given?
         end
         @regions
