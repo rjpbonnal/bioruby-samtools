@@ -89,10 +89,7 @@ module Bio
       #* start - the start position for the subsequence
       #* stop - the stop position for the subsequence
       #* &block - the the block of code to execute
-      def fetch(opts={}, &block)
-        chr = opts[:chr]
-        start = opts[:start]
-        stop = opts[:stop]
+      def fetch(chr, start,stop, &block)
         view(
         :chr => chr,
         :start => start,
@@ -107,10 +104,7 @@ module Bio
       #* chr - the reference name
       #* start - the start position 
       #* length - the length of the region queried
-      def chromosome_coverage(opts={})
-        chr = opts[:chr]
-        start = opts[:start]
-        length = opts[:length]
+      def chromosome_coverage(chr,start,length)
         result = []
         region = "#{chr}:#{start}-#{start + length}"
         self.mpileup(:r => region) do |p|
@@ -127,10 +121,10 @@ module Bio
       #OPTIONS
       #* bin - the amount of bins to split the histogram into. The arithmetic mean score for each bin will be plotted. [default 30 bins]
       #* svg - a file to write the svg image to [default a String object containing the SVG]
-      def plot_coverage(opts={})
-        chr = opts[:chr]
-        start = opts[:start]
-        length = opts[:length]
+      def plot_coverage(chr,start,length, opts={})
+        chr = opts[:chr] if chr.nil?
+        start = opts[:start] if start.nil?
+        length = opts[:length] if length.nil?
         if opts[:bin]
           bin = length/opts[:bin]
         else
@@ -181,8 +175,8 @@ module Bio
       #* chr - the reference name
       #* start - the start position 
       #* length - the length of the region queried
-      def average_coverage(opts={})
-        arr = self.chromosome_coverage(:chr=> opts[:chr],:start => opts[:start],:length => opts[:length])
+      def average_coverage(chr,start,length)
+        arr = self.chromosome_coverage(chr,start,length)
         arr.inject{ |sum, el| sum + el }.to_f / arr.size
       end
 
@@ -283,10 +277,7 @@ module Bio
       #* start - [INT] the start position for the subsequence
       #* stop - [INT] the stop position for the subsequence
       #* as_bio - boolean stating if the returned object should be a Bio::Sequence::NA object
-      def fetch_reference(opts={})
-        chr = opts[:chr]
-        start = opts[:start]
-        stop = opts[:stop]
+      def fetch_reference(chr,start,stop, opts={:as_bio => false})
         seq = ""
         unless @fasta #We return a string of Ns if we don't know the reference. 
           seq = "n" * (stop-start) 
@@ -311,11 +302,8 @@ module Bio
       #* stop - [INT] the stop position for the subsequence
       def faidx(opts={})
         if opts.has_key?(:chr) and opts.has_key?(:start) and opts.has_key?(:stop)
-          chr = opts[:chr]
-          start = opts[:start]
-          stop = opts[:stop]
           opts={:as_bio => false}
-          self.fetch_reference(:chr=>chr,:start=>start,:stop=>stop)
+          self.fetch_reference(:chr,:start,:stop,opts)
         else
           command = "#{@samtools} faidx #{@fasta}"
           @last_command = command
@@ -441,9 +429,6 @@ module Bio
       #* out -[FILE] out file name
       #* bams -[FILES] or Bio::DB::Sam list of input bams, or Bio::DB::Sam objects
       def cat(opts={})
-        #out = opts[:out]
-        #opts.delete(:out)
-
         bam_list = opts[:bams].collect do |b|
           b.bam rescue b
         end.join(' ')
@@ -612,7 +597,7 @@ module Bio
         opts[:r] = region
         opts[:region] = region
         reg =  Bio::DB::Fasta::Region.parse_region(region.to_s)
-        reg.reference = self.fetch_reference(:chr=> region.entry, :start=> region.start, :stop=>region.end).downcase
+        reg.reference = self.fetch_reference(region.entry, region.start, region.end).downcase
         tmp = Array.new
         mpileup(opts) do | pile | 
           #  puts pile

@@ -213,8 +213,6 @@ module Bio::DB::Fasta
 
     #The region needs to have a method to_region or a method to_s that ha the format "chromosome:start-end" as in samtools
     def fetch_sequence(region)
-
-
       query = region.to_s
       query = region.to_region.to_s if region.respond_to?(:to_region) 
       command = "#{@samtools} faidx #{@fasta_path} '#{query}'"
