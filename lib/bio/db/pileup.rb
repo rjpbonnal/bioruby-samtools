@@ -226,14 +226,14 @@ module Bio
          total
        end
 
-       def base_ratios
-         return @base_ratios if @base_ratios
+       def allele_frequency
+         return @allele_frequency if @allele_frequency
          bases = self.bases
-         @base_ratios = Hash.new
+         @allele_frequency = Hash.new
          bases.each do |k,v| 
-           @base_ratios[k] = v.to_f/self.base_coverage.to_f 
+           @allele_frequency[k] = v.to_f/self.base_coverage.to_f 
          end
-         @base_ratios
+         @allele_frequency
        end
 
        # returns the consensus (most frequent) base from the pileup, if there are equally represented bases returns a string of all equally represented bases in alphabetical order   

@@ -84,7 +84,7 @@ module Bio::DB::Fasta
       unless @all_ratios[base]
         ratios = Array.new
         for i in (0..region.size-1)
-          ratios << @base_ratios[i][base]
+          ratios << @allele_frequency[i][base]
         end
         @all_ratios[base] = ratios
       end
