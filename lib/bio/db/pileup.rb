@@ -152,7 +152,7 @@ module Bio
         elsif bases[1] == self.ref_base
            return [bases[0],'0/1']
         else
-          return ["#{bases[0]},#{bases[1]}",'1/2']
+          return ["#{bases[0]},#{bases[1]}",'1/1']
         end 
       end
       
