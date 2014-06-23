@@ -85,14 +85,20 @@ module Bio
       def consensus
           if @consensus.nil?
             max = self.non_refs.values.max
+            #if the ref base is in more than half the coverage..
             if (self.ref_count / self.coverage) > 0.5
-              @consensus = self.ref_base 
-            elsif self.ref_count > max
+              #..then the ref base is the concensus
               @consensus = self.ref_base
+            ##not sure if the following will ever apply as the non_refs method also returns the ref base count, hence can never be over the max count  
+            #elsif self.ref_count > max
+            #  @consensus = self.ref_base
             else
+              #get the base(s) and count(s) that has the max count
               arr = self.non_refs.select {|k,v| v == max }
+              #just get the bases (remove the counts)
               bases = arr.collect {|b| b[0].to_s }
-              bases << self.ref_base if self.ref_count == max
+              #add the ref base if the ref base has a max count (commenting this out as it should already be in)
+              #bases << self.ref_base if self.ref_count == max
               @consensus = bases.sort.join
             end
           end
@@ -104,6 +110,10 @@ module Bio
         alt,g = self.genotype_list 
         alt = self.consensus.split(//).join(',') unless self.ref_base == '*'
         alt = '.' if alt == self.ref_base
+        alt = alt.split(',')
+        #if the reference base is in alt, remove it
+        alt.delete(self.ref_base.to_s)
+        alt = alt.join(',')
         [self.ref_name, self.pos, '.', self.ref_base, alt, self.snp_quality.to_i, "0", "DP=#{self.coverage.to_i}", "GT:GQ:DP", "#{g}:#{self.consensus_quality.to_i}:#{self.coverage.to_i}" ].join("\t")
       end
       
@@ -221,7 +231,7 @@ module Bio
        end
 
       #returns the frequency of all bases in pileup position
-       def allele_frequency
+       def allele_freq
          return @allele_frequency if @allele_frequency
          bases = self.bases
          @allele_frequency = Hash.new

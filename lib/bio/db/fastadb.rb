@@ -69,7 +69,7 @@ module Bio::DB::Fasta
   class Region
     BASE_COUNT_ZERO =  {:A => 0, :C => 0, :G => 0,  :T => 0}
     attr_accessor :entry, :start, :end, :orientation
-    attr_accessor :pileup, :average_coverage, :snps, :reference, :base_ratios, :consensus, :coverages, :bases, :total_cov, :called
+    attr_accessor :pileup, :average_coverage, :snps, :reference, :allele_freq, :consensus, :coverages, :bases, :total_cov, :called
   
     def initialize(args)
       @entry = args[:entry]
@@ -79,12 +79,12 @@ module Bio::DB::Fasta
     end
   
     #TODO: Debug, as it hasnt been tested in the actual code. 
-    def base_ratios_for_base(base)
+    def allele_freq_for_base(base)
       @all_ratios = Hash.new unless @all_ratios
       unless @all_ratios[base]
         ratios = Array.new
         for i in (0..region.size-1)
-          ratios << @allele_frequency[i][base]
+          ratios << @allele_freq[i][base]
         end
         @all_ratios[base] = ratios
       end
@@ -101,7 +101,7 @@ module Bio::DB::Fasta
       self.called = 0
       reference = self.reference.downcase
 
-      self.base_ratios = Array.new(self.size, BASE_COUNT_ZERO) 
+      self.allele_freq = Array.new(self.size, BASE_COUNT_ZERO) 
       self.bases = Array.new(self.size, BASE_COUNT_ZERO) 
       self.coverages = Array.new(self.size, 0)
       self.total_cov = 0
@@ -109,7 +109,7 @@ module Bio::DB::Fasta
       self.pileup.each do | pile |
 
         if pile.coverage > min_cov
-          self.base_ratios[pile.pos - self.start ] = pile.base_ratios
+          self.allele_freq[pile.pos - self.start ] = pile.allele_freq
           reference[pile.pos - self.start   ] = pile.consensus_iuap(min_per).upcase
           self.coverages[pile.pos - self.start   ]  = pile.coverage.to_i
           self.bases[pile.pos - self.start       ]  = pile.bases

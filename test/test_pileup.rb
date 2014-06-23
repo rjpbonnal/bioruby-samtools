@@ -54,14 +54,14 @@ class TestPileup < Test::Unit::TestCase
   def test_snp_gt
     snp =  @pu2.send(:snp_gt)
     assert_equal('T,', snp[0])
-    assert_equal('1/2', snp[1])
+    assert_equal('1/1', snp[1])
   end
   
   def test_genotype_list
     gt2 = @pu2.genotype_list
     gt3 = @pu3.genotype_list
     assert_equal('T,', gt2[0])
-    assert_equal('1/2', gt2[1])
+    assert_equal('1/1', gt2[1])
     assert_equal('IAG', gt3[0])
     assert_equal('1/1', gt3[1])
   end
