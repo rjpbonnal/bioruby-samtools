@@ -109,13 +109,7 @@ module Bio
       
       private
       def Pileup.vcf_header
-        %{##fileformat=VCFv3.3
-          ##INFO=DP,1,Integer,"Total Depth"
-          ##FORMAT=GT,1,String,"Genotype"
-          ##FORMAT=GQ,1,Integer,"Genotype Quality"
-          ##FORMAT=DP,1,Integer,"Read Depth"
-          #CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tDATA
-        }.join("\n")
+        %{##fileformat=VCFv3.3\n##INFO=DP,1,Integer,"Total Depth"\n##FORMAT=GT,1,String,"Genotype"\n##FORMAT=GQ,1,Integer,"Genotype Quality"\n##FORMAT=DP,1,Integer,"Read Depth"\n#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tDATA\n}
       end
       
       
@@ -226,6 +220,7 @@ module Bio
          total
        end
 
+      #returns the frequency of all bases in pileup position
        def allele_frequency
          return @allele_frequency if @allele_frequency
          bases = self.bases
