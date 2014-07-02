@@ -78,8 +78,9 @@ module Bio
           opts['1'] = opts[:one]
           opts.delete(:one)
         end
-
-        command = form_opt_string(@samtools, 'view', opts, [:b, :h, :H, :S, :u, '1', :x, :X, :c, :B]) + " '#{region}'"
+        command = String.new
+        command = form_opt_string(@samtools, 'view', opts, [:b, :h, :H, :S, :u, '1', :x, :X, :c, :B]) 
+        commad = command + " '#{region}'" if region.size > 0
         @last_command = command
         type = (opts[:u] or opts[:b]) ? :binary : :text
         klass = (type == :binary) ? String : Bio::DB::Alignment
@@ -125,6 +126,9 @@ module Bio
       #* bin - the amount of bins to split the histogram into. The arithmetic mean score for each bin will be plotted. [default 30 bins]
       #* svg - a file to write the svg image to [default a String object containing the SVG]
       def plot_coverage(chr,start,length, opts={})
+        chr = opts[:chr] if chr.nil?
+        start = opts[:start] if start.nil?
+        length = opts[:length] if length.nil?
         if opts[:bin]
           bin = length/opts[:bin]
         else
@@ -141,7 +145,7 @@ module Bio
         :font_size => 14
         )
         default_options = {:glyph => :histogram, 
-        :stroke_color => 'black',
+        :stroke => 'black',
         :fill_color => 'gold',
         :track_height => 150,
         :name => 'read coverage', 
@@ -264,7 +268,7 @@ module Bio
         end
 
         command = form_opt_string(@samtools, "mpileup", opts, [:R, :B, :E, "6", :A, :g, :u, :I] )
-        puts command if $VERBOSE
+        puts stderr.read if $VERBOSE
         if opts[:u]
           command = command + " | #{@bcftools} view -cg -"
         end
@@ -287,7 +291,7 @@ module Bio
           seq = "n" * (stop-start) 
         else
           command = "#{@samtools} faidx #{@fasta} '#{chr}:#{start}-#{stop}'"
-          puts command if $VERBOSE
+          puts stderr.read if $VERBOSE
           @last_command = command
           seq = ""
           yield_from_pipe(command, String, :text ) {|line| seq = seq + line unless line =~ /^>/}
@@ -319,7 +323,7 @@ module Bio
       #* out_index - [STRING] name of index
       def index(opts={})
         command = "#{@samtools} index #{@bam} #{opts[:out_index]}"
-        puts command if $VERBOSE
+        puts stderr.read if $VERBOSE
         @last_command = command
         system(command)
       end
@@ -334,7 +338,7 @@ module Bio
           remove_reads = "-r"
         end
         command = "#{@samtools} fixmate #{remove_reads} #{@bam} #{opts[:out_bam]}"
-        puts command if $VERBOSE
+        puts stderr.read if $VERBOSE
         @last_command = command
         system(command)
       end
@@ -344,7 +348,7 @@ module Bio
       #generate simple stats with regard to the number and pairing of reads mapped to a reference
       def flag_stats(opts={})
         command = form_opt_string(@samtools, "flagstat", opts, [])
-        puts command if $VERBOSE
+        puts stderr.read if $VERBOSE
         @last_command = command
         strings = []
         yield_from_pipe(command,String) {|line| strings << line.chomp}
@@ -359,6 +363,7 @@ module Bio
         stats = {}   
         command = form_opt_string(@samtools, "idxstats", {}, [])
         @last_command = command
+        puts stderr.read if $VERBOSE
         yield_from_pipe(command, String, :text, true, "#") do |line|
           info = line.chomp.split(/\t/)
           stats[ info[0] ] = {:length => info[1].to_i, :mapped_reads => info[2].to_i, :unmapped_reads => info[3].to_i }
@@ -439,7 +444,7 @@ module Bio
         command = "#{@samtools} merge #{options} #{out} #{bam_list}"
 
         @last_command = command
-        puts command puts command if $VERBOSE
+        puts command puts stderr.read if $VERBOSE
         system(command)
 
       end
@@ -449,9 +454,6 @@ module Bio
       #* out -[FILE] out file name
       #* bams -[FILES] or Bio::DB::Sam list of input bams, or Bio::DB::Sam objects
       def cat(opts={})
-        out = opts[:out]
-        opts.delete(:out)
-
         bam_list = opts[:bams].collect do |b|
           b.bam rescue b
         end.join(' ')
@@ -503,7 +505,7 @@ module Bio
         command = form_opt_string(@samtools, "sort", opts, [:n, :f, :o])
         command = command + " " + prefix
         @last_command = command
-        puts command if $VERBOSE
+        puts stderr.read if $VERBOSE
         if opts[:o]
           yield_from_pipe(command, Bio::DB::Alignment)
         else
@@ -529,7 +531,7 @@ module Bio
           opts.delete(:s)
         end
         command = "#{form_opt_string(@samtools, "tview", opts)}"
-        puts command if $VERBOSE
+        puts stderr.read if $VERBOSE
         @last_command = command
         system(command)
       end
@@ -544,7 +546,7 @@ module Bio
         else
           command = "#{@samtools} reheader #{header_sam} #{@bam}"
         end
-        puts command if $VERBOSE
+        puts stderr.read if $VERBOSE
         @last_command = command
         system(command)
       end
@@ -560,7 +562,7 @@ module Bio
       #* E - Extended BAQ calculation. This option trades specificity for sensitivity, though the effect is minor. 
       def calmd(opts={}, &block)
         command = form_opt_string(@samtools, "calmd",  opts, [:E, :e, :u, :b, :S, :r] )+ " " + @fasta
-        puts command if $VERBOSE
+        puts stderr.read if $VERBOSE
         @last_command = command
         type = :text 
         klass = Bio::DB::Alignment
@@ -581,7 +583,7 @@ module Bio
         end
 
         command = "#{form_opt_string(@samtools, "targetcut", opts, [] )}"
-        puts command if $VERBOSE
+        puts stderr.read if $VERBOSE
         @last_command = command
         system(command)
       end
@@ -595,7 +597,7 @@ module Bio
       #* Q - [INT] Minimum base quality to be used in het calling. [13] 
       def phase(opts={})
         command = "#{form_opt_string(@samtools, "phase", opts, [:A, :F] )}"
-        puts command if $VERBOSE
+        puts stderr.read if $VERBOSE
         @last_command = command
         system(command)
       end
@@ -610,11 +612,7 @@ module Bio
       def depth(opts={})
         command = form_opt_string(@samtools, "depth", opts)
         @last_command = command
-        puts command if $VERBOSE
-        yield_from_pipe(command, String) do |line|
-          yield line.split(/\t/)
-        end
-
+        system(command)
       end
 
       #Returns the pipelup of a region, encapsulated as a Bio::DB::Fasta::Region object.  
@@ -668,6 +666,20 @@ module Bio
         end
       end
 
+      def bedcov(opts={})
+        bed = opts[:bed]
+        #bam = opts[:bam]
+        if opts.has_key?(:out)
+          out=opts[:out]
+          command = "#{@samtools} bedcov #{bed} #{@bam} > #{out}"
+        else
+          command = "#{@samtools} bedcov #{bed} #{@bam}"
+        end
+        #puts stderr.read if $VERBOSE
+        #puts command
+        @last_command = command
+        system(command)
+      end
 
 
       #Extract the reads that align to a region
@@ -740,7 +752,7 @@ module Bio
         "#{prog} #{command} #{opts_string} #{@bam}"
       end
 
-      # turns an opts hash into a s
+      # turns an opts hash into a string
       def commandify(opts, singles)
         list = []
         opts.each_pair do |tag,value|
