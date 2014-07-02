@@ -21,7 +21,7 @@ class TestBioDbSam < Test::Unit::TestCase
       File.delete("test/samples/small/test_chr.fasta.fai")
       File.delete("test/samples/small/test_sorted.bam")
       File.delete("test/samples/small/maps_merged.bam")
-   #   File.delete("test/samples/small/maps_cated.bam")
+      File.delete("test/samples/small/maps_cated.bam")
       File.delete("test/samples/small/testu.out")
     end
   end
