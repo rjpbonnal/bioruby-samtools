@@ -31,7 +31,7 @@ module Bio::DB::Fasta
     #The return object is of type Index. 
     def [](args)
       tmp = @entries[args]
-      new_index = Index.new
+      @new_index = Index.new
       tmp.each do | entry |
         @new_index << entry
       end       
@@ -69,20 +69,34 @@ module Bio::DB::Fasta
   class Region
     BASE_COUNT_ZERO =  {:A => 0, :C => 0, :G => 0,  :T => 0}
     attr_accessor :entry, :start, :end, :orientation
-    attr_accessor :pileup, :average_coverage, :reference, :base_ratios, :consensus, :coverages, :bases, :total_cov, :called
+
+    attr_accessor :pileup, :average_coverage, :snps, :reference, :allele_freq, :consensus, :coverages, :bases, :total_cov, :called
+  
+    def initialize(args ={})
+      @entry = args[:entry]
+      @start = args[:start]
+      @end = args[:end]
+      @orientation = args[:orientation]
+    end
+  
+
+  
 
     #TODO: Debug, as it hasnt been tested in the actual code. 
-    def base_ratios_for_base(base)
+    def allele_freq_for_base(base)
       @all_ratios = Hash.new unless @all_ratios
       unless @all_ratios[base]
         ratios = Array.new
         for i in (0..region.size-1)
-          ratios << @base_ratios[i][base]
+          ratios << @allele_freq[i][base]
         end
         @all_ratios[base] = ratios
       end
       @all_ratios[base]
     end
+
+    alias_method :base_ratios_for_base, :allele_freq_for_base
+    alias_method :base_ratios, :allele_freq
 
     #Calculates the concensus, base ratios, coverages and total coverages in the region
     #* min_cov minimum coverage to make a call (default 0)
@@ -94,7 +108,7 @@ module Bio::DB::Fasta
       self.called = 0
       reference = self.reference.downcase
 
-      self.base_ratios = Array.new(self.size, BASE_COUNT_ZERO) 
+      self.allele_freq = Array.new(self.size, BASE_COUNT_ZERO) 
       self.bases = Array.new(self.size, BASE_COUNT_ZERO) 
       self.coverages = Array.new(self.size, 0)
       self.total_cov = 0
@@ -102,7 +116,7 @@ module Bio::DB::Fasta
       self.pileup.each do | pile |
 
         if pile.coverage > min_cov
-          self.base_ratios[pile.pos - self.start ] = pile.base_ratios
+          self.allele_freq[pile.pos - self.start ] = pile.allele_freq
           reference[pile.pos - self.start   ] = pile.consensus_iuap(min_per).upcase
           self.coverages[pile.pos - self.start   ]  = pile.coverage.to_i
           self.bases[pile.pos - self.start       ]  = pile.bases
@@ -133,10 +147,7 @@ module Bio::DB::Fasta
       fields_2 = fields_1[1].split("-")
       raise FastaDBException.new(), "Invalid region. #{string}" if fields_1.length != 2 || fields_2.length != 2
 
-      reg = Region.new
-      reg.entry = fields_1[0]
-      reg.start = fields_2[0].to_i
-      reg.end = fields_2[1].to_i
+      reg = Region.new(:entry=> fields_1[0], :start=>fields_2[0].to_i, :end=>fields_2[1].to_i)
 
       if reg.end < reg.start 
         reg.orientation = :reverse
@@ -209,8 +220,6 @@ module Bio::DB::Fasta
 
     #The region needs to have a method to_region or a method to_s that ha the format "chromosome:start-end" as in samtools
     def fetch_sequence(region)
-
-
       query = region.to_s
       query = region.to_region.to_s if region.respond_to?(:to_region) 
       command = "#{@samtools} faidx #{@fasta_path} '#{query}'"

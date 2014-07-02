@@ -85,14 +85,20 @@ module Bio
       def consensus
           if @consensus.nil?
             max = self.non_refs.values.max
+            #if the ref base is in more than half the coverage..
             if (self.ref_count / self.coverage) > 0.5
-              @consensus = self.ref_base 
-            elsif self.ref_count > max
+              #..then the ref base is the concensus
               @consensus = self.ref_base
+            ##not sure if the following will ever apply as the non_refs method also returns the ref base count, hence can never be over the max count  
+            #elsif self.ref_count > max
+            #  @consensus = self.ref_base
             else
+              #get the base(s) and count(s) that has the max count
               arr = self.non_refs.select {|k,v| v == max }
+              #just get the bases (remove the counts)
               bases = arr.collect {|b| b[0].to_s }
-              bases << self.ref_base if self.ref_count == max
+              #add the ref base if the ref base has a max count (commenting this out as it should already be in)
+              #bases << self.ref_base if self.ref_count == max
               @consensus = bases.sort.join
             end
           end
@@ -104,18 +110,16 @@ module Bio
         alt,g = self.genotype_list 
         alt = self.consensus.split(//).join(',') unless self.ref_base == '*'
         alt = '.' if alt == self.ref_base
+        alt = alt.split(',')
+        #if the reference base is in alt, remove it
+        alt.delete(self.ref_base.to_s)
+        alt = alt.join(',')
         [self.ref_name, self.pos, '.', self.ref_base, alt, self.snp_quality.to_i, "0", "DP=#{self.coverage.to_i}", "GT:GQ:DP", "#{g}:#{self.consensus_quality.to_i}:#{self.coverage.to_i}" ].join("\t")
       end
       
       private
       def Pileup.vcf_header
-        %{##fileformat=VCFv3.3
-          ##INFO=DP,1,Integer,"Total Depth"
-          ##FORMAT=GT,1,String,"Genotype"
-          ##FORMAT=GQ,1,Integer,"Genotype Quality"
-          ##FORMAT=DP,1,Integer,"Read Depth"
-          #CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tDATA
-        }.join("\n")
+        %{##fileformat=VCFv3.3\n##INFO=DP,1,Integer,"Total Depth"\n##FORMAT=GT,1,String,"Genotype"\n##FORMAT=GQ,1,Integer,"Genotype Quality"\n##FORMAT=DP,1,Integer,"Read Depth"\n#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tDATA\n}
       end
       
       
@@ -158,7 +162,7 @@ module Bio
         elsif bases[1] == self.ref_base
            return [bases[0],'0/1']
         else
-          return ["#{bases[0]},#{bases[1]}",'1/2']
+          return ["#{bases[0]},#{bases[1]}",'1/1']
         end 
       end
       
@@ -216,7 +220,7 @@ module Bio
          #puts self.ref_count
          @bases[self.ref_base.upcase.to_sym] = self.ref_count 
          @bases
-       end
+      end
 
        def base_coverage
          total = 0
@@ -226,34 +230,38 @@ module Bio
          total
        end
 
-       def base_ratios
-         return @base_ratios if @base_ratios
+      #returns the frequency of all bases in pileup position
+       def allele_freq
+         return @allele_frequency if @allele_frequency
          bases = self.bases
-         @base_ratios = Hash.new
+         @allele_frequency = Hash.new
          bases.each do |k,v| 
-           @base_ratios[k] = v.to_f/self.base_coverage.to_f 
+           @allele_frequency[k] = v.to_f/self.base_coverage.to_f 
          end
-         @base_ratios
+         @allele_frequency
        end
 
        # returns the consensus (most frequent) base from the pileup, if there are equally represented bases returns a string of all equally represented bases in alphabetical order   
        def consensus_iuap(minumum_ratio_for_iup_consensus)
          
+         tmp = []
          if @consensus_iuap.nil?
            @consensus_iuap = self.ref_base.downcase
            bases = self.bases
-           tmp = String.new
+           #tmp = String.new
            bases.each do |k,v|
              tmp << k[0].to_s if v/self.coverage.to_f > minumum_ratio_for_iup_consensus
            end
            if tmp.length > 0
-             @consensus_iuap = Bio::NucleicAcid.to_IUAPC(tmp)
+             tmp = tmp.collect{ |x| Bio::Sequence::NA.new(x) }
+              # creates alignment object
+              a = Bio::Alignment.new(tmp)
+              # shows IUPAC consensus
+             @consensus_iuap = a.consensus_iupac
            end
          end 
          @consensus_iuap
        end
-       
-       
     end
   end
 end

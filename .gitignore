@@ -1,3 +1,4 @@
+.DS_Store
 # rcov generated
 coverage
 test/methods_test.rb
