@@ -21,7 +21,8 @@ class TestBioDbSam < Test::Unit::TestCase
       File.delete("test/samples/small/test_chr.fasta.fai")
       File.delete("test/samples/small/test_sorted.bam")
       File.delete("test/samples/small/maps_merged.bam")
-      File.delete("test/samples/small/maps_cated.bam")
+   #   File.delete("test/samples/small/maps_cated.bam")
+      File.delete("test/samples/small/testu.out")
     end
   end
   
@@ -31,6 +32,7 @@ class TestBioDbSam < Test::Unit::TestCase
     @testTAMFile                = @test_folder + "/test.tam"
     @testBAMFile                = @test_folder + "/testu.bam"
     @testReference              = @test_folder + "/test_chr.fasta"
+    @bed_file                   = @test_folder + "/testu.bed"
     @sam = Bio::DB::Sam.new(
         :fasta => @testReference, 
         :bam => @testBAMFile
@@ -97,14 +99,14 @@ class TestBioDbSam < Test::Unit::TestCase
   def test_fetch_with_function
     #pass the assert to method
     block = Proc.new {|a| assert_equal(a.class, Bio::DB::Alignment)}
-    @sam.fetch_with_function("chr_1", 10,1000, &block)
+    @sam.fetch_with_function("chr_1", 10, 1000, &block)
   end
   
   def test_chromosome_coverage
     #the coverage should only be 1.0 or 2.0
-    cov = @sam.chromosome_coverage("chr_1", 33, 19)
+    cov = @sam.chromosome_coverage("chr_1", 10, 1000)
     cov.each do |pu|
-      assert_send([[1.0 , 2.0], :member?, pu])
+      assert_send([[1.0 , 2.0, 3.0], :member?, pu])
     end
   end
   
@@ -197,14 +199,23 @@ class TestBioDbSam < Test::Unit::TestCase
       assert_equal(pileup.chrom, 'chr_1')
     end
   end
+
+  def test_region_new
+    reg1 = Bio::DB::Fasta::Region.new(:entry=>"chr_1", :start=>1, :end=>334)
+    reg2 = Bio::DB::Fasta::Region.new
+    reg2.entry = "chr_1"
+    reg2.start = 1
+    reg2.end = 334
+
+    assert_equal(reg1.entry, reg2.entry)
+    assert_equal(reg1.start, reg2.start)
+    assert_equal(reg1.end, reg2.end)
+  end
   
   def test_mpileup_reg
     #create an mpileup
-    reg = Bio::DB::Fasta::Region.new
-    reg.entry = "chr_1"
-    reg.start = 1
-    reg.end = 334
-    
+    reg = Bio::DB::Fasta::Region.new(:entry=>"chr_1", :start=>1, :end=>334)
+
     @sam.mpileup_cached(:r=>reg,:g => false, :min_cov => 1, :min_per =>0.2) do |pileup|
       #test that all the objects are Bio::DB::Pileup objects
       assert_kind_of(Bio::DB::Pileup, pileup)
@@ -227,11 +238,8 @@ class TestBioDbSam < Test::Unit::TestCase
   
   def test_mpileup_reg_05
     #create an mpileup
-    reg = Bio::DB::Fasta::Region.new
-    reg.entry = "chr_1"
-    reg.start = 1
-    reg.end = 334
-    @sam.mpileup_cached(:r=>reg,:g => false, :min_cov => 1, :min_per =>0.4) do |pileup|
+    reg = Bio::DB::Fasta::Region.new(:entry=>"chr_1", :start=>1, :end=>334)
+    @sam.mpileup_cached(:r=>reg, :g => false, :min_cov => 1, :min_per =>0.4) do |pileup|
       #test that all the objects are Bio::DB::Pileup objects
       assert_kind_of(Bio::DB::Pileup, pileup)
       #test that the reference name is 'chr_1' for all objects
@@ -343,5 +351,17 @@ class TestBioDbSam < Test::Unit::TestCase
     #force an error (use 'samtool' instead of 'samtools')
     output = Bio::DB::Sam.docs('samtool', 'tview')
     assert_equal(output, "program must be 'samtools' or 'bcftools'")
-  end   
+  end
+  
+  def test_bedcov
+    out_file =  @test_folder + "/testu.out"
+    @sam.bedcov(:bed=>@bed_file, :out=>out_file)
+    f = File.open(out_file, "r")
+    f.each_line do |line|
+      f_array= line.split(/\t/)
+      assert_equal(f_array[3], 630)
+    end
+    f.close
+  end
+  
 end
