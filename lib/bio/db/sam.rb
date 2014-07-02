@@ -79,7 +79,7 @@ module Bio
           opts.delete(:one)
         end
 
-        command = form_opt_string(@samtools, 'view', opts, [:b, :h, :H, :S, :u, '1', :x, :X, :c, :B]) + " " + region
+        command = form_opt_string(@samtools, 'view', opts, [:b, :h, :H, :S, :u, '1', :x, :X, :c, :B]) + " '#{region}'"
         @last_command = command
         type = (opts[:u] or opts[:b]) ? :binary : :text
         klass = (type == :binary) ? String : Bio::DB::Alignment
@@ -383,7 +383,7 @@ module Bio
           reg.start = 1
           reg.end = v[:length]
           reg.orientation = :forward
-          @regions << reg unless @regions[k]
+          @regions[k] = reg unless @regions[k]
           yield reg if block_given?
         end
         @regions
