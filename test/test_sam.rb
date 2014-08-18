@@ -104,7 +104,7 @@ class TestBioDbSam < Test::Unit::TestCase
     end
     avcov = @sam.average_coverage("chr_1", 33, 19)
     assert_equal(avcov, 1.5)
-    File.delete(test_bai_file)
+    #File.delete(test_bai_file)
   end
   
   def test_faidx
@@ -263,7 +263,7 @@ class TestBioDbSam < Test::Unit::TestCase
     
     merged_bam_file = @test_folder + "/maps_merged.bam"
     
-    @sam.merge(:out=>merged_bam_file, :bams=>bam_files, :n=>true)
+    @sam.merge(:out=>merged_bam_file, :bams=>bam_files, :n=>true, :f=>true)
     merged_bam = Bio::DB::Sam.new(:fasta => @testReference, :bam => merged_bam_file)
     no_reads_mapped = 0;
     
@@ -283,7 +283,7 @@ class TestBioDbSam < Test::Unit::TestCase
     
     cat_bam_file = @test_folder + "/maps_cated.bam"
     
-    @sam.merge(:out=>cat_bam_file, :bams=>bam_files)
+    @sam.merge(:out=>cat_bam_file, :bams=>bam_files, :f=>true)
     cated_bam = Bio::DB::Sam.new(:fasta => @testReference, :bam => cat_bam_file)
     
     no_reads_mapped = 0;
@@ -301,7 +301,7 @@ class TestBioDbSam < Test::Unit::TestCase
     unduped = @test_folder + "/dupes_rmdup.bam"
     bam_with_dupes = Bio::DB::Sam.new(:fasta => @testReference, :bam => dupes)
     bam_with_dupes.remove_duplicates(:s=>true, :out=>unduped)
-
+  
     unduped_bam = Bio::DB::Sam.new(:fasta => @testReference, :bam => unduped)
     #rmdup should remove 267 of the 268 reads mapping to the same place, so producing a bam file with 5 reads
     readcount = 0
@@ -331,7 +331,7 @@ class TestBioDbSam < Test::Unit::TestCase
     f = File.open(out_file, "r")
     f.each_line do |line|
       f_array= line.split(/\t/)
-      assert_equal(f_array[3], 630)
+      assert_equal(f_array[3].to_i, 6)
     end
     f.close
   end
