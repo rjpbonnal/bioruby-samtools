@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Ricardo Ramirez-Gonzalez", "Dan MacLean", "Raoul J.P. Bonnal"]
-  s.date = "2014-07-02"
+  s.date = "2014-09-03"
   s.description = "Binder of samtools for ruby, on the top of FFI. \n\n  This project was born from the need to add support of BAM files to \n  the gee_fu genome browser (http://github.com/danmaclean/gee_fu)."
   s.email = "ilpuccio.febo@gmail.com"
   s.extensions = ["ext/mkrf_conf.rb"]
