@@ -63,6 +63,7 @@ fasta_db.load_fai_entries
 
 output = $stdout
 
+
 output = File.open(options[:output_file], "w") if options[:output_file] != "-"
 
 fasta_db.index.entries.each do | r |
