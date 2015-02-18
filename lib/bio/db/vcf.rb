@@ -23,7 +23,30 @@ module Bio
       def int_or_raw(x)
         Integer.new(x) rescue x
       end
-    
+      
+      #returns vcf format line
+      def to_s
+        if !@chrom.nil? 
+          str = [@chrom, @pos, @id, @ref, @alt, @qual.to_i, @filter, ""].join("\t")
+          #@format, @samples]
+          infos=[]
+          info.each do|key,val|
+            infos << "#{key}=#{val}"
+          end
+          str << infos.join(";")
+          str << "\t#{@format}\t"
+          samples.each do |key, val|
+            array=[]
+            val.each do |keys, vals|
+              array << "#{vals}"
+            end
+            str << array.join(":")
+            str << "\t"
+          end
+        end
+        str
+      end
+
       #gets the info in the Vcf lines and parses it, setting the attributes
       def parse_line(line, sample_names=nil)
         return false if line[0,1] == '#'

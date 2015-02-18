@@ -3,6 +3,7 @@
 coverage
 test/methods_test.rb
 test/samples/small2
+lib/bio/db/sam/external/samtools-1.0
 
 # rdoc generated
 rdoc
