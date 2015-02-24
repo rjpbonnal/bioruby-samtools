@@ -4,53 +4,47 @@ require 'fileutils'
 include FileUtils::Verbose
 require 'rake/clean'
 
-URL = "http://sourceforge.net/projects/samtools/files/samtools/0.1.19/samtools-0.1.19.tar.bz2/download"
+URL = "http://sourceforge.net/projects/samtools/files/samtools/1.2/samtools-1.2.tar.bz2/download"
+URL2 = "https://github.com/samtools/bcftools/releases/download/1.2/bcftools-1.2.tar.bz2"
 
 task :download do
   open(URL) do |uri|
-    File.open("samtools-0.1.19.tar.bz2",'wb') do |fout|
+    File.open("samtools-1.2.tar.bz2",'wb') do |fout|
+      fout.write(uri.read)
+    end #fout 
+  end #uri
+
+    open(URL2) do |uri|
+    File.open("bcftools-1.2.tar.bz2",'wb') do |fout|
       fout.write(uri.read)
     end #fout 
   end #uri
 end
     
 task :compile do
-  sh "tar xvfj samtools-0.1.19.tar.bz2"
-  cd("samtools-0.1.19") do
-    sh "patch < ../Makefile-bioruby.patch"
-    # This patch replace CURSES lib with NCURSES which it is the only one available in OpenSUSE
-    sh "patch < ../Makefile-suse.patch"
-    case Config::CONFIG['host_os']
-      when /linux/
-        #sh "CFLAGS='-g -Wall -O2 -fPIC' make -e"
-        sh "make"
-        cp("libbam.a","/home/ramirezr/Documents/public_code/helios/bioruby-samtools/ext/../lib/bio/db/sam/external")
-        #sh "CFLAGS='-g -Wall -O2 -fPIC' make -e libbam.so.1-local"
-        sh "make libbam.so.1-local"
-        cp("samtools", "/home/ramirezr/Documents/public_code/helios/bioruby-samtools/ext/../lib/bio/db/sam/external")
-        cp("libbam.so.1","/home/ramirezr/Documents/public_code/helios/bioruby-samtools/ext/../lib/bio/db/sam/external")
-      when /darwin/
-        sh "make"
-        cp("libbam.a","/home/ramirezr/Documents/public_code/helios/bioruby-samtools/ext/../lib/bio/db/sam/external")
-        sh "make libbam.1.dylib-local"
-        cp("libbam.1.dylib","/home/ramirezr/Documents/public_code/helios/bioruby-samtools/ext/../lib/bio/db/sam/external")
-        sh "make"
-        cp('samtools', "/home/ramirezr/Documents/public_code/helios/bioruby-samtools/ext/../lib/bio/db/sam/external")      
-      when /mswin|mingw/ then raise NotImplementedError, "BWA library is not available for Windows platform"  
-    end #case
-  end #cd
-  cd("samtools-0.1.19/bcftools") do
+  sh "tar xvfj samtools-1.2.tar.bz2"
+  sh "tar xvfj bcftools-1.2.tar.bz2"
+  cd("samtools-1.2") do
     sh "make"
-    cp('bcftools', "/home/ramirezr/Documents/public_code/helios/bioruby-samtools/ext/../lib/bio/db/sam/external")
+    cp("samtools", "/Users/ramirezr/Documents/public_code/bioruby-samtools/ext/../lib/bio/db/sam/external")
+  end #cd
+  cd("bcftools-1.2") do
+    sh "make"
+    cp('bcftools', "/Users/ramirezr/Documents/public_code/bioruby-samtools/ext/../lib/bio/db/sam/external")
   end
 end
   
 task :clean do
-  cd("samtools-0.1.19") do
+  cd("samtools-1.2") do
     sh "make clean"
   end
-  rm("samtools-0.1.19.tar.bz2")
-  rm_rf("samtools-0.1.19")
+  cd("bcftools-1.2") do
+    sh "make clean"
+  end
+  rm("samtools-1.2.tar.bz2")
+  rm_rf("samtools-1.2")
+  rm("bcftools-1.2.tar.bz2")
+  rm_rf("bcftools-1.2")
 end
 
 task :default => [:download, :compile, :clean]
