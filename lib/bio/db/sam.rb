@@ -333,13 +333,14 @@ module Bio
       #Fill in mate coordinates, ISIZE and mate related flags from a name-sorted alignment
       #* out_bam name of outfile
       #* r - remove unmapped reads and secondary alignments
+      #* p -  Disable FR proper pair check.
+      #* o - Add template cigar ct tag.
+      #* O FORMAT Write the final output as sam, bam, or cram.
       def fix_mates(opts={})
-        #opts.merge!({:out_index=>nil})
-        remove_reads = ""
-        if opts[:r]
-          remove_reads = "-r"
-        end
-        command = "#{@samtools} fixmate #{remove_reads} #{@bam} #{opts[:out_bam]}"
+        out_bam = opts[:out_bam]
+        opts.delete(:out_bam)
+        command = form_opt_string(@samtools, "fixmate", opts, [:r,:p,:c])
+        command << " #{out_bam}"
         puts stderr.read if $VERBOSE
         @last_command = command
         system(command)

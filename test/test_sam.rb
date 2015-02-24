@@ -237,10 +237,10 @@ class TestBioDbSam < Test::Unit::TestCase
   
     region = @sam.cached_regions[reg.to_s]
     #puts "cahced_region: #{region.inspect}"
-    puts "AVG COV: #{region.average_coverage}"
-    puts "Reference: #{region.reference}"
-    puts "Consensus: #{region.consensus}"
-    puts "called: #{region.called}"
+    #puts "AVG COV: #{region.average_coverage}"
+    #puts "Reference: #{region.reference}"
+    #puts "Consensus: #{region.consensus}"
+    #puts "called: #{region.called}"
     #, :snps, :reference, :base_ratios, :consensus, :coverages
     snps_tot = Bio::Sequence.snps_between(region.reference, region.consensus)
     assert_equal(snps_tot, 5)
@@ -276,7 +276,9 @@ class TestBioDbSam < Test::Unit::TestCase
 
   def test_fixmate
     mates_fixed_bam = @test_folder + "/mates_fixed.bam"
-    @sam.fix_mates(:out_bam=>mates_fixed_bam)
+    @sam.fix_mates(:out_bam=>mates_fixed_bam, :r =>true, :p =>true, :c =>true)
+    puts "FIXMATE!!!"
+    puts @sam.last_command
     assert_nothing_thrown do
       File.open(mates_fixed_bam, "r")
     end
