@@ -320,9 +320,11 @@ module Bio
       end
 
       #Index sorted alignment for fast random access. Index file <aln.bam>.bai will be created of no out_index is provided.
-      #* out_index - [STRING] name of index
+      #* out_index - [STRING] name of index Depreciated. It will fail now as
+      #*                      samtools doesn't support it anymore. 
       def index(opts={})
-        command = "#{@samtools} index #{@bam} #{opts[:out_index]}"
+        raise Exception.new "Index can't recieve parameters" if opts.size > 0 
+        command = "#{@samtools} index #{@bam}"
         puts stderr.read if $VERBOSE
         @last_command = command
         system(command)
