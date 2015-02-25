@@ -43,6 +43,18 @@ class TestBioDbSam < Test::Unit::TestCase
   
   def test_new
     assert_kind_of(Bio::DB::Sam, @sam)
+
+    assert_raise(IOError) do
+      Bio::DB::Sam.new(
+        :fasta => @testReference, 
+        :bam => @testBAMFile + "ads"
+      )
+
+    end
+    assert_raise(ArgumentError) do
+      Bio::DB::Sam.new()
+    end
+
   end
   
   def test_index

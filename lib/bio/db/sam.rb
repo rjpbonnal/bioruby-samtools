@@ -1,4 +1,3 @@
-require 'open3'
 module Bio
   class DB
     class Sam
@@ -25,7 +24,7 @@ module Bio
 
         @last_command = nil
         raise ArgumentError, "Need Fasta and at least one BAM or SAM" if not @fasta or not @bam
-        raise IOError, "File not found #{files}" if not files_ok?
+        raise IOError, "File not found #{@files}" if not files_ok?
         @bams = [@bams] if @bams.instance_of? String
 
       end
