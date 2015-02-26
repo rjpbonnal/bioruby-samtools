@@ -110,8 +110,18 @@ class TestBioDbSam < Test::Unit::TestCase
   
   def test_fetch_with_function
     #pass the assert to method
-    block = Proc.new {|a| assert_equal(a.class, Bio::DB::Alignment)}
+    count = 0
+    block = Proc.new do |a| 
+      assert_equal(a.class, Bio::DB::Alignment)
+      count += 1
+    end
+
     @sam.fetch_with_function("chr_1", 10, 1000, &block)
+    assert_equal(count, 9)
+    
+    count = 0
+    @sam.fetch_with_function("chr_1", 82, 140, &block)
+    assert_equal(count, 4)
   end
   
   def test_chromosome_coverage

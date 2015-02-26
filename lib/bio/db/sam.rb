@@ -79,7 +79,7 @@ module Bio
         end
         command = String.new
         command = form_opt_string(@samtools, 'view', opts, [:b, :h, :H, :S, :u, '1', :x, :X, :c, :B]) 
-        commad = command + " '#{region}'" if region.size > 0
+        command = command + " '#{region}'" if region.size > 0
         @last_command = command
         type = (opts[:u] or opts[:b]) ? :binary : :text
         klass = (type == :binary) ? String : Bio::DB::Alignment
