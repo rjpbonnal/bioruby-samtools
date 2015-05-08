@@ -24,6 +24,13 @@ module Bio
         Integer.new(x) rescue x
       end
       
+      def method_missing(method, *args)
+        method_name = method.to_s
+        return true if @info.has_key?(method_name) and @info[method_name] == nil
+        return @info[method_name] if @info[method_name] 
+        return false
+      end
+
       #returns vcf format line
       def to_s
         if !@chrom.nil? 

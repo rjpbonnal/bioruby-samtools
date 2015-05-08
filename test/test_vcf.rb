@@ -41,6 +41,13 @@ class TestVcf < Test::Unit::TestCase
      "2"=>{"DP"=>"8", "GT"=>"1|0", "HQ"=>"51,51", "GQ"=>"48"},
      "3"=>{"DP"=>"5", "GT"=>"1/1", "HQ"=>"-1,-1", "GQ"=>"43"}}, @vcf2.samples)
 
+     assert_equal(true, @vcf2.H2)
+     assert_equal(true, @vcf2.DB)
+     assert_equal(false, @vcf2.XX)
+     assert_equal("14", @vcf2.DP)
+     assert_equal("0.5", @vcf2.AF)
+     assert_equal("3", @vcf2.NS)
+
      assert_equal("19", @vcf3.chrom)
      assert_equal(111, @vcf3.pos)
      assert_equal(nil, @vcf3.id)
@@ -61,6 +68,12 @@ class TestVcf < Test::Unit::TestCase
      assert_equal(29,@vcf4.qual)
      assert_equal("PASS", @vcf4.filter)
      assert_equal({"DP"=>"14", "AF"=>"0.5", "NS"=>"3", "DB"=>nil, "H2"=>nil}, @vcf4.info)
+     assert_equal(true, @vcf4.H2)
+     assert_equal(true, @vcf4.DB)
+     assert_equal(false, @vcf4.XX)
+     assert_equal("14", @vcf4.DP)
+     assert_equal("0.5", @vcf4.AF)
+     assert_equal("3", @vcf4.NS)
      assert_equal({"1"=>{"DP"=>"1", "GT"=>"0|0", "HQ"=>"51,51", "GQ"=>"48"},
                    "2"=>{"DP"=>"8", "GT"=>"1|0", "HQ"=>"51,51", "GQ"=>"48"},
                    "3"=>{"DP"=>"5", "GT"=>"1/1", "HQ"=>".,", "GQ"=>"43"}}, @vcf4.samples)
