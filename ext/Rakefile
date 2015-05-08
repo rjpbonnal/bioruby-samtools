@@ -24,24 +24,24 @@ task :compile do
       when /linux/
         #sh "CFLAGS='-g -Wall -O2 -fPIC' make -e"
         sh "make"
-        cp("libbam.a","/Users/ramirezr/Documents/public_code/helios/bioruby-samtools/ext/../lib/bio/db/sam/external")
+        cp("libbam.a","/Users/ramirezr/Documents/public_code/bioruby-samtools/ext/../lib/bio/db/sam/external")
         #sh "CFLAGS='-g -Wall -O2 -fPIC' make -e libbam.so.1-local"
         sh "make libbam.so.1-local"
-        cp("samtools", "/Users/ramirezr/Documents/public_code/helios/bioruby-samtools/ext/../lib/bio/db/sam/external")
-        cp("libbam.so.1","/Users/ramirezr/Documents/public_code/helios/bioruby-samtools/ext/../lib/bio/db/sam/external")
+        cp("samtools", "/Users/ramirezr/Documents/public_code/bioruby-samtools/ext/../lib/bio/db/sam/external")
+        cp("libbam.so.1","/Users/ramirezr/Documents/public_code/bioruby-samtools/ext/../lib/bio/db/sam/external")
       when /darwin/
         sh "make"
-        cp("libbam.a","/Users/ramirezr/Documents/public_code/helios/bioruby-samtools/ext/../lib/bio/db/sam/external")
+        cp("libbam.a","/Users/ramirezr/Documents/public_code/bioruby-samtools/ext/../lib/bio/db/sam/external")
         sh "make libbam.1.dylib-local"
-        cp("libbam.1.dylib","/Users/ramirezr/Documents/public_code/helios/bioruby-samtools/ext/../lib/bio/db/sam/external")
+        cp("libbam.1.dylib","/Users/ramirezr/Documents/public_code/bioruby-samtools/ext/../lib/bio/db/sam/external")
         sh "make"
-        cp('samtools', "/Users/ramirezr/Documents/public_code/helios/bioruby-samtools/ext/../lib/bio/db/sam/external")      
+        cp('samtools', "/Users/ramirezr/Documents/public_code/bioruby-samtools/ext/../lib/bio/db/sam/external")      
       when /mswin|mingw/ then raise NotImplementedError, "BWA library is not available for Windows platform"  
     end #case
   end #cd
   cd("samtools-0.1.19/bcftools") do
     sh "make"
-    cp('bcftools', "/Users/ramirezr/Documents/public_code/helios/bioruby-samtools/ext/../lib/bio/db/sam/external")
+    cp('bcftools', "/Users/ramirezr/Documents/public_code/bioruby-samtools/ext/../lib/bio/db/sam/external")
   end
 end
   

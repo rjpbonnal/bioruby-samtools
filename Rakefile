@@ -22,7 +22,7 @@ Jeweler::Tasks.new do |gem|
 
   This project was born from the need to add support of BAM files to 
   the gee_fu genome browser (http://github.com/danmaclean/gee_fu).}
-  gem.email = "ilpuccio.febo@gmail.com"
+  gem.email = "Ricardo.Ramirez-Gonzalez@tgac.ac.uk"
   gem.authors = ["Ricardo Ramirez-Gonzalez","Dan MacLean","Raoul J.P. Bonnal"]
   # Include your dependencies below. Runtime dependencies are required when using your gem,
   # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
