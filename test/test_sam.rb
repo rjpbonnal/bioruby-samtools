@@ -31,6 +31,8 @@ class TestBioDbSam < Test::Unit::TestCase
     @test_folder                = "test/samples/small"
     @testTAMFile                = @test_folder + "/test.tam"
     @testBAMFile                = @test_folder + "/testu.bam"
+    @testLCI                    = "test/samples/LCI/test.bam"
+    @testLCIref                 = "test/samples/LCI/NC_001988.ffn"
     @testReference              = @test_folder + "/test_chr.fasta"
     @bed_file                   = @test_folder + "/testu.bed"
     @sam = Bio::DB::Sam.new(
@@ -105,6 +107,14 @@ class TestBioDbSam < Test::Unit::TestCase
     end
     assert(i>0)
     assert_equal(i,9)
+
+    bam=Bio::DB::Sam.new(:bam=>@testLCI,:fasta=>@testLCIref)
+    bam.open
+    count = 0
+    bam.fetch("NC_001988.2",0,200) do|x| 
+      count += 1
+    end
+    assert_equal(count, 36)
     
   end
   
