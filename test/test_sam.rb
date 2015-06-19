@@ -10,12 +10,12 @@ gem 'test-unit'
 
 class TestBioDbSam < Test::Unit::TestCase
 #  include RubyProf::Test
-  
-  class << self
 
-    def shutdown
+class << self
+
+  def shutdown
       #File.delete("test/samples/small/different_index.bam.bai")
-      File.delete("test/samples/small/dupes_rmdup.bam")
+      #File.delete("test/samples/small/dupes_rmdup.bam")
       File.delete("test/samples/small/mates_fixed.bam")
       File.delete("test/samples/small/reheader.bam")
       File.delete("test/samples/small/test_chr.fasta.fai")
@@ -34,9 +34,9 @@ class TestBioDbSam < Test::Unit::TestCase
     @testReference              = @test_folder + "/test_chr.fasta"
     @bed_file                   = @test_folder + "/testu.bed"
     @sam = Bio::DB::Sam.new(
-        :fasta => @testReference, 
-        :bam => @testBAMFile
-    )
+      :fasta => @testReference, 
+      :bam => @testBAMFile
+      )
   end
   
   
@@ -52,7 +52,7 @@ class TestBioDbSam < Test::Unit::TestCase
       puts "bam index exists....deleting..."
       File.delete(test_bai_file)
     end
- 
+    
     #No bam file 
     assert_equal(@sam.indexed?, false)
     #index the bam file
@@ -68,12 +68,12 @@ class TestBioDbSam < Test::Unit::TestCase
     
     raised = false
     begin
-        @sam.index(:out_index=> test_bai_file)
+      @sam.index(:out_index=> test_bai_file)
     rescue Exception => e
       raised = true
     end
     assert_equal(raised, true)
-  
+    
     #puts "Writing: #{test_bai_file}"
     #File.open(test_bai_file, "r") do |f|
     #  puts "Read"
@@ -94,9 +94,9 @@ class TestBioDbSam < Test::Unit::TestCase
   
   def test_fetch
 #puts    @sam.inspect
-    i = 0
-    @sam.index
-    @sam.fetch("chr_1", 10,1000) do |sam|
+i = 0
+@sam.index
+@sam.fetch("chr_1", 10,1000) do |sam|
       #test that all the objects are Bio::DB::Alignment objects
       assert_equal(sam.class, Bio::DB::Alignment)
       assert_equal(sam.rname, "chr_1")
@@ -142,7 +142,7 @@ class TestBioDbSam < Test::Unit::TestCase
     #test that the file is not empty
     assert(File.size(test_fai_file) > 0, "From test_faidx: .fai file is empty")
   end
-   
+  
   def test_index_stats
     @sam.index_stats.each_pair do |seq, stat|
       assert_send([['chr_1' , '*'], :member?, seq])
@@ -164,41 +164,41 @@ class TestBioDbSam < Test::Unit::TestCase
     @sam.sort(:prefix=>@test_folder + "/test_sorted")
     #create a new Bio::DB::Sam from the sorted bam
     @sortsam = Bio::DB::Sam.new(
-        :fasta => @testReference, 
-        :bam => sortedsam
-    )
+      :fasta => @testReference, 
+      :bam => sortedsam
+      )
     pos = 0
     #iterate over the sorted sam file and make sure that the it's sorted by checking the order of the start positions for each read.
     @sortsam.view()do |sam|
-      assert(sam.pos > pos, "Not sorted by position")
-      pos = sam.pos
-    end
+    assert(sam.pos > pos, "Not sorted by position")
+    pos = sam.pos
   end
+end
+
+def test_reheader
+  sam_header = @test_folder + "/map_for_reheader.sam"
+  outfile = @test_folder + "/reheader.bam"
   
-  def test_reheader
-    sam_header = @test_folder + "/map_for_reheader.sam"
-    outfile = @test_folder + "/reheader.bam"
-    
-    @sam.reheader(sam_header, :out=>outfile)
-    reheader_bam = Bio::DB::Sam.new(:fasta => @testReference, :bam => outfile)
+  @sam.reheader(sam_header, :out=>outfile)
+  reheader_bam = Bio::DB::Sam.new(:fasta => @testReference, :bam => outfile)
     #check that the reference is 'chr_2'
     reheader_bam.view()do |sam|
-      assert_equal(sam.rname, "chr_2")
-    end
+    assert_equal(sam.rname, "chr_2")
   end
+end
 
-  def test_calmd
-    no_md_sam = @test_folder + "/no_md.sam"
-    md = Bio::DB::Sam.new(:fasta => @testReference, :bam => no_md_sam)
-    block = Proc.new {|a| assert(a.tags.has_key?('MD'), "From test_calmd: couldn't find the MD tag")}
-    md.calmd(:S=>true, &block)
-    
-  end
+def test_calmd
+  no_md_sam = @test_folder + "/no_md.sam"
+  md = Bio::DB::Sam.new(:fasta => @testReference, :bam => no_md_sam)
+  block = Proc.new {|a| assert(a.tags.has_key?('MD'), "From test_calmd: couldn't find the MD tag")}
+  md.calmd(:S=>true, &block)
   
-  def test_mpileup
+end
+
+def test_mpileup
     #create an mpileup
   #  @sam.index
-    @sam.mpileup(:g => false) do |pileup|
+  @sam.mpileup(:g => false) do |pileup|
       #test that all the objects are Bio::DB::Pileup objects
       assert_kind_of(Bio::DB::Pileup, pileup)
       #test that the reference name is 'chr_1' for all objects
@@ -234,7 +234,7 @@ class TestBioDbSam < Test::Unit::TestCase
       #puts pileup
       assert_equal(pileup.ref_name, 'chr_1')
     end
-  
+    
     region = @sam.cached_regions[reg.to_s]
     #puts "cahced_region: #{region.inspect}"
     #puts "AVG COV: #{region.average_coverage}"
@@ -256,9 +256,9 @@ class TestBioDbSam < Test::Unit::TestCase
       #test that the reference name is 'chr_1' for all objects
       #puts pileup
       assert_equal(pileup.ref_name, 'chr_1')
-  
+      
     end
-  
+    
     region = @sam.cached_regions[reg.to_s]
     
     #, :snps, :reference, :base_ratios, :consensus, :coverages
@@ -304,18 +304,18 @@ class TestBioDbSam < Test::Unit::TestCase
     merged_bam_file = @test_folder + "/maps_merged.bam"
     File.delete merged_bam_file if File.exists?(merged_bam_file)
 #    File.delete("test/samples/small/maps_merged.bam")
-    @sam.merge(:out=>merged_bam_file, :bams=>bam_files, :n=>true)
-    merged_bam = Bio::DB::Sam.new(:fasta => @testReference, :bam => merged_bam_file)
-    no_reads_mapped = 0;
-    
-    merged_bam.view() do |al|
-      assert_kind_of(Bio::DB::Alignment, al)
-      no_reads_mapped+=1
-    end
-    assert_equal(no_reads_mapped, 10)
-  end
-  
-  def test_cat
+@sam.merge(:out=>merged_bam_file, :bams=>bam_files, :n=>true)
+merged_bam = Bio::DB::Sam.new(:fasta => @testReference, :bam => merged_bam_file)
+no_reads_mapped = 0;
+
+merged_bam.view() do |al|
+  assert_kind_of(Bio::DB::Alignment, al)
+  no_reads_mapped+=1
+end
+assert_equal(no_reads_mapped, 10)
+end
+
+def test_cat
     #same files used for merge, but we'll cat them instead
     bam1 = @test_folder + "/map_to_merge1.bam"
     bam2 = @test_folder + "/map_to_merge2.bam"
@@ -341,26 +341,29 @@ class TestBioDbSam < Test::Unit::TestCase
     dupes = @test_folder + "/dupes.bam"
     unduped = @test_folder + "/dupes_rmdup.bam"
     bam_with_dupes = Bio::DB::Sam.new(:fasta => @testReference, :bam => dupes)
-    bam_with_dupes.remove_duplicates(:s=>true, :out=>unduped)
-
-    unduped_bam = Bio::DB::Sam.new(:fasta => @testReference, :bam => unduped)
+    #This is a temporarry patch while samtools 1.+ restores rmdup
+    assert_raise  do
+      bam_with_dupes.remove_duplicates(:s=>true, :out=>unduped)
+      
+      unduped_bam = Bio::DB::Sam.new(:fasta => @testReference, :bam => unduped)
     #rmdup should remove 267 of the 268 reads mapping to the same place, so producing a bam file with 5 reads
     readcount = 0
     unduped_bam.view()do |sam|
-        readcount +=1  
-    end
-    assert_equal(readcount, 5)
+    readcount +=1  
   end
-  
-  def test_targetcut
-    sorted_bam = @test_folder + "/sorted.bam"
-    cut = Bio::DB::Sam.new(:fasta => @testReference, :bam => sorted_bam)
-    assert_nothing_thrown do
-      cut.targetcut
-    end
+  assert_equal(readcount, 5)
+end
+end
+
+def test_targetcut
+  sorted_bam = @test_folder + "/sorted.bam"
+  cut = Bio::DB::Sam.new(:fasta => @testReference, :bam => sorted_bam)
+  assert_nothing_thrown do
+    cut.targetcut
   end
-  
-  def test_docs
+end
+
+def test_docs
     #force an error (use 'samtool' instead of 'samtools')
     output = Bio::DB::Sam.docs('samtool', 'tview')
     assert_equal(output, "program must be 'samtools' or 'bcftools'")

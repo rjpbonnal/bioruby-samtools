@@ -482,6 +482,7 @@ module Bio
       #* S - treat PE reads as SE in rmdup (force -s)
       #* out - [FILE] output bam
       def remove_duplicates(opts={})
+        raise Exception.new(), "Remove duplicates is unsuported in samtools 1.2. This function will come back onece rmdup is available again." 
         out = opts[:out]
         opts.delete(:out)
         command = "#{form_opt_string(@samtools, "rmdup", opts, [:s, :S])} #{out} #{@bam}"
