@@ -115,6 +115,12 @@ class TestBioDbSam < Test::Unit::TestCase
       count += 1
     end
     assert_equal(count, 36)
+    count = 0
+    bam.fetch("NC_001988.2",75, 75) do|x| 
+      #puts "#{x.pos} #{x.seq}"
+      count += 1
+    end
+    assert_equal(count, 7)
     
   end
   
