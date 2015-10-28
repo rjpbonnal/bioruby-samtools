@@ -21,11 +21,11 @@ task :compile do
     # This patch replace CURSES lib with NCURSES which it is the only one available in OpenSUSE
     sh "patch < ../Makefile-suse.patch"
     sh "make"
-    cp('samtools', "/Users/ramirezr/Documents/public_code/bioruby-samtools/ext/../lib/bio/db/sam/external")          
+    cp('samtools', "/Users/ramirezr/Documents/public_code/git_merge/bioruby-samtools/ext/../lib/bio/db/sam/external")          
   end #cd
   cd("samtools-0.1.19/bcftools") do
     sh "make"
-    cp('bcftools', "/Users/ramirezr/Documents/public_code/bioruby-samtools/ext/../lib/bio/db/sam/external")
+    cp('bcftools', "/Users/ramirezr/Documents/public_code/git_merge/bioruby-samtools/ext/../lib/bio/db/sam/external")
   end
 end
   
