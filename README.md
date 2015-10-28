@@ -488,11 +488,10 @@ For testing just run `rake test`. Tests must be improved.
 ####Travis integration###
 If you are integrating this library into another tool and testing it with travis, add the follwing in ```.travis.yml```:
 
-```
+```yml
 addons:
   apt:
     packages:
-    - update
     - zlib1g-dev
     - libncurses5-dev
     - libtinfo-dev

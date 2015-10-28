@@ -3,7 +3,6 @@ sudo: false
 addons:
   apt:
     packages:
-    - update
     - zlib1g-dev
     - libncurses5-dev
     - libtinfo-dev   
