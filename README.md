@@ -485,6 +485,19 @@ The latest I think is the easiest way, cause you are replicating the automatic p
 
 For testing just run `rake test`. Tests must be improved.
 
+####Travis integration###
+If you are integrating this library into another tool and testing it with travis, add the follwing in ```.travis.yml```:
+
+```
+addons:
+  apt:
+    packages:
+    - update
+    - zlib1g-dev
+    - libncurses5-dev
+    - libtinfo-dev
+```
+
 ## Copyright
 
 Copyright (c) 2011 Raoul J.P. Bonnal. See LICENSE.txt for
