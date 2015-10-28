@@ -1,7 +1,12 @@
 language: ruby
-before_install:
-  - sudo apt-get update
-  - sudo apt-get install zlib1g-dev libncurses5-dev libtinfo-dev
+sudo: false
+addons:
+  apt:
+    packages:
+    - update
+    - zlib1g-dev
+    - libncurses5-dev
+    - libtinfo-dev   
 before_script:
   - cd ext
   - ruby mkrf_conf.rb
@@ -12,3 +17,4 @@ rvm:
   - 2.0.0
   - 2.1.0
   - 2.2.2
+  - 2.2.3
