@@ -1,5 +1,6 @@
 require 'rbconfig'
 require 'open-uri'
+require 'open-uri-redirections'
 require 'fileutils'
 include FileUtils::Verbose
 require 'rake/clean'

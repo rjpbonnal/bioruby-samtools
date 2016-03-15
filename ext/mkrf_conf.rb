@@ -19,6 +19,7 @@ File.open(File.join(path,"Rakefile"),"w") do |rakefile|
 rakefile.write <<-RAKE
 require 'rbconfig'
 require 'open-uri'
+require 'open-uri-redirections'
 require 'fileutils'
 include FileUtils::Verbose
 require 'rake/clean'
