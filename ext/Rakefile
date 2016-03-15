@@ -7,7 +7,7 @@ require 'rake/clean'
 URL = "http://sourceforge.net/projects/samtools/files/samtools/0.1.19/samtools-0.1.19.tar.bz2/download"
 
 task :download do
-  open(URL) do |uri|
+  open(URL) :allow_redirections => :all do |uri|
     File.open("samtools-0.1.19.tar.bz2",'wb') do |fout|
       fout.write(uri.read)
     end #fout 
