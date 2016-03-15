@@ -26,7 +26,7 @@ require 'rake/clean'
 URL = "#{url}"
 
 task :download do
-  open(URL) :allow_redirections => :all do |uri|
+  open(URL, :allow_redirections => :all) do |uri|
     File.open("#{SamToolsFile}",'wb') do |fout|
       fout.write(uri.read)
     end #fout
