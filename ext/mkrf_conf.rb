@@ -1,4 +1,4 @@
-#(c) Copyright 2011 Raoul Bonnal. All Rights Reserved. 
+#(c) Copyright 2011 Raoul Bonnal. All Rights Reserved.
 
 # create Rakefile for shared library compilation
 
@@ -19,6 +19,7 @@ File.open(File.join(path,"Rakefile"),"w") do |rakefile|
 rakefile.write <<-RAKE
 require 'rbconfig'
 require 'open-uri'
+require 'open_uri_redirections'
 require 'fileutils'
 include FileUtils::Verbose
 require 'rake/clean'
@@ -26,13 +27,13 @@ require 'rake/clean'
 URL = "#{url}"
 
 task :download do
-  open(URL) do |uri|
+  open(URL, :allow_redirections => :all) do |uri|
     File.open("#{SamToolsFile}",'wb') do |fout|
       fout.write(uri.read)
-    end #fout 
+    end #fout
   end #uri
 end
-    
+
 task :compile do
   sh "tar xvfj #{SamToolsFile}"
   cd("samtools-#{Version}") do
@@ -40,14 +41,14 @@ task :compile do
     # This patch replace CURSES lib with NCURSES which it is the only one available in OpenSUSE
     sh "patch < ../Makefile-suse.patch"
     sh "make"
-    cp('samtools', "#{path_external}")          
+    cp('samtools', "#{path_external}")
   end #cd
   cd("samtools-#{Version}/bcftools") do
     sh "make"
     cp('bcftools', "#{path_external}")
   end
 end
-  
+
 task :clean do
   cd("samtools-#{Version}") do
     sh "make clean"
@@ -57,7 +58,7 @@ task :clean do
 end
 
 task :default => [:download, :compile, :clean]
-  
+
 RAKE
-  
+
 end
