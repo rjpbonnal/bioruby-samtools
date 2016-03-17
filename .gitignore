@@ -28,6 +28,16 @@ snippets/*
 test/coverage.rb
 test/coverage_plot.rb
 test/feature.rb
+
+test/samples/small/test_dot.bam
+test/samples/small/test_dot.fasta
+test/samples/small/test_dot.fasta.fai
+test/samples/small/test_dot.tam
+test/samples/small/test_dot_sorted.bam
+test/samples/small/test_dot_sorted.bam.bai
+test/samples/small/testu.bam.bai
+
+
 # Have editor/IDE/OS specific files you need to ignore? Consider using a global gitignore: 
 #
 # * Create a file at ~/.gitignore
