@@ -138,6 +138,11 @@ class TestBioDbSam < Test::Unit::TestCase
     count = 0
     @sam.fetch_with_function("chr_1", 82, 140, &block)
     assert_equal(count, 4)
+
+    @sam.fetch_with_function("chr_1", 0, 140, &block)
+    assert_equal(count, 8)
+    @sam.fetch("chr_1",0,200) {|x| puts "HELLO"}
+
   end
   
   def test_chromosome_coverage
