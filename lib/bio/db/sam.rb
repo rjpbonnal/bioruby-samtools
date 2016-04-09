@@ -1,6 +1,9 @@
 module Bio
   class DB
     class Sam
+      
+      class SamException < StandardError; end
+      
       attr_accessor :bam, :fasta, :samtools, :bcftools, :last_command
       attr_accessor :minumum_ratio_for_iup_consensus
       attr_reader :cached_regions
@@ -64,7 +67,7 @@ module Bio
         region = String.new
         if opts[:chr] and opts[:start] and opts[:stop]
           has_e = self.has_entry? opts[:chr]
-          raise Exception.new(), "[view] The sequence #{opts[:chr]} is not in the bam file" unless self.has_entry? opts[:chr] 
+          raise SamException.new(), "[view] The sequence #{opts[:chr]} is not in the bam file" unless self.has_entry? opts[:chr] 
           region = "#{opts[:chr]}:#{opts[:start]}-#{opts[:stop]}"
           [:chr, :start, :stop].each {|o| opts.delete(o)}
         end
@@ -257,7 +260,7 @@ module Bio
         query = opts[:r].to_s
         query = opts[:r].to_region.to_s if opts[:r].respond_to?(:to_region)
         if not query.nil? and query.size > 0
-          raise Exception.new(), "The sequence #{query} is not in the bam file"  unless has_region? query 
+          raise SamException.new(), "The sequence #{query} is not in the bam file"  unless has_region? query 
         end
         opts[:r] = query
         
@@ -284,7 +287,7 @@ module Bio
       #* stop - [INT] the stop position for the subsequence
       #* as_bio - boolean stating if the returned object should be a Bio::Sequence::NA object
       def fetch_reference(chr,start,stop, opts={:as_bio => false})
-        raise Exception.new(), "The sequence #{chr} is not in the bam file" unless has_entry? chr
+        raise SamException.new(), "The sequence #{chr} is not in the bam file" unless has_entry? chr
         seq = ""
         unless @fasta #We return a string of Ns if we don't know the reference. 
           seq = "n" * (stop-start) 
@@ -641,7 +644,7 @@ module Bio
       #
       #TODO: It may be good to load partially the pileup
       def mpileup_cached (opts={})      
-        raise Exception.new(), "A region must be provided" unless opts[:r] or opts[:region]
+        raise SamException.new(), "A region must be provided" unless opts[:r] or opts[:region]
         @cached_regions = Hash.new unless @cached_regions
         region = opts[:r] ? opts[:r] : opts[:region]
         @cached_regions[region.to_s] = fetch_region(opts) unless @cached_regions[region.to_s]
