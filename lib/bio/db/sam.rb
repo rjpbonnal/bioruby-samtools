@@ -289,7 +289,7 @@ module Bio
         unless @fasta #We return a string of Ns if we don't know the reference. 
           seq = "n" * (stop-start) 
         else
-          command = "#{@samtools} faidx #{@fasta} '#{chr}:#{start}-#{stop}'"
+          command = "#{@samtools} faidx \"#{@fasta}\" '#{chr}:#{start}-#{stop}'"
           puts "Running: #{command}" if $VERBOSE
           @last_command = command
           seq = ""
@@ -312,7 +312,7 @@ module Bio
           opts={:as_bio => false}
           self.fetch_reference(:chr,:start,:stop,opts)
         else
-          command = "#{@samtools} faidx #{@fasta}"
+          command = "#{@samtools} faidx \"#{@fasta}\""
           @last_command = command
           system(command)
         end
@@ -321,7 +321,7 @@ module Bio
       #Index sorted alignment for fast random access. Index file <aln.bam>.bai will be created of no out_index is provided.
       #* out_index - [STRING] name of index
       def index(opts={})
-        command = "#{@samtools} index #{@bam} #{opts[:out_index]}"
+        command = "#{@samtools} index \"#{@bam}\" #{opts[:out_index]}"
         puts "Running: #{command}" if $VERBOSE
         @last_command = command
         system(command)
@@ -336,7 +336,7 @@ module Bio
         if opts[:r]
           remove_reads = "-r"
         end
-        command = "#{@samtools} fixmate #{remove_reads} #{@bam} #{opts[:out_bam]}"
+        command = "#{@samtools} fixmate #{remove_reads} \"#{@bam}\" #{opts[:out_bam]}"
         puts "Running: #{command}" if $VERBOSE
         @last_command = command
         system(command)
@@ -480,7 +480,7 @@ module Bio
       def remove_duplicates(opts={})
         out = opts[:out]
         opts.delete(:out)
-        command = "#{form_opt_string(@samtools, "rmdup", opts, [:s, :S])} #{out} #{@bam}"
+        command = "#{form_opt_string(@samtools, "rmdup", opts, [:s, :S])} #{out} \"#{@bam}\""
         @last_command = command
         system(command)
       end
@@ -541,9 +541,9 @@ module Bio
       def reheader(header_sam, opts={})
         if opts.has_key?(:out)
           out=opts[:out]
-          command = "#{@samtools} reheader #{header_sam} #{@bam} > #{out}"
+          command = "#{@samtools} reheader #{header_sam} \"#{@bam}\" > #{out}"
         else
-          command = "#{@samtools} reheader #{header_sam} #{@bam}"
+          command = "#{@samtools} reheader #{header_sam} \"#{@bam}\""
         end
         puts "Running: #{command}" if $VERBOSE
         @last_command = command
@@ -670,9 +670,9 @@ module Bio
         #bam = opts[:bam]
         if opts.has_key?(:out)
           out=opts[:out]
-          command = "#{@samtools} bedcov #{bed} #{@bam} > #{out}"
+          command = "#{@samtools} bedcov \"#{bed}\" \"#{@bam}\" > \"#{out}\""
         else
-          command = "#{@samtools} bedcov #{bed} #{@bam}"
+          command = "#{@samtools} bedcov \"#{bed}\" \"#{@bam}\""
         end
          puts "Running: #{command}" if $VERBOSE
         #puts command
@@ -748,7 +748,7 @@ module Bio
       # @param singles `flag` options [Array] the options in `opts` that are single options 
       def form_opt_string(prog, command, opts, singles=[])
         opts_string = commandify(opts, singles)
-        "#{prog} #{command} #{opts_string} #{@bam}"
+        "#{prog} #{command} #{opts_string} \"#{@bam}\""
       end
 
       # turns an opts hash into a string
