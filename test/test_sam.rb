@@ -141,7 +141,9 @@ class TestBioDbSam < Test::Unit::TestCase
 
     @sam.fetch_with_function("chr_1", 0, 140, &block)
     assert_equal(count, 8)
-    @sam.fetch("chr_1",0,200) {|x| puts "HELLO"}
+    count2 = 0
+    @sam.fetch("chr_1",0,200) {|x|  count2 += 1}
+    assert_equal(count2, 6)
 
   end
   
@@ -269,14 +271,14 @@ class TestBioDbSam < Test::Unit::TestCase
   
     region = @sam.cached_regions[reg.to_s]
     #puts "cahced_region: #{region.inspect}"
-    puts "AVG COV: #{region.average_coverage}"
-    puts "Reference: #{region.reference}"
-    puts "Consensus: #{region.consensus}"
-    puts "called: #{region.called}"
+    #puts "AVG COV: #{region.average_coverage}"
+    #puts "Reference: #{region.reference}"
+#    puts "Consensus: #{region.consensus}"
+   # puts "called: #{region.called}"
     #, :snps, :reference, :base_ratios, :consensus, :coverages
     snps_tot = Bio::Sequence.snps_between(region.reference, region.consensus)
     assert_equal(snps_tot, 5)
-    assert_equal(region.called, 213)
+    assert_equal(region.called, 220)
   end
   
   def test_mpileup_reg_05
@@ -296,7 +298,7 @@ class TestBioDbSam < Test::Unit::TestCase
     #, :snps, :reference, :base_ratios, :consensus, :coverages
     snps_tot = Bio::Sequence.snps_between(region.reference, region.consensus)
     assert_equal(snps_tot, 1)
-    assert_equal(region.called, 213)
+    assert_equal(region.called, 220)
   end
 
   def test_depth

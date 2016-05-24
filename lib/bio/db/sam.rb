@@ -493,26 +493,28 @@ module Bio
       #Sort alignments by leftmost coordinates
       #* n - sort by read name
       #* f - use <out.prefix> as full file name instead of prefix
-      #* o - final output to stdout returns bio::db::alignment
+      #* o - final output to stdout returns bio::db::alignment depreciated (samtools-1.x saves to a file)
       #* l - [INT]  compression level, from 0 to 9 [-1]
       #* at - [INT] number of sorting and compression threads [1]
       #* m - [INT] max memory per thread; suffix K/M/G recognized [768M]
-      #* prefix - [STRING] prefix for output bamfile
+      #* prefix - [STRING] prefix for output bamfile (for legacy, becomes "o" to use in samtools-1.x)
       def sort(opts={})
         if !opts.has_key?(:prefix)
-          opts.merge!({:prefix => "sorted"})
-        end
-        prefix = opts[:prefix]
-        opts.delete(:prefix)
-        command = form_opt_string(@samtools, "sort", opts, [:n, :f, :o])
-        command = command + " " + prefix
-        @last_command = command
-        puts "Running: #{command}" if $VERBOSE
-        if opts[:o]
-          yield_from_pipe(command, Bio::DB::Alignment)
+          opts.merge!({:o => "sorted"})
         else
-          system(command)
+          opts[:o] = opts[:prefix] += ".bam"
         end
+       
+        opts.delete(:prefix)
+        command = form_opt_string(@samtools, "sort", opts, [:n, :f])
+        command = command + " " 
+        @last_command = command
+        puts "Running: #{command}" #if $VERBOSE
+        #if opts[:o]
+        #  yield_from_pipe(command, Bio::DB::Alignment)
+        #else
+        system(command)
+        #end
       end
 
       #used to generate a text alignment viewer
