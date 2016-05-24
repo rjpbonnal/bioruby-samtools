@@ -178,9 +178,18 @@ class TestBioDbSam < Test::Unit::TestCase
   end
    
   def test_index_stats
+    puts "Stats: #{@sam.index_stats.inspect}"
     @sam.index_stats.each_pair do |seq, stat|
       assert_send([['chr_1' , '*'], :member?, seq])
     end
+    assert_equal(@sam.index_stats['chr_1'][:length], 69930)
+    assert_equal(@sam.index_stats['chr_1'][:mapped_reads], 9)
+    assert_equal(@sam.index_stats['chr_1'][:unmapped_reads], 0)
+    assert_equal(@sam.index_stats['*'][:length], 0)
+    assert_equal(@sam.index_stats['*'][:mapped_reads], 0)
+    assert_equal(@sam.index_stats['*'][:unmapped_reads], 0)
+    assert_equal(@sam.index_stats.size, 2)
+
   end
   
   def test_fetch_reference

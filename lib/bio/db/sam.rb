@@ -509,7 +509,7 @@ module Bio
         command = form_opt_string(@samtools, "sort", opts, [:n, :f])
         command = command + " " 
         @last_command = command
-        puts "Running: #{command}" #if $VERBOSE
+        puts "Running: #{command}" if $VERBOSE
         #if opts[:o]
         #  yield_from_pipe(command, Bio::DB::Alignment)
         #else
