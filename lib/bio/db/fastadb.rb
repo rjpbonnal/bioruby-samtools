@@ -45,11 +45,25 @@ module Bio::DB::Fasta
   end
 
   class Entry
-    attr_reader :id, :length
+    attr_reader :id, :length, :line_bases, :line_length, :offset
 
-    def initialize(id, length)
+    def initialize(id, length, offset = 0 , line_bases= 0 , line_length = 0 )
       @id=id
       @length=length.to_i
+      @offset = offset.to_i
+      @line_bases  = line_bases.to_i
+      @line_length = line_length.to_i
+    end
+
+    def get_base_coordinate(coordinate)
+      lines_for_offset = coordinate / line_bases
+      line_offset = coordinate % line_bases
+      puts "get_base_coordinate"
+      puts "Coordinate: #{coordinate}"
+      puts "lines_for_offset: #{lines_for_offset}"
+      puts "line pffset: #{line_offset}"
+      puts self.inspect
+      pointer = offset + (line_length * lines_for_offset) + line_offset - 1
     end
 
     def get_full_region
@@ -79,9 +93,6 @@ module Bio::DB::Fasta
       @orientation = args[:orientation]
     end
   
-
-  
-
     #TODO: Debug, as it hasnt been tested in the actual code. 
     def allele_freq_for_base(base)
       @all_ratios = Hash.new unless @all_ratios
@@ -174,9 +185,11 @@ module Bio::DB::Fasta
     #Initialize the fasta file. If the fai file doesn't exists, it is generated at startup
     #* fasta path to the fasta file
     #* samtools path to samtools, if it is not provided, use the bundled version
-    def initialize(args)
-      @fasta_path = args[:fasta]
-      @samtools = args[:samtools] || File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools')
+    def initialize(fasta: nil, samtools: false)
+      #puts "The arguments are: '#{fasta}':'#{samtools}'"
+      @fasta_path = fasta
+      @samtools = samtools  
+      @samtools = File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools') if samtools == true
       raise FastaDBException.new(), "No path for the refernce fasta file. " if @fasta_path.nil?
       @fai_file = @fasta_path + ".fai" 
       unless File.file?(@fai_file) then
@@ -184,7 +197,6 @@ module Bio::DB::Fasta
         @last_command = command
         system(command)
       end
-
     end
 
     #Loads the fai entries 
@@ -194,7 +206,7 @@ module Bio::DB::Fasta
       fai_file = @fai_file
       File.open(fai_file).each do | line |
         fields = line.split("\t")
-        @index << Entry.new(fields[0], fields[1])
+        @index << Entry.new(fields[0], fields[1], fields[2], fields[3], fields[4])
       end     
       @index.length
     end
@@ -217,9 +229,7 @@ module Bio::DB::Fasta
       end
     end
 
-
-    #The region needs to have a method to_region or a method to_s that ha the format "chromosome:start-end" as in samtools
-    def fetch_sequence(region)
+    def fetch_sequence_samtools(region)
       query = region.to_s
       query = region.to_region.to_s if region.respond_to?(:to_region) 
       command = "#{@samtools} faidx #{@fasta_path} '#{query}'"
@@ -227,11 +237,40 @@ module Bio::DB::Fasta
       @last_command = command
       seq = ""
       yield_from_pipe(command, String, :text ) {|line| seq = seq + line unless line =~ /^>/}
+      seq
+    end
 
+    def fetch_sequence_native(region)
+      load_fai_entries
+      
+      query = Region.parse_region(region) unless region.is_a?(Region) 
+      seq = ""
+      #In order to make this reentrant, if we want to make a multithreaded
+      #version of this function, we need to get a lock. Currently, only one thred
+      #can be assosiated with eache fastadb object
+      @fasta_file = File.open(@fasta_path) unless @fasta_file
+      entry = index.region_for_entry(query.entry)
+      puts entry.inspect
+      start_pointer  =  entry.get_base_coordinate(query.start)
+      puts "Start pointer: #{start_pointer}"
+      @fasta_file.seek(start_pointer, IO::SEEK_SET)
+      
+      puts "Query: #{query.inspect}"
+      end_pointer  =  entry.get_base_coordinate(query.end)
+      to_read = end_pointer - start_pointer + 1
+      puts "End pointer: #{end_pointer}"
+      puts "To read size: #{to_read}"
+      seq = @fasta_file.read(to_read)
+      puts "readed size#{seq.size}"
+      seq.gsub!(/\s+/, '')
+      seq 
+    end
+
+    #The region needs to have a method to_region or a method to_s that ha the format "chromosome:start-end" as in samtools
+    def fetch_sequence(region)
+      seq = @samtools ?  fetch_sequence_samtools(region): fetch_sequence_native(region)
       reference = Bio::Sequence::NA.new(seq)
-
-      if region.orientation == :reverse
-        #puts "reversing! #{reference.to_s}"
+      if region.respond_to? :orientation and region.orientation == :reverse
         reference.reverse_complement!()
       end
       reference
