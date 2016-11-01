@@ -12,6 +12,7 @@ before_script:
   - rake -f Rakefile
   - cd ../
 rvm:
+  - 2.0.9
   - 2.1.10
   - 2.2.2
   - 2.2.3
