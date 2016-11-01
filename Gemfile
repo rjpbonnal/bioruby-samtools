@@ -14,7 +14,7 @@ group :development do
 #  gem  "shoulda-matchers"
 #  gem "bundler", "> 1.0.21"
   gem "jeweler", "= 2.0.1"
-
+  gem "rack", "1.6.4",  :platforms => :ruby_21
   #gem "juwelier" #jeweler support is being dropped
 #  gem "rcov", ">=0", :platforms => :ruby_18
 #  gem "simplecov", ">= 0",   :platforms => :ruby_19
