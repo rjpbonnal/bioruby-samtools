@@ -8,16 +8,17 @@ gem "bio", ">= 1.4.2"
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
 group :development do
-  gem "shoulda", "> 2.10"
+  gem "shoulda", "= 2.10"
+  gem 'test-unit'
 #  gem "shoulda-context"
 #  gem  "shoulda-matchers"
 #  gem "bundler", "> 1.0.21"
-  gem "jeweler"
+  gem "jeweler", "= 2.0.1"
 
   #gem "juwelier" #jeweler support is being dropped
 #  gem "rcov", ">=0", :platforms => :ruby_18
 #  gem "simplecov", ">= 0",   :platforms => :ruby_19
 #  gem "ruby-prof"
 #  gem 'rdoc'
-  gem 'test-unit'
+
 end
