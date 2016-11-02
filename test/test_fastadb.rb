@@ -42,11 +42,13 @@ class TestBioDbfastaDB < Test::Unit::TestCase
     	#this is the first 70 nucleotides of the test seqeunce
     	@fasta_samtools.faidx()
 
-    	# { :dog => "charlie", :cat => "kwiki", :mouse => "squeaky" }
     	test_regions = { "chr_1:1-70" => "CCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTA", 
     		"chr_1:68-74" => "CTAACCC",
     		"chr.2:300-450" => "GGTGCAGTCACGGCTCGCAGTTATACTCCGGGAGAATGGAAAAGATTGTCCAAGGACCAA\
-CAGGAAAAAGTGCGATCGCTGCGTAATAAAAAGAAGCAAGGAGGGAAACCCGAGGAATCAGAGAGGAGTGTTGACAGTGTAGCACGGGATG"
+CAGGAAAAAGTGCGATCGCTGCGTAATAAAAAGAAGCAAGGAG\
+GGAAACCCGAGGAATCAGAGAGGAGTGTTGACAGTGTAGCACGGGATG",
+			"chr_3:536-542" => "GTATACG", 
+			"chr.2:765-770" => "TCACAT"
     	}
 
     	test_regions.each_pair do |region, seq_expected|  
@@ -56,6 +58,25 @@ CAGGAAAAAGTGCGATCGCTGCGTAATAAAAAGAAGCAAGGAGGGAAACCCGAGGAATCAGAGAGGAGTGTTGACAGTGT
     		seq_fetched_local = @fasta_local.fetch_sequence(region)
     		assert_equal(seq_expected, seq_fetched_local.upcase)
     	end
+
+    	test_regions = {
+    		"chr_3:772-780" => Bio::DB::Fasta::FastaDBException,
+            "chr_3:-1-10" => Bio::DB::Fasta::FastaDBException,
+            "chr_3:0-10" => Bio::DB::Fasta::FastaDBException,
+            "bfafdaads" => Bio::DB::Fasta::FastaDBException,
+            "chr.2:765-771" => Bio::DB::Fasta::FastaDBException,
+            "chr_2:765-770" => Bio::DB::Fasta::FastaDBException,
+
+    	}
+    	test_regions.each_pair do |region, expected_eception|  
+            assert_raise expected_eception do
+                seq_fetched = @fasta_samtools.fetch_sequence(region)
+            end
+
+            assert_raise expected_eception do
+    	       seq_fetched_local = @fasta_local.fetch_sequence(region)
+    	   end
+        end
     end
 
 end

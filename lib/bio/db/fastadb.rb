@@ -46,7 +46,7 @@ module Bio::DB::Fasta
 
   class Entry
     attr_reader :id, :length, :line_bases, :line_length, :offset
-
+    alias_method :size, :length
     def initialize(id, length, offset = 0 , line_bases= 0 , line_length = 0 )
       @id=id
       @length=length.to_i
@@ -58,11 +58,11 @@ module Bio::DB::Fasta
     def get_base_coordinate(coordinate)
       lines_for_offset = coordinate / line_bases
       line_offset = coordinate % line_bases
-      puts "get_base_coordinate"
-      puts "Coordinate: #{coordinate}"
-      puts "lines_for_offset: #{lines_for_offset}"
-      puts "line pffset: #{line_offset}"
-      puts self.inspect
+      #puts "get_base_coordinate"
+      #puts "Coordinate: #{coordinate}"
+      #puts "lines_for_offset: #{lines_for_offset}"
+      #puts "line pffset: #{line_offset}"
+      #puts self.inspect
       pointer = offset + (line_length * lines_for_offset) + line_offset - 1
     end
 
@@ -155,8 +155,9 @@ module Bio::DB::Fasta
     def self.parse_region(reg_str)
       string = reg_str.delete("'")
       fields_1 = string.split(":")
+      raise FastaDBException.new(), "Invalid region. #{string}" if fields_1.length != 2
       fields_2 = fields_1[1].split("-")
-      raise FastaDBException.new(), "Invalid region. #{string}" if fields_1.length != 2 || fields_2.length != 2
+      raise FastaDBException.new(), "Invalid region. #{string}" if fields_2.length != 2
 
       reg = Region.new(:entry=> fields_1[0], :start=>fields_2[0].to_i, :end=>fields_2[1].to_i)
 
@@ -241,8 +242,7 @@ module Bio::DB::Fasta
     end
 
     def fetch_sequence_native(region)
-      load_fai_entries
-      
+      query = region
       query = Region.parse_region(region) unless region.is_a?(Region) 
       seq = ""
       #In order to make this reentrant, if we want to make a multithreaded
@@ -268,6 +268,12 @@ module Bio::DB::Fasta
 
     #The region needs to have a method to_region or a method to_s that ha the format "chromosome:start-end" as in samtools
     def fetch_sequence(region)
+      load_fai_entries
+      
+      region = Region.parse_region(region.to_s) unless region.is_a?(Region) 
+      entry = index.region_for_entry(region.entry)
+      raise FastaDBException.new "Entry (#{region.entry})not found in reference" unless entry
+      raise FastaDBException.new "Region in invalid range (#{region}): Valid range: #{entry.to_region.to_s} has a size of #{entry.size}." if region.end > entry.size or region.start < 1
       seq = @samtools ?  fetch_sequence_samtools(region): fetch_sequence_native(region)
       reference = Bio::Sequence::NA.new(seq)
       if region.respond_to? :orientation and region.orientation == :reverse
