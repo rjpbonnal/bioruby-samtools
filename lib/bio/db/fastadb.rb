@@ -230,6 +230,15 @@ module Bio::DB::Fasta
       end
     end
 
+    def index
+      return faidx if @samtools
+      samtools = File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools')
+      #TODO: make a ruby implementations 
+      command = "#{samtools} faidx #{@fasta_path}"
+      @last_command = command
+      system(command)
+    end
+
     def fetch_sequence_samtools(region)
       query = region.to_s
       query = region.to_region.to_s if region.respond_to?(:to_region) 
