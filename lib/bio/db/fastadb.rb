@@ -231,12 +231,18 @@ module Bio::DB::Fasta
     end
 
     def index
-      return faidx if @samtools
-      samtools = File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools')
-      #TODO: make a ruby implementations 
-      command = "#{samtools} faidx #{@fasta_path}"
-      @last_command = command
-      system(command)
+      return @index if @index
+      if @samtools
+        faidx
+      else
+        samtools = File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools')
+        #TODO: make a ruby implementations 
+        command = "#{samtools} faidx #{@fasta_path}"
+        @last_command = command
+        system(command)
+      end
+        load_fai_entries
+      return @index
     end
 
     def fetch_sequence_samtools(region)
@@ -259,18 +265,12 @@ module Bio::DB::Fasta
       #can be assosiated with eache fastadb object
       @fasta_file = File.open(@fasta_path) unless @fasta_file
       entry = index.region_for_entry(query.entry)
-      puts entry.inspect
+     
       start_pointer  =  entry.get_base_coordinate(query.start)
-      puts "Start pointer: #{start_pointer}"
       @fasta_file.seek(start_pointer, IO::SEEK_SET)
-      
-      puts "Query: #{query.inspect}"
       end_pointer  =  entry.get_base_coordinate(query.end)
       to_read = end_pointer - start_pointer + 1
-      puts "End pointer: #{end_pointer}"
-      puts "To read size: #{to_read}"
       seq = @fasta_file.read(to_read)
-      puts "readed size#{seq.size}"
       seq.gsub!(/\s+/, '')
       seq 
     end
@@ -278,7 +278,6 @@ module Bio::DB::Fasta
     #The region needs to have a method to_region or a method to_s that ha the format "chromosome:start-end" as in samtools
     def fetch_sequence(region)
       load_fai_entries
-      
       region = Region.parse_region(region.to_s) unless region.is_a?(Region) 
       entry = index.region_for_entry(region.entry)
       raise FastaDBException.new "Entry (#{region.entry})not found in reference" unless entry
