@@ -14,7 +14,7 @@ require 'rake'
 
 if RUBY_VERSION.start_with?("2.1") or RUBY_VERSION.start_with?("2.2") or RUBY_VERSION.start_with?("2.0")
   require 'jeweler'
-  @taskClass = Jewelier
+  @taskClass = Jeweler
 else
   require 'juwelier'
   @taskClass = Juwelier
