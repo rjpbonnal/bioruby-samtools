@@ -11,13 +11,19 @@ rescue Bundler::BundlerError => e
 end
 require 'rake'
 
-#begin
-require 'jeweler'
-#rescue
-#  gem 'juwelier'
-#end
 
-Jeweler::Tasks.new do |gem|
+if RUBY_VERSION.start_with?("2.1") or RUBY_VERSION.start_with?("2.2") or RUBY_VERSION.start_with?("2.0")
+  require 'jeweler'
+  @taskClass = Jewelier
+else Gem::LoadError
+  require 'juwelier'
+  @taskClass = Juwelier
+end
+
+
+#Juwelier
+
+@taskClass::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "bio-samtools"
   gem.homepage = "http://github.com/helios/bioruby-samtools"
@@ -35,7 +41,7 @@ Jeweler::Tasks.new do |gem|
   #  gem.add_development_dependency 'rspec', '> 1.2.3'
   gem.extensions = "ext/mkrf_conf.rb"
 end
-Jeweler::RubygemsDotOrgTasks.new
+@taskClass::RubygemsDotOrgTasks.new
 
 require 'rake/testtask'
 Rake::TestTask.new(:test) do |test|
