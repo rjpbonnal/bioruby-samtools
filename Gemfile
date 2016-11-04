@@ -10,15 +10,12 @@ gem "bio", ">= 1.4.2"
 group :development do
   gem "shoulda", "= 2.10"
   gem 'test-unit'
-#  gem "shoulda-context"
-#  gem  "shoulda-matchers"
-#  gem "bundler", "> 1.0.21"
-  gem "jeweler", "= 2.0.1",  :platforms => [ :ruby_22,:ruby_21,:ruby_20]
+if RUBY_VERSION.start_with?("2.1") or RUBY_VERSION.start_with?("2.2") or RUBY_VERSION.start_with?("2.0")
+  gem "jeweler", "= 2.0.1"
+else
+	gem "juwelier" ,  :platforms => :ruby_23 #jeweler support is being dropped
+end
   gem "rack", "1.6.4",  :platforms => :ruby_21
-  gem "juwelier" ,  :platforms => :ruby_23 #jeweler support is being dropped
-#  gem "rcov", ">=0", :platforms => :ruby_18
-#  gem "simplecov", ">= 0",   :platforms => :ruby_19
-#  gem "ruby-prof"
-#  gem 'rdoc'
+
 
 end
