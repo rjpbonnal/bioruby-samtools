@@ -6,17 +6,17 @@
 # stub: ext/mkrf_conf.rb
 
 Gem::Specification.new do |s|
-  s.name = "bio-samtools"
+  s.name = "bio-samtools".freeze
   s.version = "2.5.0"
 
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.require_paths = ["lib"]
-  s.authors = ["Ricardo Ramirez-Gonzalez", "Dan MacLean", "Raoul J.P. Bonnal"]
-  s.date = "2016-11-01"
-  s.description = "Binder of samtools for ruby, on the top of FFI. \n\n  This project was born from the need to add support of BAM files to \n  the gee_fu genome browser (http://github.com/danmaclean/gee_fu)."
-  s.email = "Ricardo.Ramirez-Gonzalez@tgac.ac.uk"
-  s.executables = ["bam_consensus.rb"]
-  s.extensions = ["ext/mkrf_conf.rb"]
+  s.required_rubygems_version = Gem::Requirement.new(">= 0".freeze) if s.respond_to? :required_rubygems_version=
+  s.require_paths = ["lib".freeze]
+  s.authors = ["Ricardo Ramirez-Gonzalez".freeze, "Dan MacLean".freeze, "Raoul J.P. Bonnal".freeze]
+  s.date = "2016-11-04"
+  s.description = "Binder of samtools for ruby, on the top of FFI. \n\n  This project was born from the need to add support of BAM files to \n  the gee_fu genome browser (http://github.com/danmaclean/gee_fu).".freeze
+  s.email = "Ricardo.Ramirez-Gonzalez@tgac.ac.uk".freeze
+  s.executables = ["bam_consensus.rb".freeze]
+  s.extensions = ["ext/mkrf_conf.rb".freeze]
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.md"
@@ -147,54 +147,36 @@ Gem::Specification.new do |s|
     "tutorial/tutorial.md",
     "tutorial/tutorial.pdf"
   ]
-  s.homepage = "http://github.com/helios/bioruby-samtools"
-  s.licenses = ["MIT"]
-  s.rubygems_version = "2.2.2"
-  s.summary = "Binder of samtools for ruby, on the top of FFI."
+  s.homepage = "http://github.com/helios/bioruby-samtools".freeze
+  s.licenses = ["MIT".freeze]
+  s.rubygems_version = "2.6.8".freeze
+  s.summary = "Binder of samtools for ruby, on the top of FFI.".freeze
 
   if s.respond_to? :specification_version then
     s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<bio-svgenes>, [">= 0.4.1"])
-      s.add_runtime_dependency(%q<bio>, [">= 1.4.2"])
-      s.add_development_dependency(%q<shoulda>, ["> 2.10"])
-      s.add_development_dependency(%q<shoulda-context>, [">= 0"])
-      s.add_development_dependency(%q<shoulda-matchers>, [">= 0"])
-      s.add_development_dependency(%q<bundler>, ["> 1.0.21"])
-      s.add_development_dependency(%q<jeweler>, [">= 0"])
-      s.add_development_dependency(%q<rcov>, [">= 0"])
-      s.add_development_dependency(%q<simplecov>, [">= 0"])
-      s.add_development_dependency(%q<ruby-prof>, [">= 0"])
-      s.add_development_dependency(%q<rdoc>, [">= 0"])
-      s.add_development_dependency(%q<test-unit>, [">= 0"])
+      s.add_runtime_dependency(%q<bio-svgenes>.freeze, [">= 0.4.1"])
+      s.add_runtime_dependency(%q<bio>.freeze, [">= 1.4.2"])
+      s.add_development_dependency(%q<shoulda>.freeze, ["= 2.10"])
+      s.add_development_dependency(%q<test-unit>.freeze, [">= 0"])
+      s.add_development_dependency(%q<jeweler>.freeze, ["= 2.0.1"])
+      s.add_development_dependency(%q<rack>.freeze, ["= 1.6.4"])
     else
-      s.add_dependency(%q<bio-svgenes>, [">= 0.4.1"])
-      s.add_dependency(%q<bio>, [">= 1.4.2"])
-      s.add_dependency(%q<shoulda>, ["> 2.10"])
-      s.add_dependency(%q<shoulda-context>, [">= 0"])
-      s.add_dependency(%q<shoulda-matchers>, [">= 0"])
-      s.add_dependency(%q<bundler>, ["> 1.0.21"])
-      s.add_dependency(%q<jeweler>, [">= 0"])
-      s.add_dependency(%q<rcov>, [">= 0"])
-      s.add_dependency(%q<simplecov>, [">= 0"])
-      s.add_dependency(%q<ruby-prof>, [">= 0"])
-      s.add_dependency(%q<rdoc>, [">= 0"])
-      s.add_dependency(%q<test-unit>, [">= 0"])
+      s.add_dependency(%q<bio-svgenes>.freeze, [">= 0.4.1"])
+      s.add_dependency(%q<bio>.freeze, [">= 1.4.2"])
+      s.add_dependency(%q<shoulda>.freeze, ["= 2.10"])
+      s.add_dependency(%q<test-unit>.freeze, [">= 0"])
+      s.add_dependency(%q<jeweler>.freeze, ["= 2.0.1"])
+      s.add_dependency(%q<rack>.freeze, ["= 1.6.4"])
     end
   else
-    s.add_dependency(%q<bio-svgenes>, [">= 0.4.1"])
-    s.add_dependency(%q<bio>, [">= 1.4.2"])
-    s.add_dependency(%q<shoulda>, ["> 2.10"])
-    s.add_dependency(%q<shoulda-context>, [">= 0"])
-    s.add_dependency(%q<shoulda-matchers>, [">= 0"])
-    s.add_dependency(%q<bundler>, ["> 1.0.21"])
-    s.add_dependency(%q<jeweler>, [">= 0"])
-    s.add_dependency(%q<rcov>, [">= 0"])
-    s.add_dependency(%q<simplecov>, [">= 0"])
-    s.add_dependency(%q<ruby-prof>, [">= 0"])
-    s.add_dependency(%q<rdoc>, [">= 0"])
-    s.add_dependency(%q<test-unit>, [">= 0"])
+    s.add_dependency(%q<bio-svgenes>.freeze, [">= 0.4.1"])
+    s.add_dependency(%q<bio>.freeze, [">= 1.4.2"])
+    s.add_dependency(%q<shoulda>.freeze, ["= 2.10"])
+    s.add_dependency(%q<test-unit>.freeze, [">= 0"])
+    s.add_dependency(%q<jeweler>.freeze, ["= 2.0.1"])
+    s.add_dependency(%q<rack>.freeze, ["= 1.6.4"])
   end
 end
 
