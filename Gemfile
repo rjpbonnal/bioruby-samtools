@@ -13,9 +13,9 @@ group :development do
 #  gem "shoulda-context"
 #  gem  "shoulda-matchers"
 #  gem "bundler", "> 1.0.21"
-  gem "jeweler", "= 2.0.1"
+  gem "jeweler", "= 2.0.1",  :platforms => [:ruby_23, :ruby_22,:ruby_21,:ruby_20]
   gem "rack", "1.6.4",  :platforms => :ruby_21
-  #gem "juwelier" #jeweler support is being dropped
+  #gem "juwelier" ,  :platforms => :ruby_23 #jeweler support is being dropped
 #  gem "rcov", ">=0", :platforms => :ruby_18
 #  gem "simplecov", ">= 0",   :platforms => :ruby_19
 #  gem "ruby-prof"

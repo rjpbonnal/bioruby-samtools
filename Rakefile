@@ -11,7 +11,12 @@ rescue Bundler::BundlerError => e
 end
 require 'rake'
 
+#begin
 require 'jeweler'
+#rescue
+#  gem 'juwelier'
+#end
+
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "bio-samtools"
