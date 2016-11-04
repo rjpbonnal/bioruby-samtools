@@ -26,7 +26,7 @@ class TestBioDbfastaDB < Test::Unit::TestCase
 	end
 
 	def test_faidx
-		@fasta_samtools.faidx()
+		@fasta_samtools.index()
     	test_fai_file = @testReference+".fai"
     	#test that the .fai file exists
     	assert_nothing_thrown do
