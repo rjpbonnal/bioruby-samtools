@@ -24,9 +24,10 @@ class TestBioDbfastaDB < Test::Unit::TestCase
         	samtools: true
     	)
 	end
-    
-    def shutdown
-        File.delete("test/samples/small/test_fastadb.fasta.fai")
+     class << self    
+        def shutdown
+            File.delete("test/samples/small/test_fastadb.fasta.fai")
+        end
     end
 
 	def test_faidx

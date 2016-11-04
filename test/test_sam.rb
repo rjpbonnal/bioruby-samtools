@@ -343,7 +343,7 @@ class TestBioDbSam < Test::Unit::TestCase
     bam_files = [bam_to_merge1, bam_to_merge2]
     
     merged_bam_file = @test_folder + "/maps_merged.bam"
-    File.delete merged_bam_file if File.exists?(merged_bam_file)
+    File.delete merged_bam_file if File.exist?(merged_bam_file)
 #    File.delete("test/samples/small/maps_merged.bam")
     @sam.merge(:out=>merged_bam_file, :bams=>bam_files, :n=>true)
     merged_bam = Bio::DB::Sam.new(:fasta => @testReference, :bam => merged_bam_file)
@@ -364,7 +364,7 @@ class TestBioDbSam < Test::Unit::TestCase
     bam_files = [bam1, bam2]
     
     cat_bam_file = @test_folder + "/maps_cated.bam"
-    File.delete cat_bam_file if File.exists?(cat_bam_file)
+    File.delete cat_bam_file if File.exist?(cat_bam_file)
     @sam.merge(:out=>cat_bam_file, :bams=>bam_files)
     cated_bam = Bio::DB::Sam.new(:fasta => @testReference, :bam => cat_bam_file)
     
