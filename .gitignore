@@ -4,6 +4,7 @@ coverage
 test/methods_test.rb
 test/samples/small2
 lib/bio/db/sam/external/samtools-1.0
+lib/bio/db/sam/external/samtools.exe
 
 # rdoc generated
 rdoc
@@ -14,6 +15,7 @@ rdoc
 
 # bundler
 .bundle
+/vendor/bundle
 
 # jeweler generated
 pkg
@@ -38,7 +40,7 @@ test/samples/small/test_dot_sorted.bam.bai
 test/samples/small/testu.bam.bai
 
 
-# Have editor/IDE/OS specific files you need to ignore? Consider using a global gitignore: 
+# Have editor/IDE/OS specific files you need to ignore? Consider using a global gitignore:
 #
 # * Create a file at ~/.gitignore
 # * Include files you want ignored
@@ -65,6 +67,9 @@ tmtags
 # For vim:
 *.swp
 old_lib/
+
+#For the custom rake file 
+ext/Rakefile
 
 #For the gems to work
 
