@@ -465,7 +465,7 @@ Each test file tests different aspects of the code.
 1. Filter to the fetching algorithm (give a condition that has to be satisfied to add the alignment to the list)
 
 ### To whom do I complain?
-Try [Ricardo.Ramirez-Gonzalez@tgac.ac.uk](Ricardo.Ramirez-Gonzalez@tgac.ac.uk)
+Try [Ricardo.Ramirez-Gonzalez@jic.ac.uk](Ricardo.Ramirez-Gonzalez@jic.ac.uk)
  and [dan.maclean@tsl.ac.uk](dan.maclean@tsl.ac.uk)
 
 ### Important Notes
