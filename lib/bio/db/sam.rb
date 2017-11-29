@@ -1,9 +1,9 @@
 module Bio
   class DB
     class Sam
-      
+
       class SamException < StandardError; end
-      
+
       attr_accessor :bam, :fasta, :samtools, :bcftools, :last_command
       attr_accessor :minumum_ratio_for_iup_consensus
       attr_reader :cached_regions
@@ -37,7 +37,7 @@ module Bio
         files_ok?
       end
 
-      #runs the samtools view command   
+      #runs the samtools view command
       #* b - output BAM
       #* h - print header for the SAM output
       #* H - print header only (no alignments)
@@ -67,7 +67,7 @@ module Bio
         region = String.new
         if opts[:chr] and opts[:start] and opts[:stop]
           has_e = self.has_entry? opts[:chr]
-          raise SamException.new(), "[view] The sequence #{opts[:chr]} is not in the bam file" unless self.has_entry? opts[:chr] 
+          raise SamException.new(), "[view] The sequence #{opts[:chr]} is not in the bam file" unless self.has_entry? opts[:chr]
           region = "#{opts[:chr]}:#{opts[:start]}-#{opts[:stop]}"
           [:chr, :start, :stop].each {|o| opts.delete(o)}
         end
@@ -81,8 +81,8 @@ module Bio
           opts.delete(:one)
         end
         command = String.new
-        command = form_opt_string(@samtools, 'view', opts, [:b, :h, :H, :S, :u, '1', :x, :X, :c, :B]) 
-        command = command + " '#{region}'" if region.size > 0
+        command = form_opt_string(@samtools, 'view', opts, [:b, :h, :H, :S, :u, '1', :x, :X, :c, :B])
+        command = command + " \"#{region}\"" if region.size > 0
         @last_command = command
         type = (opts[:u] or opts[:b]) ? :binary : :text
         klass = (type == :binary) ? String : Bio::DB::Alignment
@@ -95,12 +95,12 @@ module Bio
       #* stop - the stop position for the subsequence
       #* &block - the the block of code to execute
       def fetch(chr, start,stop, &block)
-       
+
         view(
         :chr => chr,
         :start => start,
-        :stop => stop, 
-        &block  
+        :stop => stop,
+        &block
         )
       end
 
@@ -108,7 +108,7 @@ module Bio
 
       #returns an array of coverage for each location for which there are mapped reads
       #* chr - the reference name
-      #* start - the start position 
+      #* start - the start position
       #* length - the length of the region queried
       def chromosome_coverage(chr,start,length)
         result = []
@@ -122,7 +122,7 @@ module Bio
 
       #returns an svg file or object, plotting coverage for each location for which there are mapped reads
       #* chr - the reference name
-      #* start - the start position 
+      #* start - the start position
       #* length - the length of the region queried
       #OPTIONS
       #* bin - the amount of bins to split the histogram into. The arithmetic mean score for each bin will be plotted. [default 30 bins]
@@ -141,25 +141,25 @@ module Bio
         self.mpileup(:r => region) do |p|
           result << p.coverage
         end
-        p = Bio::Graphics::Page.new(:width => 1000, 
-        :height => 200, 
+        p = Bio::Graphics::Page.new(:width => 1000,
+        :height => 200,
         :number_of_intervals => 10,
         :font_size => 14
         )
-        default_options = {:glyph => :histogram, 
+        default_options = {:glyph => :histogram,
         :stroke => 'black',
         :fill_color => 'gold',
         :track_height => 150,
-        :name => 'read coverage', 
-        :label => true, 
-        :stroke_width => '1', 
+        :name => 'read coverage',
+        :label => true,
+        :stroke_width => '1',
         :x_round => 1,
         :y_round => 1 }
         opts = default_options.merge(opts)
-        
+
         data_track = p.add_track(opts)
-        index = 0;        
-        result.each_slice(bin) {|slice| 
+        index = 0;
+        result.each_slice(bin) {|slice|
           #result.each_with_index {|val, index|
           data_feature = Bio::Graphics::MiniFeature.new(:start => start + index,
           :end => (start + index + bin),
@@ -179,7 +179,7 @@ module Bio
 
       #returns the average coverage over the region queried
       #* chr - the reference name
-      #* start - the start position 
+      #* start - the start position
       #* length - the length of the region queried
       def average_coverage(chr,start,length)
         arr = self.chromosome_coverage(chr,start,length)
@@ -187,19 +187,19 @@ module Bio
       end
 
       #returns a Bio::DB::Pileup or Bio::DB::VCF object
-      #* region - Only generate pileup in region [chrom:start-stop] 
+      #* region - Only generate pileup in region [chrom:start-stop]
       #* illumina_quals - Assume the quality is in the Illumina 1.3+ encoding
       #* count_anomalous - Do not skip anomalous read pairs in variant calling
       #* no_baq - Disable probabilistic realignment for the computation of base alignment quality (BAQ). BAQ is the Phred-scaled probability of a read base being misaligned. Applying this option greatly helps to reduce false SNPs caused by misalignments.
-      #* adjust_mapq - [INT] Coefficient for downgrading mapping quality for reads containing excessive mismatches. Given a read with a phred-scaled probability q of being generated from the mapped position, the new mapping quality is about sqrt((INT-q)/INT)*INT. A zero value disables this functionality; if enabled, the recommended value for BWA is 50. [0] 
-      #* max_per_bam_depth - [INT] At a position, read maximally INT reads per input BAM. [250] 
+      #* adjust_mapq - [INT] Coefficient for downgrading mapping quality for reads containing excessive mismatches. Given a read with a phred-scaled probability q of being generated from the mapped position, the new mapping quality is about sqrt((INT-q)/INT)*INT. A zero value disables this functionality; if enabled, the recommended value for BWA is 50. [0]
+      #* max_per_bam_depth - [INT] At a position, read maximally INT reads per input BAM. [250]
       #* extended_baq - Extended BAQ computation. This option helps sensitivity especially for MNPs, but may hurt specificity a little bit.
       #* exclude_reads_file - [FILE] exclude read groups listed in FILE [null]
       #* list_of_positions - [FILE] BED or position list file containing a list of regions or sites where pileup or BCF should be generated [null]
       #* mapping_quality_cap - [INT] cap mapping quality at INT [60]
       #* ignore_rg - ignore read group tags
       #* min_mapping_quality - [INT] skip alignments with mapQ smaller than INT [0]
-      #* min_base_quality - [INT] skip bases with baseQ/BAQ smaller than INT [13]   
+      #* min_base_quality - [INT] skip bases with baseQ/BAQ smaller than INT [13]
       #* ##following options are for the -g -u option
       #* genotype_calling - generate BCF output (genotype likelihoods)
       #* uncompressed_bcf - generate uncompress BCF output
@@ -233,19 +233,19 @@ module Bio
           :no_indels => :I,
           :skip_indel_over_average_depth => :L,
           :gap_open_sequencing_error_probability => :o,
-          :platforms => :P 
+          :platforms => :P
         }
 
-        ##convert any long_opts to short opts 
+        ##convert any long_opts to short opts
         temp_opts = opts.dup
         opts.each_pair do |k,v|
           if long_opts[k]
-            temp_opts[long_opts[k]] = v 
+            temp_opts[long_opts[k]] = v
             temp_opts.delete(k)
           end
         end
         opts = Hash.new
-        #To remove any unwanted options. 
+        #To remove any unwanted options.
         long_opts.each_pair do |k,v|
           opts[v] = temp_opts[v] if temp_opts.has_key?(v)
         end
@@ -260,10 +260,10 @@ module Bio
         query = opts[:r].to_s
         query = opts[:r].to_region.to_s if opts[:r].respond_to?(:to_region)
         if not query.nil? and query.size > 0
-          raise SamException.new(), "The sequence #{query} is not in the bam file"  unless has_region? query 
+          raise SamException.new(), "The sequence #{query} is not in the bam file"  unless has_region? query
         end
         opts[:r] = query
-        
+
         if opts[:six]
           opts["6"] = nil
           opts.delete(:six)
@@ -274,7 +274,7 @@ module Bio
         if opts[:u]
           command = command + " | #{@bcftools} view -cg -"
         end
-        
+
         klass = opts[:u] ? Bio::DB::Vcf : Bio::DB::Pileup
         @last_command = command
         yield_from_pipe(command, klass, :text, &block)
@@ -289,8 +289,8 @@ module Bio
       def fetch_reference(chr,start,stop, opts={:as_bio => false})
         raise SamException.new(), "The sequence #{chr} is not in the bam file" unless has_entry? chr
         seq = ""
-        unless @fasta #We return a string of Ns if we don't know the reference. 
-          seq = "n" * (stop-start) 
+        unless @fasta #We return a string of Ns if we don't know the reference.
+          seq = "n" * (stop-start)
         else
           command = "#{@samtools} faidx \"#{@fasta}\" '#{chr}:#{start}-#{stop}'"
           puts "Running: #{command}" if $VERBOSE
@@ -362,7 +362,7 @@ module Bio
       #Retrieve and print stats in the index file. The output is TAB delimited with each line consisting of reference sequence name, sequence length, number of mapped reads and number unmapped reads.
       def index_stats
        return @stats if @stats
-        stats = {}   
+        stats = {}
         command = form_opt_string(@samtools, "idxstats", {}, [])
         @last_command = command
         puts "Running: #{command}" if $VERBOSE
@@ -375,12 +375,12 @@ module Bio
       end
 
       alias_method :idxstats, :index_stats
-      
+
       #Retrive a hash with all the regions, with the region id as index or runs the function on each region
       def each_region
-        index_stats 
-        if @regions 
-          return @regions unless block_given? 
+        index_stats
+        if @regions
+          return @regions unless block_given?
         else
           @regions = Hash.new
         end
@@ -395,18 +395,18 @@ module Bio
         end
         @regions
       end
-      
+
       #Tells if the bam file contains the entry. It has to be indexed.
       def has_entry?(entry)
          index_stats.has_key?(entry)
     #    puts "#{entry} #{@stats.inspect}"
       #  index_stats
       end
-      
+
       def has_region?(region)
         index_stats
         reg=Bio::DB::Fasta::Region::parse_region(region)
-        return 0 unless has_entry? (reg.entry) 
+        return 0 unless has_entry? (reg.entry)
          len = @stats[reg.entry][:length]
          reg.start > 0 and reg.end <= len
       end
@@ -504,10 +504,10 @@ module Bio
         else
           opts[:o] = opts[:prefix] += ".bam"
         end
-       
+
         opts.delete(:prefix)
         command = form_opt_string(@samtools, "sort", opts, [:n, :f])
-        command = command + " " 
+        command = command + " "
         @last_command = command
         puts "Running: #{command}" if $VERBOSE
         #if opts[:o]
@@ -518,7 +518,7 @@ module Bio
       end
 
       #used to generate a text alignment viewer
-      #* d - display, output as (H)tml or (C)urses or (T)ext 
+      #* d - display, output as (H)tml or (C)urses or (T)ext
       #* p - [chr:pos] go directly to this position
       #* s - [STR] display only reads from this sample or group
       def tview(opts={})
@@ -563,18 +563,18 @@ module Bio
       #* S - The input is SAM with header lines
       #* C - [INT] Coefficient to cap mapping quality of poorly mapped reads. See the pileup command for details. [0]
       #* r - Compute the BQ tag (without -A) or cap base quality by BAQ (with -A).
-      #* E - Extended BAQ calculation. This option trades specificity for sensitivity, though the effect is minor. 
+      #* E - Extended BAQ calculation. This option trades specificity for sensitivity, though the effect is minor.
       def calmd(opts={}, &block)
         command = form_opt_string(@samtools, "calmd",  opts, [:E, :e, :u, :b, :S, :r] )+ " " + @fasta
         puts "Running: #{command}" if $VERBOSE
         @last_command = command
-        type = :text 
+        type = :text
         klass = Bio::DB::Alignment
         yield_from_pipe(command, klass, type, true, "@",&block)
       end
 
-      #Identifies target regions by examining the continuity of read depth, computes haploid consensus sequences of targets and outputs a SAM with each sequence corresponding to a target. When option -f is in use, BAQ will be applied. 
-      #* Q - [INT] Minimum base quality for a base to be considered [13] 
+      #Identifies target regions by examining the continuity of read depth, computes haploid consensus sequences of targets and outputs a SAM with each sequence corresponding to a target. When option -f is in use, BAQ will be applied.
+      #* Q - [INT] Minimum base quality for a base to be considered [13]
       #* i - in penalty
       #* 0 - em0
       #* 1 - em1
@@ -598,7 +598,7 @@ module Bio
       #* F - Do not attempt to fix chimeric reads.
       #* k - [INT] Maximum length for local phasing. [13]
       #* q - [INT] Minimum Phred-scaled LOD to call a heterozygote. [40]
-      #* Q - [INT] Minimum base quality to be used in het calling. [13] 
+      #* Q - [INT] Minimum base quality to be used in het calling. [13]
       def phase(opts={})
         command = "#{form_opt_string(@samtools, "phase", opts, [:A, :F] )}"
         puts "Running: #{command}" if $VERBOSE
@@ -619,18 +619,18 @@ module Bio
         system(command)
       end
 
-      #Returns the pipelup of a region, encapsulated as a Bio::DB::Fasta::Region object.  
+      #Returns the pipelup of a region, encapsulated as a Bio::DB::Fasta::Region object.
       #The opts are the same as for mpileup
-      def fetch_region(opts={})   
+      def fetch_region(opts={})
         region = opts[:r] ? opts[:r] : opts[:region]
         opts[:r] = region
         opts[:region] = region
         reg =  Bio::DB::Fasta::Region.parse_region(region.to_s)
         reg.reference = self.fetch_reference(region.entry, region.start, region.end).downcase
         tmp = Array.new
-        mpileup(opts) do | pile | 
+        mpileup(opts) do | pile |
           #  puts pile
-          tmp << pile 
+          tmp << pile
           yield pile if block_given?
         end
         reg.pileup =  tmp
@@ -641,19 +641,19 @@ module Bio
       #Same as mpilup, but it caches the pileup, so if you want several operations on the same set of regions
       #the pile for different operations, it won't execute the mpilup command several times
       #Whenever you finish using a region, call mpileup_clear_cache to free the cache
-      #The argument Region is required, as it will be the key for the underlying hash. 
-      #We asume that the options (other than the region) are constant. If they are not, the cache mechanism may not be consistent. 
+      #The argument Region is required, as it will be the key for the underlying hash.
+      #We asume that the options (other than the region) are constant. If they are not, the cache mechanism may not be consistent.
       #
       #TODO: It may be good to load partially the pileup
-      def mpileup_cached (opts={})      
+      def mpileup_cached (opts={})
         raise SamException.new(), "A region must be provided" unless opts[:r] or opts[:region]
         @cached_regions = Hash.new unless @cached_regions
         region = opts[:r] ? opts[:r] : opts[:region]
         @cached_regions[region.to_s] = fetch_region(opts) unless @cached_regions[region.to_s]
         if block_given?
           @cached_regions[region.to_s].pileup.each do | pile |
-            yield pile 
-          end  
+            yield pile
+          end
         end
         region.pileup
       end
@@ -695,7 +695,7 @@ module Bio
         opts[:region] = Bio::DB::Fasta::Region.parse_region( opts[:region] .to_s)  unless opts[:region].class == Bio::DB::Fasta::Region
         fastq_filename = opts[:fastq]
 
-        out = $stdout 
+        out = $stdout
         print_fastq = Proc.new do |alignment|
           out.puts "@#{alignment.qname}"
           out.puts "#{alignment.seq}"
@@ -709,25 +709,25 @@ module Bio
         fetch_with_function(chromosome, qstart, qstart+len,  print_fastq)
         out.close if fastq_filename
       end
-      
+
        # checks existence of files in instance
       def files_ok?
         [@fasta, @sam, @bam].flatten.compact.each {|f| return false unless File.exists? f }
         true
       end
-      
-      #Returns true if the .bai exists. It doesn't validate if it is valid. 
+
+      #Returns true if the .bai exists. It doesn't validate if it is valid.
       def indexed?
         File.exists? @bam and File.exists? "#{@bam}.bai"
       end
-        
+
       private
       #Returns Process::Status with the execution status. If run in a $VERBOSE environment, stderr of the process
       #is forwarded to the default stdout
       def yield_from_pipe(command, klass, type=:text, skip_comments=true, comment_char="#", &block)
         puts "[yield_from_pipe] #{command}" if $VERBOSE
         stdin, pipe, stderr, wait_thr = Open3.popen3(command)
-        pid = wait_thr[:pid]  # pid of the started process.       
+        pid = wait_thr[:pid]  # pid of the started process.
         if type == :text
           while (line = pipe.gets)
             next if skip_comments and line[0] == comment_char
@@ -739,7 +739,7 @@ module Bio
           end
         end
         exit_status = wait_thr.value  # Process::Status object returned.
-        puts "Running: #{command}" if $VERBOSE 
+        puts "Running: #{command}" if $VERBOSE
         stdin.close
         pipe.close
         stderr.close
@@ -750,7 +750,7 @@ module Bio
       # returns a command string from a program
       # @param program [Symbol] either `:samtools` or `:bcftools`
       # @param opts [Hash] the options hash
-      # @param singles `flag` options [Array] the options in `opts` that are single options 
+      # @param singles `flag` options [Array] the options in `opts` that are single options
       def form_opt_string(prog, command, opts, singles=[])
         opts_string = commandify(opts, singles)
         "#{prog} #{command} #{opts_string} \"#{@bam}\""
@@ -763,7 +763,7 @@ module Bio
           value = "\"#{value}\""
           value = "" if singles.include?(tag)
 
-          list << "-#{tag.to_s} #{value}" 
+          list << "-#{tag.to_s} #{value}"
         end
         list.join(" ")
       end
