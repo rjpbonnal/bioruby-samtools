@@ -24,7 +24,7 @@ class TestBioDbfastaDB < Test::Unit::TestCase
         	samtools: true
     	)
 	end
-     class << self    
+    class << self    
         def shutdown
             File.delete("test/samples/small/test_fastadb.fasta.fai")
         end
@@ -43,7 +43,7 @@ class TestBioDbfastaDB < Test::Unit::TestCase
 
 
 
-	def test_fetch_reference
+    def test_fetch_reference
     	#this is the first 70 nucleotides of the test seqeunce
     	@fasta_samtools.faidx()
 
@@ -73,15 +73,17 @@ GGAAACCCGAGGAATCAGAGAGGAGTGTTGACAGTGTAGCACGGGATG",
             "chr_2:765-770" => Bio::DB::Fasta::FastaDBException,
 
     	}
+
     	test_regions.each_pair do |region, expected_eception|  
             assert_raise expected_eception do
-                seq_fetched = @fasta_samtools.fetch_sequence(region)
+                #seq_fetched =
+                @fasta_samtools.fetch_sequence(region)
             end
 
             assert_raise expected_eception do
-    	       seq_fetched_local = @fasta_local.fetch_sequence(region)
+    	       #seq_fetched_local = 
+               @fasta_local.fetch_sequence(region)
     	   end
         end
     end
-
 end

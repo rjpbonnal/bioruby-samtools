@@ -20,10 +20,16 @@ module Bio
       def initialize(args)
         @fasta = args[:fasta]
         @bam = args[:bam]
+        @bams = nil
+        @sam = nil
+        @files = nil 
+        @cached_regions = nil
+        @stats = nil
         @samtools = args[:samtools] || File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools')
         @bcftools = args[:bcftools] || File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','bcftools')
 
         @files = [@files] if @files.instance_of?(String)
+       
 
         @last_command = nil
         raise ArgumentError, "Need Fasta and at least one BAM or SAM" if not @fasta or not @bam
@@ -67,7 +73,7 @@ module Bio
         region = String.new
         if opts[:chr] and opts[:start] and opts[:stop]
           has_e = self.has_entry? opts[:chr]
-          raise SamException.new(), "[view] The sequence #{opts[:chr]} is not in the bam file" unless self.has_entry? opts[:chr]
+          raise SamException.new(), "[view] The sequence #{opts[:chr]} is not in the bam file" unless has_e
           region = "#{opts[:chr]}:#{opts[:start]}-#{opts[:stop]}"
           [:chr, :start, :stop].each {|o| opts.delete(o)}
         end
@@ -712,13 +718,13 @@ module Bio
 
        # checks existence of files in instance
       def files_ok?
-        [@fasta, @sam, @bam].flatten.compact.each {|f| return false unless File.exists? f }
+        [@fasta, @sam, @bam].flatten.compact.each {|f| return false unless File.exist? f }
         true
       end
 
       #Returns true if the .bai exists. It doesn't validate if it is valid.
       def indexed?
-        File.exists? @bam and File.exists? "#{@bam}.bai"
+        File.exists? @bam and File.exist? "#{@bam}.bai"
       end
 
       private
@@ -727,7 +733,7 @@ module Bio
       def yield_from_pipe(command, klass, type=:text, skip_comments=true, comment_char="#", &block)
         puts "[yield_from_pipe] #{command}" if $VERBOSE
         stdin, pipe, stderr, wait_thr = Open3.popen3(command)
-        pid = wait_thr[:pid]  # pid of the started process.
+        #pid = wait_thr[:pid]  # pid of the started process.
         if type == :text
           while (line = pipe.gets)
             next if skip_comments and line[0] == comment_char

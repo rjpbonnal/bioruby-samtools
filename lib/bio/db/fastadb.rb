@@ -64,6 +64,7 @@ module Bio::DB::Fasta
       #puts "line pffset: #{line_offset}"
       #puts self.inspect
       pointer = offset + (line_length * lines_for_offset) + line_offset - 1
+      pointer
     end
 
     def get_full_region
@@ -181,7 +182,7 @@ module Bio::DB::Fasta
 
   #Class that holds the fasta file. It is used as a database. 
   class FastaFile
-    attr_reader :index, :fasta_path
+    attr_reader :fasta_path
 
     #Initialize the fasta file. If the fai file doesn't exists, it is generated at startup
     #* fasta path to the fasta file
@@ -190,6 +191,8 @@ module Bio::DB::Fasta
       #puts "The arguments are: '#{fasta}':'#{samtools}'"
       @fasta_path = fasta
       @samtools = samtools  
+      @index = nil
+      @fasta_file = nil
       @samtools = File.join(File.expand_path(File.dirname(__FILE__)),'sam','external','samtools') if samtools == true
       raise FastaDBException.new(), "No path for the refernce fasta file. " if @fasta_path.nil?
       @fai_file = @fasta_path + ".fai" 
@@ -249,7 +252,7 @@ module Bio::DB::Fasta
       query = region.to_s
       query = region.to_region.to_s if region.respond_to?(:to_region) 
       command = "#{@samtools} faidx #{@fasta_path} '#{query}'"
-      puts command  if $VERBOSE
+      puts "Running: #{command}"  if $VERBOSE
       @last_command = command
       seq = ""
       yield_from_pipe(command, String, :text ) {|line| seq = seq + line unless line =~ /^>/}
@@ -295,7 +298,7 @@ module Bio::DB::Fasta
     #is forwarded to the default stdout
     def yield_from_pipe(command, klass, type=:text, skip_comments=true, comment_char="#", &block)
       stdin, pipe, stderr, wait_thr = Open3.popen3(command)
-      pid = wait_thr[:pid]  # pid of the started process.       
+      #pid = wait_thr[:pid]  # pid of the started process.       
       if type == :text
         while (line = pipe.gets)
           next if skip_comments and line[0] == comment_char

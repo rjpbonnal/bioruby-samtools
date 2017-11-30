@@ -27,13 +27,19 @@
 module Bio
   class DB
     class Pileup
-      attr_accessor :ref_name, :pos, :ref_base, :coverage, :read_bases, :read_quals, :consensus, :consensus_quality, :snp_quality, :rms_mapq, :ar1, :ar2, :ar3, :indel_1, :indel_2
+      attr_accessor :ref_name, :pos, :ref_base, :coverage, :read_bases, :read_quals, :consensus_quality, :snp_quality, :rms_mapq, :ar1, :ar2, :ar3, :indel_1, :indel_2
       
       #creates the Pileup object
       #    pile_up_line = "seq2\t151\tG\tG\t36\t0\t99\t12\t...........A\t:9<;;7=<<<<<"
       #    pile = Bio::DB::Pileup.new(pile_up_line)
       def initialize(pile_up_line)
         cols = pile_up_line.split(/\t/)
+        @consensus = nil
+        @consensus_quality = nil
+        @read_quals = nil
+        @bases = nil
+        @allele_frequency = nil
+        @consensus_iuap = nil
         if cols.length == 6 ##should only be able to get 6 lines from mpileup
           @ref_name, @pos, @ref_base, @coverage, @read_bases, @read_quals = cols
         elsif (10..13).include?(cols.length) ##incase anyone tries to use deprecated pileup with -c flag we get upto 13 cols...

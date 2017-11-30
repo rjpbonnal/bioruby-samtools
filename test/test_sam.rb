@@ -178,7 +178,7 @@ class TestBioDbSam < Test::Unit::TestCase
   end
    
   def test_index_stats
-    puts "Stats: #{@sam.index_stats.inspect}"
+    #puts "Stats: #{@sam.index_stats.inspect}"
     @sam.index_stats.each_pair do |seq, stat|
       assert_send([['chr_1' , '*'], :member?, seq])
     end
