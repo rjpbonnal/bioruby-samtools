@@ -3,6 +3,7 @@ source "http://rubygems.org"
 # Example:
 gem "bio-svgenes", ">= 0.4.1"
 gem "bio", ">= 1.4.2"
+gem "rake" 
 #gem 'open_uri_redirections'
 
 # Add dependencies to develop your gem here.
