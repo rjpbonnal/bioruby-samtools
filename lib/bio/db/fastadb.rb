@@ -13,7 +13,7 @@ module Bio::DB::Fasta
 
     #This doesnt validate if you are adding the same entry twice. I may add
     #a validation for that. 
-    def << (entry)
+    def <<(entry)
       @entries << entry
       @entries_map[entry.id] = entry
     end
@@ -252,7 +252,7 @@ module Bio::DB::Fasta
       query = region.to_s
       query = region.to_region.to_s if region.respond_to?(:to_region) 
       command = "#{@samtools} faidx #{@fasta_path} '#{query}'"
-      puts "Running: #{command}"  if $VERBOSE
+      puts "Running: #{command}"  if $DEBUG
       @last_command = command
       seq = ""
       yield_from_pipe(command, String, :text ) {|line| seq = seq + line unless line =~ /^>/}
@@ -294,7 +294,7 @@ module Bio::DB::Fasta
     end
 
     private
-    #Returns Process::Status with the execution status. If run in a $VERBOSE environment, stderr of the process
+    #Returns Process::Status with the execution status. If run in a $DEBUG environment, stderr of the process
     #is forwarded to the default stdout
     def yield_from_pipe(command, klass, type=:text, skip_comments=true, comment_char="#", &block)
       stdin, pipe, stderr, wait_thr = Open3.popen3(command)
@@ -310,7 +310,7 @@ module Bio::DB::Fasta
         end
       end
       exit_status = wait_thr.value  # Process::Status object returned.
-      puts stderr.read if $VERBOSE 
+      puts stderr.read if $DEBUG 
       stdin.close
       pipe.close
       stderr.close

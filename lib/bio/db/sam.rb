@@ -276,7 +276,7 @@ module Bio
         end
 
         command = form_opt_string(@samtools, "mpileup", opts, [:R, :B, :E, "6", :A, :g, :u, :I] )
-        puts "Running: #{command}" if $VERBOSE
+        puts "Running: #{command}" if $DEBUG
         if opts[:u]
           command = command + " | #{@bcftools} view -cg -"
         end
@@ -299,7 +299,7 @@ module Bio
           seq = "n" * (stop-start)
         else
           command = "#{@samtools} faidx \"#{@fasta}\" '#{chr}:#{start}-#{stop}'"
-          puts "Running: #{command}" if $VERBOSE
+          puts "Running: #{command}" if $DEBUG
           @last_command = command
           seq = ""
           yield_from_pipe(command, String, :text ) {|line| seq = seq + line unless line =~ /^>/}
@@ -331,7 +331,7 @@ module Bio
       #* out_index - [STRING] name of index
       def index(opts={})
         command = "#{@samtools} index \"#{@bam}\" #{opts[:out_index]}"
-        puts "Running: #{command}" if $VERBOSE
+        puts "Running: #{command}" if $DEBUG
         @last_command = command
         system(command)
       end
@@ -346,7 +346,7 @@ module Bio
           remove_reads = "-r"
         end
         command = "#{@samtools} fixmate #{remove_reads} \"#{@bam}\" #{opts[:out_bam]}"
-        puts "Running: #{command}" if $VERBOSE
+        puts "Running: #{command}" if $DEBUG
         @last_command = command
         system(command)
       end
@@ -356,7 +356,7 @@ module Bio
       #generate simple stats with regard to the number and pairing of reads mapped to a reference
       def flag_stats(opts={})
         command = form_opt_string(@samtools, "flagstat", opts, [])
-        puts "Running: #{command}" if $VERBOSE
+        puts "Running: #{command}" if $DEBUG
         @last_command = command
         strings = []
         yield_from_pipe(command,String) {|line| strings << line.chomp}
@@ -371,7 +371,7 @@ module Bio
         stats = {}
         command = form_opt_string(@samtools, "idxstats", {}, [])
         @last_command = command
-        puts "Running: #{command}" if $VERBOSE
+        #puts "Running: #{command}" if $DEBUG
         yield_from_pipe(command, String, :text, true, "#") do |line|
           info = line.chomp.split(/\t/)
           stats[ info[0] ] = {:length => info[1].to_i, :mapped_reads => info[2].to_i, :unmapped_reads => info[3].to_i }
@@ -452,7 +452,7 @@ module Bio
         command = "#{@samtools} merge #{options} #{out} #{bam_list}"
 
         @last_command = command
-        puts "Running: #{command}" if $VERBOSE
+        puts "Running: #{command}" if $DEBUG
         system(command)
 
       end
@@ -468,7 +468,7 @@ module Bio
         opts.delete(:bams)
         options = commandify(opts, [:h] )
         command = "#{@samtools} cat #{options} -o #{out} #{bam_list}"
-        puts command if $VERBOSE
+        puts command if $DEBUG
         @last_command = command
         system(command)
 
@@ -515,7 +515,7 @@ module Bio
         command = form_opt_string(@samtools, "sort", opts, [:n, :f])
         command = command + " "
         @last_command = command
-        puts "Running: #{command}" if $VERBOSE
+        puts "Running: #{command}" if $DEBUG
         #if opts[:o]
         #  yield_from_pipe(command, Bio::DB::Alignment)
         #else
@@ -541,7 +541,7 @@ module Bio
           opts.delete(:s)
         end
         command = "#{form_opt_string(@samtools, "tview", opts)}"
-        puts "Running: #{command}" if $VERBOSE
+        puts "Running: #{command}" if $DEBUG
         @last_command = command
         system(command)
       end
@@ -556,7 +556,7 @@ module Bio
         else
           command = "#{@samtools} reheader #{header_sam} \"#{@bam}\""
         end
-        puts "Running: #{command}" if $VERBOSE
+        puts "Running: #{command}" if $DEBUG
         @last_command = command
         system(command)
       end
@@ -572,7 +572,7 @@ module Bio
       #* E - Extended BAQ calculation. This option trades specificity for sensitivity, though the effect is minor.
       def calmd(opts={}, &block)
         command = form_opt_string(@samtools, "calmd",  opts, [:E, :e, :u, :b, :S, :r] )+ " " + @fasta
-        puts "Running: #{command}" if $VERBOSE
+        puts "Running: #{command}" if $DEBUG
         @last_command = command
         type = :text
         klass = Bio::DB::Alignment
@@ -593,7 +593,7 @@ module Bio
         end
 
         command = "#{form_opt_string(@samtools, "targetcut", opts, [] )}"
-        puts "Running: #{command}" if $VERBOSE
+        puts "Running: #{command}" if $DEBUG
         @last_command = command
         system(command)
       end
@@ -607,7 +607,7 @@ module Bio
       #* Q - [INT] Minimum base quality to be used in het calling. [13]
       def phase(opts={})
         command = "#{form_opt_string(@samtools, "phase", opts, [:A, :F] )}"
-        puts "Running: #{command}" if $VERBOSE
+        puts "Running: #{command}" if $DEBUG
         @last_command = command
         system(command)
       end
@@ -651,7 +651,7 @@ module Bio
       #We asume that the options (other than the region) are constant. If they are not, the cache mechanism may not be consistent.
       #
       #TODO: It may be good to load partially the pileup
-      def mpileup_cached (opts={})
+      def mpileup_cached(opts={})
         raise SamException.new(), "A region must be provided" unless opts[:r] or opts[:region]
         @cached_regions = Hash.new unless @cached_regions
         region = opts[:r] ? opts[:r] : opts[:region]
@@ -667,7 +667,7 @@ module Bio
 
       #Clears the pileup cache. If a region is passed as argument, just the specified region is removed
       #If no region is passed, the hash is emptied
-      def mpileup_clear_cache (region)
+      def mpileup_clear_cache(region)
         return unless @cached_regions
         if region
           @cached_regions[region.to_s] = nil
@@ -685,7 +685,7 @@ module Bio
         else
           command = "#{@samtools} bedcov \"#{bed}\" \"#{@bam}\""
         end
-         puts "Running: #{command}" if $VERBOSE
+         puts "Running: #{command}" if $DEBUG
         #puts command
         @last_command = command
         system(command)
@@ -724,14 +724,14 @@ module Bio
 
       #Returns true if the .bai exists. It doesn't validate if it is valid.
       def indexed?
-        File.exists? @bam and File.exist? "#{@bam}.bai"
+        File.exist? @bam and File.exist? "#{@bam}.bai"
       end
 
       private
-      #Returns Process::Status with the execution status. If run in a $VERBOSE environment, stderr of the process
+      #Returns Process::Status with the execution status. If run in a $DEBUG environment, stderr of the process
       #is forwarded to the default stdout
       def yield_from_pipe(command, klass, type=:text, skip_comments=true, comment_char="#", &block)
-        puts "[yield_from_pipe] #{command}" if $VERBOSE
+        puts "[yield_from_pipe] #{command}" if $DEBUG
         stdin, pipe, stderr, wait_thr = Open3.popen3(command)
         #pid = wait_thr[:pid]  # pid of the started process.
         if type == :text
@@ -745,7 +745,7 @@ module Bio
           end
         end
         exit_status = wait_thr.value  # Process::Status object returned.
-        puts "Running: #{command}" if $VERBOSE
+        puts "Running: #{command}" if $DEBUG
         stdin.close
         pipe.close
         stderr.close
