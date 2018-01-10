@@ -6,13 +6,22 @@ addons:
     - zlib1g-dev
     - libncurses5-dev
     - libtinfo-dev   
+before_install:
+  - if [ $TRAVIS_OS_NAME = osx ];  brew update; brew install xz ; fi# see note below
+
 before_script:
   - cd ext
   - ruby mkrf_conf.rb
   - rake -f Rakefile
   - cd ../
+os:
+  - linux
+  - osx
 rvm:
   - 2.1.10
   - 2.2.5
   - 2.3.5
   - 2.4.2
+  - 2.5.0
+
+
