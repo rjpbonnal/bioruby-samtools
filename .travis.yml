@@ -7,8 +7,7 @@ addons:
     - libncurses5-dev
     - libtinfo-dev   
 before_install:
-  - if [ $TRAVIS_OS_NAME = osx ];  brew update; brew install xz ; fi# see note below
-
+  - if [ $TRAVIS_OS_NAME = osx ];  brew update; brew install xz ; fi
 before_script:
   - cd ext
   - ruby mkrf_conf.rb
