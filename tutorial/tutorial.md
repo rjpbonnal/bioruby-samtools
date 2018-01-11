@@ -18,7 +18,7 @@ connection.
 
 bio-samtools relies on the following other rubygems:
 
--   [bio \>= 1.4.2](http://rubygems.org/gems/bio)
+-   [bio \>= 1.5](http://rubygems.org/gems/bio)
 -   [bio-svgenes >= 0.4.1](https://rubygems.org/gems/bio-svgenes)
 
 Once these are installed, bio-samtools can be installed with

@@ -438,17 +438,14 @@ Each test file tests different aspects of the code.
 
 ## Dependencies
 
-* BioRuby >= 1.4.3 [https://github.com/bioruby/bioruby](https://github.com/bioruby/bioruby)
-* Ruby 1.9 and above. 
+* BioRuby >= 1.5 [https://github.com/bioruby/bioruby](https://github.com/bioruby/bioruby)
+* Ruby 2.1.10 and above. 
+
 	
 ## FAQ
-* I´m getting a **segmentation Fault**, what did I do wrong?
+* I want to use Ruby 1.x, what can I do? 
 
-	[Answer] You are using an old version of bio-samtools, the current version doesn't link directly to the library. 
-
-* I keep seeing this **Invalid gemspec in [some ruby gem path…]**, what is wrong?
-	
-	[Answer] This appears to be a bug in RubyGems that doesn't affect the running of the tools. It will keep happening until someone updates RubyGems. If it really bugs you, downgrade RubyGems.
+We try to ensure backwards compatibility with old rubies. However we only officially support current versions of [https://www.ruby-lang.org/en/downloads/](Ruby). The code should work however the testing suites used in earlier versions are not currently supported and don't work in modern rubies. This decision ensures compatibility with maintained versions of Ruby.  
 
 
 ## Contributing to bio-samtools
