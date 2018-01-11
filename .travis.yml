@@ -7,6 +7,7 @@ addons:
     - libncurses5-dev
     - libtinfo-dev   
 before_install:
+  - gem update --system
   - if [ $TRAVIS_OS_NAME = osx ]; then brew update; brew install xz ; fi
 before_script:
   - cd ext
