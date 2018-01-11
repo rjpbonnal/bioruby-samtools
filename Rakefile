@@ -27,7 +27,7 @@ end
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "bio-samtools"
   gem.homepage = "http://github.com/helios/bioruby-samtools"
-  gem.license = "MIT"
+  gem.license = "GPL-3.0"
   gem.summary = %Q{Binder of samtools for ruby, on the top of FFI.}
   gem.description = %Q{Binder of samtools for ruby, on the top of FFI. 
 
