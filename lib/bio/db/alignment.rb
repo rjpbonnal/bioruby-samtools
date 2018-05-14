@@ -11,7 +11,7 @@ module Bio
       end
     end
     
-    #Attrobites frp, the flag field (see chapter 2.2.2 of the sam file documentation)
+    #Attrobites for the flag field (see chapter 2.2.2 of the sam file documentation)
     #query_strand and mate_strand are true if they are forward. It is the opposite to
     #the definition in the BAM format for clarity.
     #primary is the negation of is_negative from the BAM format
@@ -54,6 +54,10 @@ module Bio
         @failed_quality        = @flag & 0x0200 > 0
         @is_duplicate          = @flag & 0x0400 > 0
       
+      end
+
+       def to_fastq
+        ["@#{qname}",seq, "+",qual].join "\n"
       end
     end
   end
