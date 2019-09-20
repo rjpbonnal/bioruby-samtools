@@ -24,6 +24,7 @@ if is_windows = (RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/)
   url = "http://download-codeplex.sec.s-msft.com/Download/Release?ProjectName=bow&DownloadId=379402&FileTime=129956483945970000&Build=21040"
 
   task :download do
+    #TODO dont run if —local
     open(url) do |uri|
       File.open("#{SamToolsFile}",'wb') do |fout|
         fout.write(uri.read)
@@ -52,14 +53,14 @@ else
   version = File.open(File.join(path_external,"VERSION"),'r')
   Version = version.read
   version.close
-
+  #TODO if local instalarion, make sure that the paths of the gzip files exist. the version shoulf match the supported version of samtools in the library 
   #url = "http://sourceforge.net/projects/samtools/files/samtools/#{Version}/samtools-#{Version}.tar.bz2/download"
   url="https://github.com/samtools/samtools/releases/download/#{Version}/samtools-#{Version}.tar.bz2"
   SamToolsFile = "samtools-#{Version}.tar.bz2"
   url_bcftools="https://github.com/samtools/bcftools/releases/download/#{Version}/bcftools-#{Version}.tar.bz2"
   BcfToolsFile = "bcftools-#{Version}.tar.bz2"
 
-  File.open(File.join(path,"Rakefile"),"w") do |rakefile|
+  File.open(File.joint(path,"Rakefile"),"w") do |rakefile|
   rakefile.write <<-RAKE
   require 'rbconfig'
   require 'open-uri'
